@@ -1,0 +1,1367 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>PDF Studio | منصة معالجة وتنسيق الكتب</title>
+    <meta name="description" content="منصة مجانية واحترافية لدمج، تجزئة، وتعديل ملفات PDF بالكامل داخل متصفحك.">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class', 
+            theme: { 
+                extend: {
+                    colors: {
+                        slate: { 50: '#f8fafc', 100: '#f1f5f9', 200: '#e2e8f0', 300: '#cbd5e1', 400: '#94a3b8', 500: '#64748b', 600: '#475569', 700: '#334155', 800: '#1e293b', 900: '#0f172a', 950: '#020617' },
+                        brand: { 50: '#eff6ff', 100: '#dbeafe', 200: '#bfdbfe', 300: '#93c5fd', 400: '#60a5fa', 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8', 800: '#1e40af', 900: '#1e3a8a', 950: '#172554' }
+                    },
+                    boxShadow: {
+                        'glass': '0 8px 32px 0 rgba(0, 0, 0, 0.05)',
+                        'glow': '0 0 15px rgba(59, 130, 246, 0.5)',
+                    }
+                } 
+            }
+        }
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+    <script src="https://unpkg.com/@pdf-lib/fontkit@0.0.4"></script> 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&family=Cairo:wght@400;700&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { 
+            font-family: 'Tajawal', sans-serif; 
+            transition: background-color 0.4s ease, color 0.4s ease; 
+        }
+        
+        /* Smooth Scrollbar */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 10px; border: 2px solid transparent; background-clip: padding-box; }
+        .dark ::-webkit-scrollbar-thumb { background-color: #475569; }
+        ::-webkit-scrollbar-thumb:hover { background-color: #94a3b8; }
+        .dark ::-webkit-scrollbar-thumb:hover { background-color: #64748b; }
+
+        /* Accordion Animations */
+        .accordion-content { 
+            display: grid; 
+            grid-template-rows: 0fr; 
+            transition: grid-template-rows 0.3s ease-in-out, opacity 0.3s ease-in-out, margin 0.3s ease-in-out; 
+            opacity: 0; 
+            margin-top: 0;
+        }
+        .accordion-content > div { overflow: hidden; }
+        .accordion-content.open { 
+            grid-template-rows: 1fr; 
+            opacity: 1; 
+            margin-top: 1rem; 
+        }
+        .toggle-accordion[aria-expanded="true"] .accordion-icon { transform: rotate(180deg); }
+
+        /* Fancy Cards & Selection */
+        .selectable-card { 
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); 
+            border: 2px solid transparent;
+        }
+        .selectable-card:hover { transform: translateY(-4px); }
+        
+        /* Light Mode Selection */
+        .light .selectable-card.selected { 
+            border-color: #3b82f6; 
+            background-color: #eff6ff; 
+            box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.15), 0 0 0 3px rgba(59, 130, 246, 0.1); 
+        }
+        
+        /* Dark Mode Selection */
+        .dark .selectable-card.selected { 
+            border-color: #60a5fa; 
+            background-color: rgba(30, 58, 138, 0.4); 
+            box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.25), 0 0 0 3px rgba(59, 130, 246, 0.15); 
+        }
+
+        /* File Items List */
+        .file-item { transition: all 0.2s ease; }
+        .file-item:hover { transform: translateX(-4px); }
+        .drag-handle { cursor: grab; }
+        .drag-handle:active { cursor: grabbing; }
+        .sortable-ghost { opacity: 0.3; background-color: #dbeafe !important; border: 2px dashed #3b82f6 !important; transform: scale(0.98); }
+        .dark .sortable-ghost { background-color: rgba(30, 58, 138, 0.5) !important; border-color: #60a5fa !important; }
+        .sortable-drag { cursor: grabbing !important; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04) !important; }
+
+        /* Loader */
+        .loader {
+            border: 3px solid rgba(255,255,255,0.2); border-top: 3px solid #ffffff;
+            border-radius: 50%; width: 22px; height: 22px; animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* Floating Logo Animation */
+        @keyframes float-logo {
+            0% { transform: translateY(0px) scale(1); filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1)); }
+            50% { transform: translateY(-4px) scale(1.02); filter: drop-shadow(0 10px 15px rgba(59,130,246,0.3)); }
+            100% { transform: translateY(0px) scale(1); filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1)); }
+        }
+        .animate-float { animation: float-logo 3.5s ease-in-out infinite; }
+
+        /* Layout Grid Previews */
+        .layout-preview-box { transition: all 0.3s ease; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        #layout-grid.orient-landscape .layout-preview-box { width: 3.8rem; height: 2.5rem; }
+        #layout-grid.orient-portrait .layout-preview-box { width: 2.5rem; height: 3.8rem; }
+        #layout-grid.orient-landscape .layout-preview-half { width: 1.7rem; height: 2.2rem; }
+        #layout-grid.orient-portrait .layout-preview-half { width: 2.2rem; height: 1.7rem; }
+        
+        .selected .layout-preview-box { border-color: #3b82f6; box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3); }
+        .dark .selected .layout-preview-box { border-color: #60a5fa; box-shadow: 0 0 0 2px rgba(96, 165, 250, 0.3); }
+
+        /* Custom Input Enhancements */
+        input:focus, select:focus { box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15); }
+        .dark input:focus, .dark select:focus { box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.15); }
+        input[type="checkbox"], input[type="radio"] { transition: all 0.2s ease; }
+        input[type="checkbox"]:checked, input[type="radio"]:checked { animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        @keyframes popIn { 0% { transform: scale(0.8); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+    </style>
+</head>
+
+<body class="text-slate-800 bg-slate-50 dark:text-slate-100 dark:bg-[#0B1120] antialiased min-h-screen flex flex-col selection:bg-brand-500 selection:text-white" id="app-body">
+
+    <header class="sticky top-0 z-50 bg-white/80 dark:bg-[#0f172a]/80 backdrop-blur-xl border-b border-slate-200 dark:border-slate-800 shadow-sm transition-colors duration-300">
+        <div class="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-brand-400 via-brand-600 to-indigo-600"></div>
+        <div class="container mx-auto px-4 max-w-5xl flex justify-between items-center py-4 relative">
+            <div class="flex items-center gap-4">
+                <div class="bg-gradient-to-br from-brand-500 to-indigo-600 p-2.5 rounded-2xl shadow-lg shadow-brand-500/30 animate-float">
+                    <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                </div>
+                <div>
+                    <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white">PDF Studio</h1>
+                    <p class="text-brand-600 dark:text-brand-400 text-xs md:text-sm font-bold mt-0.5 opacity-90">المنصة الاحترافية لمعالجة الكتب</p>
+                </div>
+            </div>
+            <button id="theme-toggle" class="p-3 rounded-2xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 transition-all shadow-sm hover:shadow focus:outline-none focus:ring-2 focus:ring-brand-500" title="تغيير المظهر">
+                <svg id="theme-toggle-dark-icon" class="hidden w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+                <svg id="theme-toggle-light-icon" class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd"></path></svg>
+            </button>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 max-w-5xl py-10 flex-grow space-y-8">
+        
+        <section class="bg-white dark:bg-slate-800/80 backdrop-blur-md rounded-3xl shadow-sm border border-slate-200/80 dark:border-slate-700/80 overflow-hidden">
+            <div class="p-6 md:p-8">
+                <h2 class="text-xl font-extrabold mb-6 text-slate-900 dark:text-white flex items-center">
+                    تحديد نوع العملية
+                </h2>
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                    <div class="selectable-card mode-option bg-slate-50 dark:bg-slate-800/50 rounded-2xl p-4 cursor-pointer selected flex flex-col items-center text-center shadow-sm border border-slate-200 dark:border-slate-700" data-mode="merge">
+                        <div class="w-14 h-14 bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 rounded-2xl flex items-center justify-center mb-3 shadow-inner transition-transform group-hover:scale-110">
+                            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                        </div>
+                        <h3 class="font-extrabold text-base text-slate-900 dark:text-white">دمج وفهرسة</h3>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 font-bold">عدة ملفات في كتاب</p>
+                    </div>
+                    <div class="selectable-card mode-option bg-slate-50 dark:bg-slate-800/50 rounded-2xl p-4 cursor-pointer flex flex-col items-center text-center shadow-sm border border-slate-200 dark:border-slate-700" data-mode="batch">
+                        <div class="w-14 h-14 bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400 rounded-2xl flex items-center justify-center mb-3 shadow-inner">
+                            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                        </div>
+                        <h3 class="font-extrabold text-base text-slate-900 dark:text-white">تعديل أفراد</h3>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 font-bold">تنسيق بدون دمج</p>
+                    </div>
+                    <div class="selectable-card mode-option bg-slate-50 dark:bg-slate-800/50 rounded-2xl p-4 cursor-pointer flex flex-col items-center text-center shadow-sm border border-slate-200 dark:border-slate-700" data-mode="split">
+                        <div class="w-14 h-14 bg-purple-100 dark:bg-purple-900/40 text-purple-600 dark:text-purple-400 rounded-2xl flex items-center justify-center mb-3 shadow-inner">
+                            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path></svg>
+                        </div>
+                        <h3 class="font-extrabold text-base text-slate-900 dark:text-white">تجزئة وفصل</h3>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 font-bold">تقسيم الملفات</p>
+                    </div>
+                    <div class="selectable-card mode-option bg-slate-50 dark:bg-slate-800/50 rounded-2xl p-4 cursor-pointer flex flex-col items-center text-center shadow-sm border border-slate-200 dark:border-slate-700" data-mode="blank">
+                        <div class="w-14 h-14 bg-amber-100 dark:bg-amber-900/40 text-amber-600 dark:text-amber-400 rounded-2xl flex items-center justify-center mb-3 shadow-inner">
+                            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                        </div>
+                        <h3 class="font-extrabold text-base text-slate-900 dark:text-white">كتاب فارغ</h3>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 font-bold">توليد دفتر مخصص</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="file-upload-section" class="bg-white dark:bg-slate-800/80 backdrop-blur-md rounded-3xl shadow-sm border border-slate-200/80 dark:border-slate-700/80 overflow-hidden">
+            <button class="toggle-accordion w-full p-6 md:p-8 flex justify-between items-center text-slate-900 dark:text-white focus:outline-none" aria-expanded="true" data-target="#files-accordion-content">
+                <h2 class="text-xl font-extrabold flex items-center">إدارة الملفات والأقسام</h2>
+                <div class="bg-slate-100 dark:bg-slate-700 p-2 rounded-full">
+                    <svg class="w-6 h-6 accordion-icon transition-transform text-slate-500 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </div>
+            </button>
+            <div id="files-accordion-content" class="accordion-content open px-6 md:px-8 pb-6 md:pb-8">
+                <div>
+                    <div id="drop-zone" class="border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-2xl p-8 md:p-12 text-center bg-slate-50/50 dark:bg-slate-800/30 hover:bg-brand-50 hover:border-brand-400 dark:hover:bg-slate-700/50 dark:hover:border-brand-500 transition-all cursor-pointer mb-6 group">
+                        <div class="w-20 h-20 bg-white dark:bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm border border-slate-200 dark:border-slate-700 group-hover:scale-110 transition-transform duration-300">
+                            <svg class="w-10 h-10 text-brand-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
+                        </div>
+                        <h3 class="text-slate-800 dark:text-slate-200 font-extrabold text-lg mb-2">اسحب وأفلت الملفات هنا</h3>
+                        <p class="text-slate-500 dark:text-slate-400 text-sm font-bold mb-6">أو استخدم الأزرار أدناه للاختيار من جهازك</p>
+                        
+                        <div class="flex flex-wrap justify-center gap-3">
+                            <label class="cursor-pointer bg-slate-900 text-white dark:bg-white dark:text-slate-900 px-6 py-3 rounded-xl shadow hover:shadow-lg hover:-translate-y-0.5 transition-all text-sm font-extrabold">
+                                📄 إضافة ملفات<input type="file" id="file-input" multiple accept=".pdf" class="hidden">
+                            </label>
+                            <label class="cursor-pointer bg-white text-slate-800 border border-slate-200 dark:bg-slate-700 dark:text-slate-100 dark:border-slate-600 px-6 py-3 rounded-xl shadow-sm hover:bg-slate-50 dark:hover:bg-slate-600 transition-all text-sm font-extrabold hidden sm:inline-block">
+                                📁 إضافة مجلد<input type="file" id="folder-input" webkitdirectory directory multiple class="hidden">
+                            </label>
+                            <label class="cursor-pointer bg-white text-slate-800 border border-slate-200 dark:bg-slate-700 dark:text-slate-100 dark:border-slate-600 px-6 py-3 rounded-xl shadow-sm hover:bg-slate-50 dark:hover:bg-slate-600 transition-all text-sm font-extrabold">
+                                🗜️ استخراج من ZIP<input type="file" id="zip-input" accept=".zip" class="hidden">
+                            </label>
+                        </div>
+                    </div>
+
+                    <div id="group-name-container" class="flex flex-col sm:flex-row gap-3">
+                        <input type="text" id="group-name-input" placeholder="اسم الموضوع أو القسم للفهرسة..." class="flex-grow bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 dark:text-white px-4 py-3 rounded-xl outline-none focus:ring-2 focus:ring-brand-500 transition text-sm shadow-sm font-bold">
+                        <button id="add-group-btn" class="bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200 border border-slate-300 dark:border-slate-600 px-6 py-3 rounded-xl font-extrabold hover:bg-slate-300 dark:hover:bg-slate-600 transition shadow-sm text-sm">إدراج موضوع / فاصل</button>
+                    </div>
+
+                    <div id="files-container" class="mt-6 hidden">
+                        <div class="flex justify-between items-center mb-4 px-2">
+                            <div class="flex items-center gap-2">
+                                <span class="text-sm font-black text-slate-700 dark:text-slate-200 uppercase tracking-wide">قائمة الملفات المرفوعة:</span>
+                                <span id="total-size-badge" class="text-[10px] font-bold bg-brand-100 dark:bg-brand-900/40 text-brand-700 dark:text-brand-400 px-2 py-1 rounded-md border border-brand-200 dark:border-brand-800" dir="ltr">0 B</span>
+                            </div>
+                            <button id="clear-all-btn" class="text-xs text-red-600 dark:text-red-400 font-extrabold px-4 py-2 rounded-lg bg-red-50 dark:bg-red-900/20 hover:bg-red-100 dark:hover:bg-red-900/40 transition flex items-center gap-1.5 border border-red-100 dark:border-red-800">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                تفريغ القائمة
+                            </button>
+                        </div>
+                        <div class="bg-slate-50 dark:bg-slate-900/50 rounded-2xl border border-slate-200 dark:border-slate-700 p-2 shadow-inner">
+                            <ul id="files-list" class="space-y-2 max-h-72 overflow-y-auto pr-2 pl-1 py-1"></ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="blank-settings-section" class="hidden bg-white dark:bg-slate-800/80 backdrop-blur-md rounded-3xl shadow-sm border border-slate-200/80 dark:border-slate-700/80 overflow-hidden">
+             <div class="p-6 md:p-8">
+                <h2 class="text-xl font-extrabold mb-6 text-slate-900 dark:text-white flex items-center">
+                    إعدادات الدفتر الفارغ
+                </h2>
+                <div class="flex flex-col sm:flex-row gap-4 items-center justify-between bg-brand-50 dark:bg-brand-900/20 p-6 rounded-2xl border border-brand-100 dark:border-brand-800/50 shadow-sm">
+                    <label class="text-slate-800 dark:text-slate-200 font-extrabold text-base">كم عدد صفحات الدفتر الإجمالية التي تريد إنشاءها؟</label>
+                    <div class="flex items-center bg-white dark:bg-slate-900 border border-brand-200 dark:border-brand-700 rounded-xl overflow-hidden shadow-sm">
+                        <input type="number" id="blank-pages-count" value="10" min="1" max="2000" class="w-24 bg-transparent text-slate-900 dark:text-white px-4 py-3 outline-none font-black text-center text-lg">
+                        <span class="bg-brand-100 dark:bg-brand-800 text-brand-700 dark:text-brand-200 px-4 py-3 font-bold text-sm border-r border-brand-200 dark:border-brand-700">صفحة</span>
+                    </div>
+                </div>
+             </div>
+        </section>
+
+        <section id="split-options-section" class="hidden bg-white dark:bg-slate-800/80 backdrop-blur-md rounded-3xl shadow-sm border border-slate-200/80 dark:border-slate-700/80 overflow-hidden">
+            <button class="toggle-accordion w-full p-6 md:p-8 flex justify-between items-center text-slate-900 dark:text-white focus:outline-none" aria-expanded="false" data-target="#split-accordion-content">
+                <h2 class="text-xl font-extrabold flex items-center">طريقة التجزئة والفصل</h2>
+                <div class="bg-slate-100 dark:bg-slate-700 p-2 rounded-full">
+                    <svg class="w-6 h-6 accordion-icon transition-transform text-slate-500 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </div>
+            </button>
+            <div id="split-accordion-content" class="accordion-content px-6 md:px-8 pb-6 md:pb-8">
+                <div class="grid gap-4">
+                    <label class="flex flex-col cursor-pointer p-5 border border-slate-200 dark:border-slate-700 rounded-2xl bg-slate-50 dark:bg-slate-900/50 hover:border-purple-300 dark:hover:border-purple-600 transition-colors shadow-sm group">
+                        <div class="flex items-center mb-3">
+                            <input type="radio" name="split_type" value="range" class="w-5 h-5 text-purple-600 focus:ring-purple-500 border-slate-300" checked>
+                            <span class="ml-3 text-slate-900 dark:text-white font-extrabold text-base">استخراج نطاق مخصص (أرقام محددة)</span>
+                        </div>
+                        <input type="text" id="split-range-input" placeholder="مثال: 1-5, 8, 11-15" class="w-full bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 text-slate-900 dark:text-white rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-purple-500 transition text-left text-sm font-bold shadow-inner" dir="ltr">
+                    </label>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <label class="flex items-center cursor-pointer p-5 border border-slate-200 dark:border-slate-700 rounded-2xl bg-slate-50 dark:bg-slate-900/50 hover:border-purple-300 dark:hover:border-purple-600 transition-colors shadow-sm">
+                            <input type="radio" name="split_type" value="odd" class="w-5 h-5 text-purple-600 focus:ring-purple-500 border-slate-300">
+                            <span class="ml-3 text-slate-900 dark:text-white font-extrabold text-sm">استخراج الفردية فقط</span>
+                        </label>
+                        <label class="flex items-center cursor-pointer p-5 border border-slate-200 dark:border-slate-700 rounded-2xl bg-slate-50 dark:bg-slate-900/50 hover:border-purple-300 dark:hover:border-purple-600 transition-colors shadow-sm">
+                            <input type="radio" name="split_type" value="even" class="w-5 h-5 text-purple-600 focus:ring-purple-500 border-slate-300">
+                            <span class="ml-3 text-slate-900 dark:text-white font-extrabold text-sm">استخراج الزوجية فقط</span>
+                        </label>
+                    </div>
+                    <label class="flex flex-col sm:flex-row sm:items-center justify-between cursor-pointer p-5 border border-slate-200 dark:border-slate-700 rounded-2xl bg-slate-50 dark:bg-slate-900/50 hover:border-purple-300 dark:hover:border-purple-600 transition-colors shadow-sm gap-4">
+                        <div class="flex items-center">
+                            <input type="radio" name="split_type" value="fixed" class="w-5 h-5 text-purple-600 focus:ring-purple-500 border-slate-300">
+                            <span class="ml-3 text-slate-900 dark:text-white font-extrabold text-sm">تقسيم متساوٍ (أجزاء متساوية)</span>
+                        </div>
+                        <div class="flex items-center bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-xl overflow-hidden shadow-inner">
+                            <span class="px-3 py-2 text-xs font-bold text-slate-500 bg-slate-100 dark:bg-slate-700">كل جزء</span>
+                            <input type="number" id="split-fixed-input" value="10" min="1" class="w-16 bg-transparent text-slate-900 dark:text-white py-2 outline-none text-center font-black text-sm border-l border-slate-200 dark:border-slate-600">
+                            <span class="px-3 py-2 text-xs font-bold text-slate-500">صفحات</span>
+                        </div>
+                    </label>
+                    <label class="flex items-center cursor-pointer p-5 border border-slate-200 dark:border-slate-700 rounded-2xl bg-slate-50 dark:bg-slate-900/50 hover:border-purple-300 dark:hover:border-purple-600 transition-colors shadow-sm">
+                        <input type="radio" name="split_type" value="all" class="w-5 h-5 text-purple-600 focus:ring-purple-500 border-slate-300">
+                        <span class="ml-3 text-slate-900 dark:text-white font-extrabold text-sm">تفكيك كامل (كل صفحة في ملف مستقل)</span>
+                    </label>
+                </div>
+            </div>
+        </section>
+
+        <div id="format-options-section" class="space-y-8">
+            <section class="bg-white dark:bg-slate-800/80 backdrop-blur-md rounded-3xl shadow-sm border border-slate-200/80 dark:border-slate-700/80 overflow-hidden">
+                <button class="toggle-accordion w-full p-6 md:p-8 flex justify-between items-center text-slate-900 dark:text-white focus:outline-none" aria-expanded="false" data-target="#layout-accordion-content">
+                    <h2 class="text-xl font-extrabold flex items-center">تخطيط وهندسة الصفحة</h2>
+                    <div class="bg-slate-100 dark:bg-slate-700 p-2 rounded-full">
+                        <svg class="w-6 h-6 accordion-icon transition-transform text-slate-500 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </div>
+                </button>
+                <div id="layout-accordion-content" class="accordion-content px-6 md:px-8 pb-6 md:pb-8">
+                    <div>
+                        <div class="mb-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 bg-slate-50 dark:bg-slate-900/40 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-inner">
+                            <div class="flex flex-col gap-2">
+                                <label class="text-xs font-black text-slate-500 dark:text-slate-400 uppercase tracking-wider pl-1">مقاس الورقة النهائية</label>
+                                <select id="page-size" class="w-full bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 text-slate-900 dark:text-white rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-brand-500 text-sm font-bold shadow-sm transition">
+                                    <option value="A4">A4 (القياسي)</option>
+                                    <option value="A5">A5 (كتاب صغير)</option>
+                                    <option value="Letter">Letter</option>
+                                </select>
+                            </div>
+                            <div class="flex flex-col gap-2">
+                                <label class="text-xs font-black text-slate-500 dark:text-slate-400 uppercase tracking-wider pl-1">اتجاه الورقة</label>
+                                <select id="page-orientation" class="w-full bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 text-slate-900 dark:text-white rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-brand-500 text-sm font-bold shadow-sm transition">
+                                    <option value="portrait">عمودي (Portrait)</option>
+                                    <option value="landscape">أفقي (Landscape)</option>
+                                </select>
+                            </div>
+                            <div class="flex flex-col gap-2">
+                                <label class="text-xs font-black text-slate-500 dark:text-slate-400 uppercase tracking-wider pl-1">تدوير الأصل</label>
+                                <select id="page-rotation" class="w-full bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 text-slate-900 dark:text-white rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-brand-500 text-sm font-bold shadow-sm transition">
+                                    <option value="0">بدون دوران</option>
+                                    <option value="90">تدوير 90° لليمين</option>
+                                    <option value="180">تدوير 180° (مقلوب)</option>
+                                    <option value="270">تدوير 90° لليسار</option>
+                                </select>
+                            </div>
+                            <div class="flex flex-col gap-3 justify-center mt-2 lg:mt-0 lg:pt-6">
+                                <label class="flex items-center cursor-pointer">
+                                    <input type="checkbox" id="crop-edges" class="w-5 h-5 text-brand-600 bg-white border-slate-300 rounded focus:ring-brand-500 dark:focus:ring-brand-600 dark:ring-offset-slate-800 focus:ring-2 dark:bg-slate-700 dark:border-slate-600">
+                                    <span class="mr-3 font-extrabold text-sm text-slate-700 dark:text-slate-200">قص هوامش الأصل</span>
+                                </label>
+                                <label class="flex items-center cursor-pointer">
+                                    <input type="checkbox" id="line-empty-space" class="w-5 h-5 text-brand-600 bg-white border-slate-300 rounded focus:ring-brand-500 dark:focus:ring-brand-600 dark:ring-offset-slate-800 focus:ring-2 dark:bg-slate-700 dark:border-slate-600">
+                                    <span class="mr-3 font-extrabold text-sm text-slate-700 dark:text-slate-200">تسطير الفراغ المتبقي</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Layout Grid -->
+                        <div id="layout-grid" class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-8 gap-3 orient-portrait">
+                            <div class="selectable-card layout-option bg-white dark:bg-slate-800 rounded-2xl p-3 text-center cursor-pointer selected shadow-sm border border-slate-200 dark:border-slate-600" data-layout="standard">
+                                <div class="layout-preview-box bg-slate-200 dark:bg-slate-600 mx-auto mb-2 border border-slate-300 dark:border-slate-500"></div><span class="text-[11px] font-black block">ملاءمة كاملة</span>
+                            </div>
+                            <div class="selectable-card layout-option bg-white dark:bg-slate-800 rounded-2xl p-3 text-center cursor-pointer shadow-sm border border-slate-200 dark:border-slate-600" data-layout="two-up">
+                                <div class="layout-preview-box bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-500 flex items-center justify-evenly mx-auto mb-2"><div class="layout-preview-half bg-slate-300 dark:bg-slate-500 rounded-[2px]"></div><div class="layout-preview-half bg-slate-300 dark:bg-slate-500 rounded-[2px]"></div></div><span class="text-[11px] font-black block">صفحتين/ورقة</span>
+                            </div>
+                            <div class="selectable-card layout-option bg-white dark:bg-slate-800 rounded-2xl p-3 text-center cursor-pointer shadow-sm border border-slate-200 dark:border-slate-600" data-layout="center">
+                                <div class="layout-preview-box bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-500 flex items-center justify-center mx-auto mb-2"><div class="w-5 h-7 bg-slate-300 dark:bg-slate-500 rounded-[2px]"></div></div><span class="text-[11px] font-black block">منتصف الورقة</span>
+                            </div>
+                            
+                            <!-- Books -->
+                            <div class="selectable-card layout-option bg-white dark:bg-slate-800 rounded-2xl p-3 text-center cursor-pointer shadow-sm border border-slate-200 dark:border-slate-600" data-layout="notebook-r">
+                                <div class="layout-preview-box bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-500 flex mx-auto mb-2 relative"><div class="absolute top-0 right-0 h-full w-1/2 bg-slate-300 dark:bg-slate-500 border-l border-slate-400"></div></div><span class="text-[11px] font-black block">كتاب يمين</span>
+                            </div>
+                            <div class="selectable-card layout-option bg-white dark:bg-slate-800 rounded-2xl p-3 text-center cursor-pointer shadow-sm border border-slate-200 dark:border-slate-600" data-layout="notebook-l">
+                                <div class="layout-preview-box bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-500 flex mx-auto mb-2 relative"><div class="absolute top-0 left-0 h-full w-1/2 bg-slate-300 dark:bg-slate-500 border-r border-slate-400"></div></div><span class="text-[11px] font-black block">كتاب يسار</span>
+                            </div>
+                            <div class="selectable-card layout-option bg-white dark:bg-slate-800 rounded-2xl p-3 text-center cursor-pointer shadow-sm border border-slate-200 dark:border-slate-600" data-layout="notebook-t">
+                                <div class="layout-preview-box bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-500 flex mx-auto mb-2 relative"><div class="absolute top-0 right-0 w-full h-1/2 bg-slate-300 dark:bg-slate-500 border-b border-slate-400"></div></div><span class="text-[11px] font-black block">كتاب أعلى</span>
+                            </div>
+                            <div class="selectable-card layout-option bg-white dark:bg-slate-800 rounded-2xl p-3 text-center cursor-pointer shadow-sm border border-slate-200 dark:border-slate-600" data-layout="notebook-b">
+                                <div class="layout-preview-box bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-500 flex mx-auto mb-2 relative"><div class="absolute bottom-0 right-0 w-full h-1/2 bg-slate-300 dark:bg-slate-500 border-t border-slate-400"></div></div><span class="text-[11px] font-black block">كتاب أسفل</span>
+                            </div>
+
+                            <!-- Corners -->
+                            <div class="selectable-card layout-option bg-white dark:bg-slate-800 rounded-2xl p-3 text-center cursor-pointer shadow-sm border border-slate-200 dark:border-slate-600" data-layout="top">
+                                <div class="layout-preview-box bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-500 relative mx-auto mb-2"><div class="absolute top-1 left-1/2 -translate-x-1/2 w-5 h-7 bg-slate-300 dark:bg-slate-500 rounded-[2px]"></div></div><span class="text-[11px] font-black block">أعلى المنتصف</span>
+                            </div>
+                            <div class="selectable-card layout-option bg-white dark:bg-slate-800 rounded-2xl p-3 text-center cursor-pointer shadow-sm border border-slate-200 dark:border-slate-600" data-layout="bottom">
+                                <div class="layout-preview-box bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-500 relative mx-auto mb-2"><div class="absolute bottom-1 left-1/2 -translate-x-1/2 w-5 h-7 bg-slate-300 dark:bg-slate-500 rounded-[2px]"></div></div><span class="text-[11px] font-black block">أسفل المنتصف</span>
+                            </div>
+                            <div class="selectable-card layout-option bg-white dark:bg-slate-800 rounded-2xl p-3 text-center cursor-pointer shadow-sm border border-slate-200 dark:border-slate-600" data-layout="right">
+                                <div class="layout-preview-box bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-500 relative mx-auto mb-2"><div class="absolute top-1/2 -translate-y-1/2 right-1 w-5 h-7 bg-slate-300 dark:bg-slate-500 rounded-[2px]"></div></div><span class="text-[11px] font-black block">يمين المنتصف</span>
+                            </div>
+                            <div class="selectable-card layout-option bg-white dark:bg-slate-800 rounded-2xl p-3 text-center cursor-pointer shadow-sm border border-slate-200 dark:border-slate-600" data-layout="left">
+                                <div class="layout-preview-box bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-500 relative mx-auto mb-2"><div class="absolute top-1/2 -translate-y-1/2 left-1 w-5 h-7 bg-slate-300 dark:bg-slate-500 rounded-[2px]"></div></div><span class="text-[11px] font-black block">يسار المنتصف</span>
+                            </div>
+                            <div class="selectable-card layout-option bg-white dark:bg-slate-800 rounded-2xl p-3 text-center cursor-pointer shadow-sm border border-slate-200 dark:border-slate-600" data-layout="tr">
+                                <div class="layout-preview-box bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-500 relative mx-auto mb-2"><div class="absolute top-1 right-1 w-5 h-7 bg-slate-300 dark:bg-slate-500 rounded-[2px]"></div></div><span class="text-[11px] font-black block">أعلى يمين</span>
+                            </div>
+                            <div class="selectable-card layout-option bg-white dark:bg-slate-800 rounded-2xl p-3 text-center cursor-pointer shadow-sm border border-slate-200 dark:border-slate-600" data-layout="tl">
+                                <div class="layout-preview-box bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-500 relative mx-auto mb-2"><div class="absolute top-1 left-1 w-5 h-7 bg-slate-300 dark:bg-slate-500 rounded-[2px]"></div></div><span class="text-[11px] font-black block">أعلى يسار</span>
+                            </div>
+                            <div class="selectable-card layout-option bg-white dark:bg-slate-800 rounded-2xl p-3 text-center cursor-pointer shadow-sm border border-slate-200 dark:border-slate-600" data-layout="br">
+                                <div class="layout-preview-box bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-500 relative mx-auto mb-2"><div class="absolute bottom-1 right-1 w-5 h-7 bg-slate-300 dark:bg-slate-500 rounded-[2px]"></div></div><span class="text-[11px] font-black block">أسفل يمين</span>
+                            </div>
+                            <div class="selectable-card layout-option bg-white dark:bg-slate-800 rounded-2xl p-3 text-center cursor-pointer shadow-sm border border-slate-200 dark:border-slate-600" data-layout="bl">
+                                <div class="layout-preview-box bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-500 relative mx-auto mb-2"><div class="absolute bottom-1 left-1 w-5 h-7 bg-slate-300 dark:bg-slate-500 rounded-[2px]"></div></div><span class="text-[11px] font-black block">أسفل يسار</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                
+                <section class="bg-white dark:bg-slate-800/80 backdrop-blur-md rounded-3xl shadow-sm border border-slate-200/80 dark:border-slate-700/80 overflow-hidden flex flex-col">
+                    <button class="toggle-accordion w-full p-6 md:p-8 flex justify-between items-center text-slate-900 dark:text-white focus:outline-none" aria-expanded="false" data-target="#indexes-accordion-content">
+                        <h3 class="text-lg font-extrabold flex items-center">الفهارس والترقيم</h3>
+                        <div class="bg-slate-100 dark:bg-slate-700 p-2 rounded-full">
+                            <svg class="w-6 h-6 accordion-icon transition-transform text-slate-500 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </div>
+                    </button>
+                    <div id="indexes-accordion-content" class="accordion-content px-6 md:px-8 pb-6 md:pb-8 flex-grow">
+                        <div class="space-y-6">
+                            <div id="merge-only-options" class="space-y-4">
+                                <div class="bg-indigo-50/50 dark:bg-indigo-900/10 p-5 rounded-2xl border border-indigo-100 dark:border-indigo-800/30 flex flex-col gap-4 shadow-sm">
+                                    <label class="flex items-center cursor-pointer">
+                                        <input type="checkbox" id="add-toc" class="w-5 h-5 text-indigo-600 bg-white border-slate-300 rounded focus:ring-indigo-500 dark:focus:ring-indigo-600 focus:ring-2 dark:bg-slate-700 dark:border-slate-600">
+                                        <span class="mr-3 text-slate-800 dark:text-slate-200 text-sm font-extrabold">بناء فهرس تفاعلي للروابط</span>
+                                    </label>
+                                    <select id="toc-position" class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 rounded-xl px-4 py-2.5 outline-none text-sm font-bold shadow-sm">
+                                        <option value="start">وضع الفهرس في بداية الكتاب</option>
+                                        <option value="end">وضع الفهرس في نهاية الكتاب</option>
+                                    </select>
+                                </div>
+                                <hr class="my-4 border-slate-100 dark:border-slate-700">
+                            </div>
+
+                            <div>
+                                <label class="flex items-center cursor-pointer font-extrabold mb-4 px-2">
+                                    <input type="checkbox" id="add-pagination" class="w-6 h-6 text-brand-600 bg-white border-slate-300 rounded focus:ring-brand-500 dark:focus:ring-brand-600 focus:ring-2 dark:bg-slate-700 dark:border-slate-600">
+                                    <span class="mr-3 text-slate-900 dark:text-white text-base">ترقيم الصفحات (داخل دوائر)</span>
+                                </label>
+                                <div id="pagination-settings" class="opacity-50 pointer-events-none bg-slate-50 dark:bg-slate-900/40 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-inner space-y-4 transition-all duration-300">
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <div class="flex flex-col gap-1.5">
+                                            <label class="text-[11px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-wider pl-1">موضع الترقيم</label>
+                                            <select id="page-num-pos" class="bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 text-slate-900 dark:text-white rounded-xl px-3 py-2 outline-none font-bold shadow-sm text-sm">
+                                                <option value="tc">أعلى المنتصف</option><option value="tl">أعلى اليسار</option><option value="tr">أعلى اليمين</option>
+                                                <option value="bc">أسفل المنتصف</option><option value="bl">أسفل اليسار</option><option value="br">أسفل اليمين</option>
+                                            </select>
+                                        </div>
+                                        <div class="flex flex-col gap-1.5">
+                                            <label class="text-[11px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-wider pl-1">لغة الأرقام</label>
+                                            <select id="page-num-lang" class="bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 text-slate-900 dark:text-white rounded-xl px-3 py-2 outline-none font-bold shadow-sm text-sm">
+                                                <option value="ar">عربية (١، ٢)</option><option value="en">إنجليزية (1, 2)</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="flex flex-col gap-1.5 border-t border-slate-200 dark:border-slate-700 pt-4 mt-2">
+                                        <label class="text-[11px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-wider pl-1">نطاق الترقيم</label>
+                                        <select id="pagination-scope" class="w-full bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 text-slate-900 dark:text-white rounded-xl px-3 py-2.5 outline-none font-bold shadow-sm text-sm">
+                                            <option value="all">الكل (ترقيم الصفحات الأصلية والإضافية معاً)</option>
+                                            <option value="original">ترقيم الصفحات الأصلية فقط</option>
+                                            <option value="extra">ترقيم الصفحات الإضافية (الفوائد) فقط</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="bg-white dark:bg-slate-800/80 backdrop-blur-md rounded-3xl shadow-sm border border-slate-200/80 dark:border-slate-700/80 overflow-hidden flex flex-col">
+                    <button class="toggle-accordion w-full p-6 md:p-8 flex justify-between items-center text-slate-900 dark:text-white focus:outline-none" aria-expanded="false" data-target="#extra-accordion-content">
+                        <h3 class="text-lg font-extrabold flex items-center">الصفحات الإضافية (الفوائد)</h3>
+                        <div class="bg-slate-100 dark:bg-slate-700 p-2 rounded-full">
+                            <svg class="w-6 h-6 accordion-icon transition-transform text-slate-500 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </div>
+                    </button>
+                    <div id="extra-accordion-content" class="accordion-content px-6 md:px-8 pb-6 md:pb-8 flex-grow">
+                        <div>
+                            <label class="flex items-start cursor-pointer font-extrabold mb-4 px-2 group">
+                                <div class="flex items-center h-6 mt-0.5">
+                                    <input type="checkbox" id="add-lined-pages" class="w-6 h-6 text-brand-600 bg-white border-slate-300 rounded focus:ring-brand-500 dark:focus:ring-brand-600 focus:ring-2 dark:bg-slate-700 dark:border-slate-600">
+                                </div>
+                                <div class="ml-0 mr-3">
+                                    <span class="block text-slate-900 dark:text-white text-base">إدراج صفحات إضافية للفوائد</span>
+                                    <span class="block text-xs font-bold text-slate-500 dark:text-slate-400 mt-1">تضاف هذه الصفحات خلف كل ورقة أصلية</span>
+                                </div>
+                            </label>
+                            
+                            <div id="extra-page-settings" class="bg-slate-50 dark:bg-slate-900/40 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 text-sm space-y-5 shadow-inner transition-all duration-300 opacity-50 pointer-events-none">
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div class="flex flex-col gap-1.5">
+                                        <label class="text-[11px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-wider pl-1">العدد لكل ورقة:</label>
+                                        <input type="number" id="extra-pages-count" value="1" min="1" max="10" class="w-full bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-xl px-3 py-2 text-center outline-none text-base font-black shadow-sm text-slate-900 dark:text-white">
+                                    </div>
+                                    <div class="flex items-end pb-2">
+                                        <label class="flex items-center cursor-pointer">
+                                            <input type="checkbox" id="extra-enable-lines" class="w-5 h-5 text-brand-600 bg-white border-slate-300 rounded focus:ring-brand-500 dark:focus:ring-brand-600 focus:ring-2 dark:bg-slate-700 dark:border-slate-600" checked>
+                                            <span class="mr-2 text-slate-800 dark:text-slate-200 font-extrabold text-sm">تسطير هذه الصفحات</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                
+                                <div id="extra-lines-container" class="grid grid-cols-3 gap-3 pt-4 border-t border-slate-200 dark:border-slate-700 transition-all duration-300">
+                                    <div class="flex flex-col gap-1.5">
+                                        <label class="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-wider pl-1 text-center">الأسطر</label>
+                                        <input type="number" id="extra-lines-count" value="30" min="5" max="60" class="bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg px-2 py-1.5 text-center outline-none text-sm font-bold shadow-sm text-slate-900 dark:text-white">
+                                    </div>
+                                    <div class="flex flex-col gap-1.5">
+                                        <label class="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-wider pl-1 text-center">النمط</label>
+                                        <select id="extra-lines-style" class="bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg px-2 py-1.5 outline-none text-xs font-bold shadow-sm text-slate-900 dark:text-white text-center">
+                                            <option value="solid">متصل</option><option value="dashed">متقطع</option><option value="dotted">نقاط</option>
+                                        </select>
+                                    </div>
+                                    <div class="flex flex-col gap-1.5">
+                                        <label class="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-wider pl-1 text-center">البروز</label>
+                                        <input type="range" id="extra-lines-opacity" min="0.1" max="1" step="0.1" value="0.3" class="w-full mt-2 accent-brand-500">
+                                    </div>
+                                </div>
+
+                                <div class="pt-4 border-t border-slate-200 dark:border-slate-700">
+                                    <label class="block text-[11px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-wider pl-1 mb-2">عنوان الصفحة (اختياري):</label>
+                                    <div class="flex gap-2 mb-3">
+                                        <input type="text" id="extra-page-title" placeholder="مثال: الفوائد والتعليقات..." class="flex-grow bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-xl px-4 py-2.5 outline-none text-sm font-bold shadow-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-brand-500">
+                                        <select id="extra-title-pos" class="w-24 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-xl px-2 py-2.5 text-xs font-black outline-none shadow-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-brand-500">
+                                            <option value="center">المنتصف</option><option value="right">اليمين</option><option value="left">اليسار</option>
+                                        </select>
+                                    </div>
+                                    <div class="grid grid-cols-2 gap-3">
+                                        <div class="flex items-center bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-xl overflow-hidden shadow-sm focus-within:ring-2 focus-within:ring-brand-500 p-1">
+                                             <span class="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase pl-2 pr-2 border-l border-slate-200 dark:border-slate-700">اللون</span>
+                                             <input type="color" id="extra-title-color" value="#475569" class="w-full h-8 cursor-pointer border-0 p-0 bg-transparent rounded">
+                                        </div>
+                                        <select id="extra-title-font" class="bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-xl px-3 py-2 text-xs font-bold outline-none shadow-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-brand-500">
+                                            <option value="Tajawal">خط تجوال</option>
+                                            <option value="Cairo">خط كايرو</option>
+                                            <option value="Amiri">خط أميري</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <section class="bg-white dark:bg-slate-800/80 backdrop-blur-md rounded-3xl shadow-sm border border-slate-200/80 dark:border-slate-700/80 overflow-hidden">
+                <button class="toggle-accordion w-full p-6 md:p-8 flex justify-between items-center text-slate-900 dark:text-white focus:outline-none" aria-expanded="false" data-target="#filters-accordion-content">
+                    <h2 class="text-xl font-extrabold flex items-center">فلاتر الألوان والدقة</h2>
+                    <div class="bg-slate-100 dark:bg-slate-700 p-2 rounded-full">
+                        <svg class="w-6 h-6 accordion-icon transition-transform text-slate-500 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </div>
+                </button>
+                <div id="filters-accordion-content" class="accordion-content px-6 md:px-8 pb-6 md:pb-8">
+                    <div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                            <div class="bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 border border-amber-200/60 dark:border-amber-700/30 p-5 rounded-2xl shadow-sm">
+                                <label class="flex items-center cursor-pointer">
+                                    <input type="checkbox" id="compress-output" class="w-6 h-6 text-amber-600 bg-white border-amber-300 rounded focus:ring-amber-500 dark:bg-slate-800 dark:border-amber-700/50">
+                                    <span class="mr-4 text-slate-800 dark:text-slate-200 font-extrabold text-base">ضغط وتقليص حجم الملف المخرج <span class="text-xs text-amber-600 dark:text-amber-500 block font-bold mt-1">يقلل الحجم بضغط الهيكل الداخلي</span></span>
+                                </label>
+                            </div>
+                            <div class="bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-900/20 dark:to-teal-900/20 border border-emerald-200/60 dark:border-emerald-700/30 p-5 rounded-2xl shadow-sm">
+                                <label class="flex items-center cursor-pointer">
+                                    <input type="checkbox" id="hq-output" class="w-6 h-6 text-emerald-600 bg-white border-emerald-300 rounded focus:ring-emerald-500 dark:bg-slate-800 dark:border-emerald-700/50">
+                                    <span class="mr-4 text-slate-800 dark:text-slate-200 font-extrabold text-base">تحسين دقة المتجهات والنصوص <span class="text-xs text-emerald-600 dark:text-emerald-500 block font-bold mt-1">يحافظ على أعلى جودة (يلغي الضغط)</span></span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <h3 class="text-xs font-black mb-4 text-slate-500 dark:text-slate-400 uppercase tracking-wider pl-2">اختر فلتر ألوان للقراءة</h3>
+                        <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-9 gap-4">
+                            <div class="selectable-card filter-option bg-slate-50 dark:bg-slate-900/50 rounded-2xl p-4 text-center cursor-pointer selected shadow-sm border border-slate-200 dark:border-slate-700" data-filter="none">
+                                <div class="w-10 h-10 mx-auto mb-3 rounded-full border-2 border-slate-300 dark:border-slate-600 bg-white shadow-inner"></div><span class="text-[11px] font-extrabold block text-slate-800 dark:text-slate-200">أصلي</span>
+                            </div>
+                            <div class="selectable-card filter-option bg-slate-50 dark:bg-slate-900/50 rounded-2xl p-4 text-center cursor-pointer shadow-sm border border-slate-200 dark:border-slate-700" data-filter="contrast">
+                                <div class="w-10 h-10 mx-auto mb-3 rounded-full border-2 border-brand-500 bg-gradient-to-tr from-white to-brand-100 shadow-glow"></div><span class="text-[11px] font-extrabold block text-brand-700 dark:text-brand-400">بروز النصوص</span>
+                            </div>
+                            <div class="selectable-card filter-option bg-slate-50 dark:bg-slate-900/50 rounded-2xl p-4 text-center cursor-pointer shadow-sm border border-slate-200 dark:border-slate-700" data-filter="bw">
+                                <div class="w-10 h-10 mx-auto mb-3 rounded-full border-2 border-slate-800 dark:border-slate-400 bg-white font-black text-slate-900 text-xs flex items-center justify-center shadow-inner">B/W</div><span class="text-[11px] font-extrabold block text-slate-800 dark:text-slate-200">تبييض عالي</span>
+                            </div>
+                            <div class="selectable-card filter-option bg-slate-50 dark:bg-slate-900/50 rounded-2xl p-4 text-center cursor-pointer shadow-sm border border-slate-200 dark:border-slate-700" data-filter="dark">
+                                <div class="w-10 h-10 mx-auto mb-3 rounded-full border-2 border-slate-600 bg-black font-black text-white text-xs flex items-center justify-center shadow-md">A</div><span class="text-[11px] font-extrabold block text-slate-800 dark:text-slate-200">ليلي قوي</span>
+                            </div>
+                            <div class="selectable-card filter-option bg-slate-50 dark:bg-slate-900/50 rounded-2xl p-4 text-center cursor-pointer shadow-sm border border-slate-200 dark:border-slate-700" data-filter="dark-gray">
+                                <div class="w-10 h-10 mx-auto mb-3 rounded-full border-2 border-slate-500 bg-[#1e293b] shadow-md"></div><span class="text-[11px] font-extrabold block text-slate-800 dark:text-slate-200">ليلي مريح</span>
+                            </div>
+                            <div class="selectable-card filter-option bg-slate-50 dark:bg-slate-900/50 rounded-2xl p-4 text-center cursor-pointer shadow-sm border border-slate-200 dark:border-slate-700" data-filter="sepia">
+                                <div class="w-10 h-10 mx-auto mb-3 rounded-full border-2 border-[#d4c5b0] bg-[#fdf6e3] shadow-inner"></div><span class="text-[11px] font-extrabold block text-slate-800 dark:text-slate-200">سيبيا دافئ</span>
+                            </div>
+                            <div class="selectable-card filter-option bg-slate-50 dark:bg-slate-900/50 rounded-2xl p-4 text-center cursor-pointer shadow-sm border border-slate-200 dark:border-slate-700" data-filter="green">
+                                <div class="w-10 h-10 mx-auto mb-3 rounded-full border-2 border-[#a3c9a3] bg-[#e8f4e8] shadow-inner"></div><span class="text-[11px] font-extrabold block text-slate-800 dark:text-slate-200">أخضر مهدئ</span>
+                            </div>
+                            <div class="selectable-card filter-option bg-slate-50 dark:bg-slate-900/50 rounded-2xl p-4 text-center cursor-pointer shadow-sm border border-slate-200 dark:border-slate-700" data-filter="night-shift">
+                                <div class="w-10 h-10 mx-auto mb-3 rounded-full border-2 border-[#fcd34d] bg-[#fef3c7] shadow-inner"></div><span class="text-[11px] font-extrabold block text-slate-800 dark:text-slate-200">نايت شفت</span>
+                            </div>
+                            <div class="selectable-card filter-option bg-slate-50 dark:bg-slate-900/50 rounded-2xl p-4 text-center cursor-pointer shadow-sm border border-slate-200 dark:border-slate-700" data-filter="cool-blue">
+                                <div class="w-10 h-10 mx-auto mb-3 rounded-full border-2 border-[#93c5fd] bg-[#f0f9ff] shadow-inner"></div><span class="text-[11px] font-extrabold block text-slate-800 dark:text-slate-200">أزرق بارد</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <section class="bg-gradient-to-b from-white to-slate-50 dark:from-slate-800 dark:to-slate-900/50 rounded-3xl p-8 md:p-10 border border-slate-200 dark:border-slate-700 shadow-xl shadow-slate-200/40 dark:shadow-none mt-10 relative overflow-hidden">
+            <div class="absolute -top-24 -right-24 w-64 h-64 bg-brand-500/10 rounded-full blur-3xl pointer-events-none"></div>
+            
+            <div class="flex flex-col md:flex-row items-end gap-6 relative z-10">
+                <div class="flex-grow w-full">
+                    <label class="block text-slate-800 dark:text-slate-200 font-black mb-3 text-base">اسم الملف الناتج:</label>
+                    <div class="flex" dir="rtl">
+                        <input type="text" id="output-filename" value="الملف_المعالج" class="flex-grow border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white rounded-r-2xl px-5 py-4 outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition font-black text-lg shadow-sm">
+                        <span class="bg-slate-100 dark:bg-slate-800 border border-r-0 border-slate-300 dark:border-slate-600 text-slate-500 dark:text-slate-400 px-5 py-4 rounded-l-2xl font-mono text-base flex items-center font-bold" dir="ltr">.pdf</span>
+                    </div>
+                </div>
+                
+                <div class="w-full md:w-1/3" id="download-format-options">
+                    <label class="block text-slate-800 dark:text-slate-200 font-black mb-3 text-base">صيغة التحميل (للمتعدد):</label>
+                    <select id="download-format" class="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 text-slate-900 dark:text-slate-100 rounded-2xl px-5 py-4 outline-none font-bold cursor-pointer shadow-sm focus:ring-2 focus:ring-brand-500 transition">
+                        <option value="pdf">تحميل بصيغة PDF (الأساسي)</option>
+                        <option value="zip">ملف مضغوط واحد (ZIP)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="text-center mt-12 relative z-10">
+                <button id="process-btn" class="group relative overflow-hidden bg-gradient-to-l from-brand-600 to-indigo-600 hover:from-brand-500 hover:to-indigo-500 text-white font-black py-5 px-12 md:px-24 rounded-2xl shadow-xl shadow-brand-500/30 hover:shadow-2xl hover:shadow-brand-500/40 hover:-translate-y-1 transition-all duration-300 text-xl disabled:opacity-50 disabled:transform-none disabled:cursor-not-allowed disabled:shadow-none flex items-center justify-center mx-auto w-full md:w-auto ring-1 ring-white/20">
+                    <div class="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite]"></div>
+                    <span id="process-btn-text" class="relative z-10 drop-shadow-md">بدء المعالجة والتنزيل</span>
+                    <div id="loading-spinner" class="loader ml-4 hidden mr-4 relative z-10"></div>
+                </button>
+                <div class="h-8 mt-6">
+                    <p id="status-message" class="text-sm font-black text-slate-500 dark:text-slate-400 transition-colors"></p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl py-8 border-t border-slate-200 dark:border-slate-800 mt-auto shadow-[0_-10px_30px_-5px_rgba(0,0,0,0.05)] relative z-20">
+        <div class="container mx-auto px-4 flex justify-center items-center">
+            <div class="flex items-center gap-4">
+                <div class="text-right">
+                    <p class="text-[11px] text-slate-400 dark:text-slate-500 font-black mb-0.5 uppercase tracking-wider">تطوير وبرمجة</p>
+                    <p class="font-extrabold text-slate-800 dark:text-slate-200 text-sm">ناصر مظفر</p>
+                </div>
+                <div class="w-px h-8 bg-slate-300 dark:bg-slate-700"></div>
+                <a href="https://t.me/NasserAhmad9" target="_blank" class="flex items-center justify-center text-[#24A1DE] hover:text-[#1c84b8] transition-transform hover:scale-110 drop-shadow-sm focus:outline-none" title="تواصل عبر تليجرام">
+                    <svg class="w-9 h-9" fill="currentColor" viewBox="0 0 24 24"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        tailwind.config.theme.extend.keyframes = { shimmer: { '100%': { transform: 'translateX(100%)' } } };
+
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        const darkIcon = document.getElementById('theme-toggle-dark-icon');
+        const lightIcon = document.getElementById('theme-toggle-light-icon');
+        
+        function applyTheme(theme) {
+            if(theme === 'dark') {
+                document.documentElement.classList.add('dark');
+                darkIcon.classList.add('hidden'); lightIcon.classList.remove('hidden');
+            } else {
+                document.documentElement.classList.remove('dark');
+                lightIcon.classList.add('hidden'); darkIcon.classList.remove('hidden');
+            }
+        }
+        let initialTheme = localStorage.getItem('color-theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        applyTheme(initialTheme);
+        themeToggleBtn.addEventListener('click', () => {
+            const newTheme = document.documentElement.classList.contains('dark') ? 'light' : 'dark';
+            applyTheme(newTheme); localStorage.setItem('color-theme', newTheme);
+        });
+
+        document.querySelectorAll('.toggle-accordion').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const target = document.querySelector(btn.getAttribute('data-target'));
+                const isExpanded = btn.getAttribute('aria-expanded') === 'true';
+                btn.setAttribute('aria-expanded', !isExpanded);
+                if (!isExpanded) { target.classList.add('open'); } else { target.classList.remove('open'); }
+            });
+        });
+
+        let selectedFiles = [];
+        let currentMode = 'merge';
+        let currentLayout = 'standard';
+        let currentFilter = 'none';
+
+        const ui = {
+            modeOptions: document.querySelectorAll('.mode-option'),
+            layoutOptions: document.querySelectorAll('.layout-option'),
+            filterOptions: document.querySelectorAll('.filter-option'),
+            fileInput: document.getElementById('file-input'),
+            folderInput: document.getElementById('folder-input'),
+            zipInput: document.getElementById('zip-input'),
+            dropZone: document.getElementById('drop-zone'),
+            filesContainer: document.getElementById('files-container'),
+            filesList: document.getElementById('files-list'),
+            clearBtn: document.getElementById('clear-all-btn'),
+            processBtn: document.getElementById('process-btn'),
+            processBtnText: document.getElementById('process-btn-text'),
+            spinner: document.getElementById('loading-spinner'),
+            status: document.getElementById('status-message'),
+            addPagination: document.getElementById('add-pagination'),
+            addLinedPages: document.getElementById('add-lined-pages'),
+            extraEnableLines: document.getElementById('extra-enable-lines'),
+            mergeOnlyOptions: document.getElementById('merge-only-options'),
+            formatOptionsSection: document.getElementById('format-options-section'),
+            splitOptionsSection: document.getElementById('split-options-section'),
+            fileUploadSection: document.getElementById('file-upload-section'),
+            blankSettingsSection: document.getElementById('blank-settings-section'),
+            downloadFormatOptions: document.getElementById('download-format-options'),
+            groupNameInput: document.getElementById('group-name-input'),
+            addGroupBtn: document.getElementById('add-group-btn')
+        };
+
+        function updateModeUI() {
+            const isMerge = currentMode === 'merge';
+            const isBatch = currentMode === 'batch';
+            const isSplit = currentMode === 'split';
+            const isBlank = currentMode === 'blank';
+
+            ui.fileUploadSection.style.display = isBlank ? 'none' : 'block';
+            ui.blankSettingsSection.style.display = isBlank ? 'block' : 'none';
+            ui.formatOptionsSection.style.display = (isMerge || isBatch || isBlank) ? 'block' : 'none';
+            ui.splitOptionsSection.style.display = isSplit ? 'block' : 'none';
+            ui.mergeOnlyOptions.style.display = isMerge ? 'block' : 'none';
+            ui.downloadFormatOptions.style.display = (isMerge || isBlank) ? 'none' : 'block';
+            document.getElementById('group-name-container').style.display = isMerge ? 'flex' : 'none';
+
+            if (isMerge) ui.processBtnText.innerText = 'بدء الدمج والتحميل';
+            else if (isBatch) ui.processBtnText.innerText = 'تطبيق التنسيق والتحميل';
+            else if (isSplit) ui.processBtnText.innerText = 'بدء التجزئة والتحميل';
+            else if (isBlank) ui.processBtnText.innerText = 'توليد الكتاب وتحميله';
+
+            if (!isMerge) {
+                const hasGroups = selectedFiles.some(f => f.isGroup);
+                if (hasGroups) { selectedFiles = selectedFiles.filter(f => !f.isGroup); updateUI(); }
+            }
+            updateUI();
+        }
+
+        ui.modeOptions.forEach(opt => {
+            opt.addEventListener('click', () => {
+                ui.modeOptions.forEach(o => o.classList.remove('selected'));
+                opt.classList.add('selected'); currentMode = opt.dataset.mode; updateModeUI();
+            });
+        });
+
+        ui.layoutOptions.forEach(opt => {
+            opt.addEventListener('click', () => {
+                ui.layoutOptions.forEach(o => o.classList.remove('selected'));
+                opt.classList.add('selected'); currentLayout = opt.dataset.layout;
+            });
+        });
+
+        ui.filterOptions.forEach(opt => {
+            opt.addEventListener('click', () => {
+                ui.filterOptions.forEach(o => o.classList.remove('selected'));
+                opt.classList.add('selected'); currentFilter = opt.dataset.filter;
+            });
+        });
+
+        ui.addPagination.addEventListener('change', (e) => {
+            const set = document.getElementById('pagination-settings');
+            if(e.target.checked) set.classList.remove('opacity-50', 'pointer-events-none');
+            else set.classList.add('opacity-50', 'pointer-events-none');
+        });
+        ui.addLinedPages.addEventListener('change', (e) => {
+            const set = document.getElementById('extra-page-settings');
+            if(e.target.checked) set.classList.remove('opacity-50', 'pointer-events-none');
+            else set.classList.add('opacity-50', 'pointer-events-none');
+        });
+        ui.extraEnableLines.addEventListener('change', (e) => {
+            const set = document.getElementById('extra-lines-container');
+            if(e.target.checked) set.classList.remove('opacity-50', 'pointer-events-none');
+            else set.classList.add('opacity-50', 'pointer-events-none');
+        });
+
+        const orientSelect = document.getElementById('page-orientation');
+        orientSelect.addEventListener('change', () => {
+            const grid = document.getElementById('layout-grid');
+            if (orientSelect.value === 'landscape') { grid.classList.remove('orient-portrait'); grid.classList.add('orient-landscape'); } 
+            else { grid.classList.remove('orient-landscape'); grid.classList.add('orient-portrait'); }
+        });
+
+        ui.fileInput.addEventListener('change', (e) => handleFiles(e.target.files));
+        ui.folderInput.addEventListener('change', (e) => handleFiles(e.target.files));
+        ui.zipInput.addEventListener('change', handleZipUpload);
+        ui.clearBtn.addEventListener('click', () => { selectedFiles = []; updateUI(); });
+        
+        ui.addGroupBtn.addEventListener('click', () => {
+            const name = ui.groupNameInput.value.trim();
+            if(!name) return;
+            selectedFiles.push({ id: Math.random().toString(36).substr(2, 9), name: name, isGroup: true });
+            ui.groupNameInput.value = '';
+            updateUI();
+        });
+
+        ui.dropZone.addEventListener('dragover', (e) => { e.preventDefault(); ui.dropZone.classList.add('border-brand-500', 'bg-brand-50', 'dark:bg-slate-700'); });
+        ui.dropZone.addEventListener('dragleave', () => { ui.dropZone.classList.remove('border-brand-500', 'bg-brand-50', 'dark:bg-slate-700'); });
+        ui.dropZone.addEventListener('drop', (e) => { e.preventDefault(); ui.dropZone.classList.remove('border-brand-500', 'bg-brand-50', 'dark:bg-slate-700'); if (e.dataTransfer.files) handleFiles(e.dataTransfer.files); });
+
+        new Sortable(ui.filesList, {
+            animation: 200, handle: '.drag-handle', ghostClass: 'sortable-ghost', dragClass: 'sortable-drag',
+            onEnd: () => {
+                const newOrder = Array.from(ui.filesList.children).map(li => li.dataset.id);
+                selectedFiles = newOrder.map(id => selectedFiles.find(f => f.id === id)).filter(Boolean);
+                updateUI();
+            }
+        });
+
+        function handleFiles(files) {
+            Array.from(files).filter(f => f.name.toLowerCase().endsWith('.pdf')).forEach(file => {
+                selectedFiles.push({ id: Math.random().toString(36).substr(2, 9), file, name: file.name, size: file.size });
+            });
+            updateUI(); ui.fileInput.value = ''; ui.folderInput.value = '';
+        }
+
+        async function handleZipUpload(e) {
+            const file = e.target.files[0]; if (!file) return;
+            ui.status.innerText = 'جاري استخراج الملفات من ZIP...'; ui.processBtn.disabled = true;
+            try {
+                const zip = await JSZip.loadAsync(file); const promises = [];
+                zip.forEach((path, entry) => {
+                    if (!entry.dir && path.toLowerCase().endsWith('.pdf') && !path.includes('__MACOSX')) {
+                        promises.push(entry.async("blob").then(blob => {
+                            const f = new File([blob], path.split('/').pop(), { type: "application/pdf" });
+                            selectedFiles.push({ id: Math.random().toString(36).substr(2, 9), file: f, name: f.name, size: blob.size });
+                        }));
+                    }
+                });
+                await Promise.all(promises);
+                ui.status.innerText = 'تم الاستخراج بنجاح!'; setTimeout(() => { ui.status.innerText=''; }, 2000);
+            } catch (err) { ui.status.innerText = 'خطأ في قراءة ملف ZIP.'; } 
+            finally { updateUI(); ui.zipInput.value = ''; }
+        }
+
+        function removeFile(id) { selectedFiles = selectedFiles.filter(f => f.id !== id); updateUI(); }
+
+        function formatBytes(bytes, decimals = 2) {
+            if (!+bytes) return '0 B';
+            const k = 1024; const dm = decimals < 0 ? 0 : decimals;
+            const sizes = ['B', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`;
+        }
+
+        function updateUI() {
+            const isBlank = currentMode === 'blank';
+            if (!isBlank && selectedFiles.length === 0) {
+                ui.filesContainer.classList.add('hidden'); ui.processBtn.disabled = true;
+            } else {
+                if(!isBlank) ui.filesContainer.classList.remove('hidden'); 
+                ui.processBtn.disabled = false;
+            }
+            
+            ui.filesList.innerHTML = '';
+            let totalBytes = 0;
+            
+            selectedFiles.forEach((f) => {
+                if (f.size) totalBytes += f.size;
+                const li = document.createElement('li');
+                const isGrp = f.isGroup;
+                li.className = isGrp 
+                    ? 'file-item bg-brand-50 dark:bg-brand-900/30 border border-brand-200 dark:border-brand-800 rounded-xl p-3 flex justify-between items-center group shadow-sm'
+                    : 'file-item bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-3 flex justify-between items-center group shadow-sm';
+                li.dataset.id = f.id;
+                
+                const sizeBadge = !isGrp && f.size ? `<span class="text-[10px] bg-slate-200 dark:bg-slate-700 text-slate-500 dark:text-slate-400 px-1.5 py-0.5 rounded-md font-mono whitespace-nowrap flex-shrink-0" dir="ltr">${formatBytes(f.size)}</span>` : '';
+                
+                li.innerHTML = `
+                    <div class="flex items-center overflow-hidden flex-grow">
+                        <span class="drag-handle text-slate-400 hover:text-brand-500 mx-2 cursor-grab bg-slate-50 dark:bg-slate-700 p-1.5 rounded-lg transition"><svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M7 15a2 2 0 110 4 2 2 0 010-4zm10 0a2 2 0 110 4 2 2 0 010-4zM7 9a2 2 0 110 4 2 2 0 010-4zm10 0a2 2 0 110 4 2 2 0 010-4zM7 3a2 2 0 110 4 2 2 0 010-4zm10 0a2 2 0 110 4 2 2 0 010-4z"></path></svg></span>
+                        <span class="font-extrabold text-sm truncate ${isGrp ? 'text-brand-700 dark:text-brand-300' : 'text-slate-800 dark:text-slate-200'} mr-2" dir="auto">${isGrp ? '📌 موضوع: ' : ''}${f.name}</span>
+                        ${sizeBadge}
+                    </div>
+                    <div class="flex space-x-1.5 space-x-reverse opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button onclick="removeFile('${f.id}')" class="text-red-600 bg-red-50 hover:bg-red-100 dark:bg-slate-700 dark:text-red-400 dark:hover:bg-red-900/40 p-2 rounded-lg transition shadow-sm mr-1"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button>
+                    </div>`;
+                ui.filesList.appendChild(li);
+            });
+            
+            const totalSizeBadge = document.getElementById('total-size-badge');
+            if (totalSizeBadge) totalSizeBadge.innerText = formatBytes(totalBytes);
+        }
+
+        const readFileAsAB = (file) => new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result); r.onerror = rej; r.readAsArrayBuffer(file); });
+        
+        function formatNumber(num, lang) { 
+            if(lang === 'en') return String(num); 
+            const arabicMap = ['٠','١','٢','٣','٤','٥','٦','٧','٨','٩'];
+            return String(num).split('').map(d => arabicMap[Number(d)]).join('');
+        }
+
+        async function createTextPngObj(text, size, isBold, fontName, color, align) {
+            const scale = 3; const canvas = document.createElement('canvas'); const ctx = canvas.getContext('2d');
+            const font = `${isBold?'bold ':''}${size*scale}px '${fontName}', sans-serif`;
+            ctx.font = font; const metrics = ctx.measureText(text);
+            canvas.width = Math.max(metrics.width + 20, 1); canvas.height = Math.max((size*scale*1.5), 1);
+            ctx.font = font; ctx.fillStyle = color; ctx.textBaseline = 'top'; ctx.direction = 'rtl';
+            let xPos = canvas.width / 2; ctx.textAlign = 'center';
+            if (align === 'right') { xPos = canvas.width - 5; ctx.textAlign = 'right'; }
+            if (align === 'left') { xPos = 5; ctx.textAlign = 'left'; }
+            ctx.fillText(text, xPos, 5);
+            return { dataUrl: canvas.toDataURL(), w: canvas.width/scale, h: canvas.height/scale };
+        }
+
+        function drawLines(page, rgb, xStart, xEnd, yStart, yEnd, numLines, styleStr, opacity) {
+            if (numLines <= 0) return; 
+            let topY = Math.max(yStart, yEnd);
+            let botY = Math.min(yStart, yEnd);
+            const spc = (topY - botY) / numLines;
+            let dash = undefined; if (styleStr === 'dashed') dash = [5, 5]; if (styleStr === 'dotted') dash = [2, 4];
+            for (let i = 0; i <= numLines; i++) {
+                page.drawLine({ start:{x:xStart, y:topY - (i*spc)}, end:{x:xEnd, y:topY - (i*spc)}, thickness: 1, color: rgb(0,0,0), opacity: opacity, dashArray: dash });
+            }
+        }
+
+        function renderEmbeddedPage(nPage, embed, oW, oH, bx, by, bw, bh, doCrop, filter, rotDeg, BlendMode, PDFLib) {
+            let cropFactor = doCrop ? 0.85 : 1.0; 
+            let isRotated = rotDeg === 90 || rotDeg === 270;
+            let actualOW = isRotated ? oH : oW; let actualOH = isRotated ? oW : oH;
+            let scale = Math.min(bw / (actualOW * cropFactor), bh / (actualOH * cropFactor));
+            let drawW = oW * scale; let drawH = oH * scale;
+            let drawX = bx + (bw - actualOW * scale) / 2; let drawY = by + (bh - actualOH * scale) / 2;
+
+            if (rotDeg === 90) { drawX += actualOW * scale; }
+            else if (rotDeg === 180) { drawX += actualOW * scale; drawY += actualOH * scale; }
+            else if (rotDeg === 270) { drawY += actualOH * scale; }
+
+            const renderParams = { x: drawX, y: drawY, width: drawW, height: drawH, rotate: PDFLib.degrees(rotDeg) };
+            if(filter !== 'none' && filter !== 'contrast') renderParams.blendMode = BlendMode.Multiply;
+            
+            nPage.drawPage(embed, renderParams);
+            
+            if (filter !== 'none' && filter !== 'contrast') {
+                nPage.drawPage(embed, { ...renderParams, x: renderParams.x + 0.3, y: renderParams.y - 0.2, blendMode: BlendMode.Multiply, opacity: 0.9 });
+                nPage.drawPage(embed, { ...renderParams, x: renderParams.x - 0.2, y: renderParams.y + 0.2, blendMode: BlendMode.Multiply, opacity: 0.5 });
+            }
+        }
+
+        function parseRange(str, maxPages) {
+            let indices = new Set();
+            for (let part of str.split(',')) {
+                part = part.trim();
+                if (part.includes('-')) {
+                    let [s, e] = part.split('-').map(Number);
+                    if (s && e && s <= e) { for (let i = s; i <= e; i++) { if (i >= 1 && i <= maxPages) indices.add(i - 1); } }
+                } else { let num = Number(part); if (num && num >= 1 && num <= maxPages) indices.add(num - 1); }
+            }
+            return Array.from(indices).sort((a,b) => a-b);
+        }
+
+        function getPageDimensions(sizeStr, orientStr) {
+            const sizes = { 'A4': [595.28, 841.89], 'A5': [419.53, 595.28], 'Letter': [612, 792] };
+            let [w, h] = sizes[sizeStr] || sizes['A4'];
+            if (orientStr === 'landscape') return { wBase: h, hBase: w };
+            return { wBase: w, hBase: h };
+        }
+
+        function applyFilters(pdf, filter, PDFLib) {
+            if (filter === 'none') return;
+            const { rgb, BlendMode } = PDFLib;
+            const pages = pdf.getPages();
+            for (const p of pages) {
+                const { width, height } = p.getSize();
+                if (filter === 'contrast') {
+                    p.drawRectangle({ x:0, y:0, width, height, color:rgb(1,1,1), blendMode: BlendMode.ColorDodge, opacity: 0.1 });
+                    p.drawRectangle({ x:0, y:0, width, height, color:rgb(0,0,0), blendMode: BlendMode.Overlay, opacity: 0.1 });
+                }
+                else if (filter === 'bw') {
+                    p.drawRectangle({ x:0, y:0, width, height, color:rgb(1,1,1), blendMode: BlendMode.Saturation });
+                    p.drawRectangle({ x:0, y:0, width, height, color:rgb(0.8,0.8,0.8), blendMode: BlendMode.ColorBurn });
+                }
+                else if (filter.startsWith('dark')) {
+                    p.drawRectangle({ x:0, y:0, width, height, color:rgb(1,1,1), blendMode: BlendMode.Difference });
+                    if (filter === 'dark-gray') p.drawRectangle({ x:0, y:0, width, height, color:rgb(0.15,0.15,0.15), blendMode: BlendMode.Screen });
+                } 
+                else if (filter === 'sepia') { p.drawRectangle({ x:0, y:0, width, height, color:rgb(0.97,0.93,0.85), blendMode: BlendMode.Multiply }); }
+                else if (filter === 'green') { p.drawRectangle({ x:0, y:0, width, height, color:rgb(0.88,0.95,0.88), blendMode: BlendMode.Multiply }); }
+                else if (filter === 'night-shift') { p.drawRectangle({ x:0, y:0, width, height, color:rgb(0.99,0.95,0.78), blendMode: BlendMode.Multiply }); }
+                else if (filter === 'cool-blue') { p.drawRectangle({ x:0, y:0, width, height, color:rgb(0.94,0.97,1), blendMode: BlendMode.Multiply }); }
+            }
+        }
+
+        function downloadBlob(data, filename) {
+            const blob = new Blob([data], { type: filename.endsWith('.zip') ? 'application/zip' : 'application/pdf' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a'); a.href = url; a.download = filename;
+            document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
+        }
+
+        ui.processBtn.addEventListener('click', async () => {
+            const isBlank = currentMode === 'blank';
+            if (!isBlank && selectedFiles.length === 0) return;
+            
+            try {
+                ui.processBtn.disabled = true; ui.spinner.classList.remove('hidden');
+                ui.processBtnText.innerText = 'جاري المعالجة بسرعة...';
+                ui.status.className = 'text-brand-600 dark:text-brand-400 mt-2 block bg-brand-50 dark:bg-brand-900/30 p-2.5 rounded-xl border border-brand-100 dark:border-brand-800 shadow-sm';
+
+                const { PDFDocument, rgb, BlendMode, PDFName } = PDFLib;
+                let zip = new JSZip();
+                
+                const outNameBase = document.getElementById('output-filename').value || 'الملف_المعالج';
+                const dlFormat = document.getElementById('download-format').value;
+                const doCompress = document.getElementById('compress-output').checked;
+                const hqOutput = document.getElementById('hq-output').checked;
+                
+                // If Compression is ON, we force useObjectStreams. If HQ is ON, we disable it.
+                const baseSaveOptions = doCompress && !hqOutput ? { useObjectStreams: true } : { useObjectStreams: false };
+
+                if (currentMode === 'split') {
+                    const splitType = document.querySelector('input[name="split_type"]:checked').value;
+                    let outFiles = [];
+                    
+                    for (let fObj of selectedFiles) {
+                        ui.status.innerText = `جاري تجزئة الملف: ${fObj.name}`;
+                        const srcPdf = await PDFDocument.load(await readFileAsAB(fObj.file));
+                        const totalPages = srcPdf.getPageCount();
+                        const baseName = fObj.name.replace(/\.[^/.]+$/, "");
+
+                        if (splitType === 'all') {
+                            for (let i = 0; i < totalPages; i++) {
+                                const newPdf = await PDFDocument.create(); const [copied] = await newPdf.copyPages(srcPdf, [i]); newPdf.addPage(copied);
+                                outFiles.push({ name: `${baseName}_ص_${i+1}.pdf`, bytes: await newPdf.save(baseSaveOptions) });
+                            }
+                        } else if (splitType === 'fixed') {
+                            const chunk = parseInt(document.getElementById('split-fixed-input').value) || 1;
+                            for (let i = 0; i < totalPages; i += chunk) {
+                                const newPdf = await PDFDocument.create(); let end = Math.min(i + chunk, totalPages);
+                                let indices = Array.from({length: end - i}, (_, k) => i + k);
+                                const copied = await newPdf.copyPages(srcPdf, indices); copied.forEach(p => newPdf.addPage(p));
+                                outFiles.push({ name: `${baseName}_جزء_${Math.floor(i/chunk)+1}.pdf`, bytes: await newPdf.save(baseSaveOptions) });
+                            }
+                        } else if (splitType === 'range') {
+                            const indices = parseRange(document.getElementById('split-range-input').value, totalPages);
+                            if (indices.length > 0) {
+                                const newPdf = await PDFDocument.create(); const copied = await newPdf.copyPages(srcPdf, indices); copied.forEach(p => newPdf.addPage(p));
+                                outFiles.push({ name: `${baseName}_مستخرج.pdf`, bytes: await newPdf.save(baseSaveOptions) });
+                            }
+                        } else if (splitType === 'odd' || splitType === 'even') {
+                            const indices = [];
+                            for(let i=0; i<totalPages; i++) { if (splitType === 'odd' && i % 2 === 0) indices.push(i); if (splitType === 'even' && i % 2 !== 0) indices.push(i); }
+                            if (indices.length > 0) {
+                                const newPdf = await PDFDocument.create(); const copied = await newPdf.copyPages(srcPdf, indices); copied.forEach(p => newPdf.addPage(p));
+                                outFiles.push({ name: `${baseName}_${splitType === 'odd' ? 'فردي' : 'زوجي'}.pdf`, bytes: await newPdf.save(baseSaveOptions) });
+                            }
+                        }
+                        await new Promise(r => setTimeout(r, 10)); 
+                    }
+
+                    if (outFiles.length > 0) {
+                        if (dlFormat === 'pdf') {
+                            ui.status.innerText = 'جاري التحميل كملفات منفصلة...';
+                            for (let f of outFiles) { downloadBlob(f.bytes, f.name); await new Promise(r => setTimeout(r, 300)); }
+                        } else {
+                            ui.status.innerText = 'جاري التجميع في ملف مضغوط...';
+                            outFiles.forEach(f => zip.file(f.name, f.bytes));
+                            const zipBlob = await zip.generateAsync({ type: "blob", compression: doCompress ? "DEFLATE" : "STORE" });
+                            downloadBlob(zipBlob, `${outNameBase}_مجزأ.zip`);
+                        }
+                    } else throw new Error("تأكد من إعدادات التجزئة، لم ينتج أي ملف.");
+                } 
+                else {
+                    const isMerge = currentMode === 'merge';
+                    const { wBase, hBase } = getPageDimensions(document.getElementById('page-size').value, document.getElementById('page-orientation').value);
+                    const pageRot = parseInt(document.getElementById('page-rotation').value) || 0;
+                    const lineEmptySpace = document.getElementById('line-empty-space').checked;
+                    const doCrop = document.getElementById('crop-edges').checked;
+                    
+                    let bAddToc = isMerge ? document.getElementById('add-toc').checked : false;
+                    let tocPos = isMerge ? document.getElementById('toc-position').value : 'start';
+
+                    const bNum = document.getElementById('add-pagination').checked;
+                    const numPos = document.getElementById('page-num-pos').value;
+                    const numLang = document.getElementById('page-num-lang').value;
+                    const pageScope = document.getElementById('pagination-scope').value;
+                    
+                    const bLined = document.getElementById('add-lined-pages').checked;
+                    const ePagesCount = parseInt(document.getElementById('extra-pages-count').value) || 1;
+                    const eEnableLines = document.getElementById('extra-enable-lines').checked;
+                    const lCount = parseInt(document.getElementById('extra-lines-count').value) || 0;
+                    const lStyle = document.getElementById('extra-lines-style').value;
+                    const lOpacity = parseFloat(document.getElementById('extra-lines-opacity').value) || 0.3;
+                    const lTitle = document.getElementById('extra-page-title').value.trim();
+                    const lTitlePos = document.getElementById('extra-title-pos').value;
+                    const lTitleFont = document.getElementById('extra-title-font').value;
+                    const lTitleColor = document.getElementById('extra-title-color').value;
+
+                    let mergePdf = null;
+                    let tocData = [];
+                    let globalOriginalCounter = 0; let globalExtraCounter = 0;
+                    let outFilesBatch = []; 
+                    
+                    // Fetch Arabic Font explicitly ONCE
+                    let cairoFontBytes = null;
+                    if (bNum || lTitle || isBlank || bAddToc) {
+                        ui.status.innerText = 'جاري إحضار الخطوط الذكية...';
+                        try { const fRes = await fetch('https://cdn.jsdelivr.net/gh/google/fonts@main/ofl/cairo/Cairo-Regular.ttf'); if (fRes.ok) cairoFontBytes = await fRes.arrayBuffer(); } catch(e) { console.warn("Font fetch failed."); }
+                    }
+
+                    // Create Extra Page Title PNG ONCE to save massive file size
+                    let cachedTitleDataUrl = null;
+                    let cachedTitleW = 0; let cachedTitleH = 0;
+                    if (bLined && lTitle) {
+                        ui.status.innerText = 'تحضير عناوين الفوائد...';
+                        let tObj = await createTextPngObj(lTitle, '16', true, lTitleFont, lTitleColor, lTitlePos);
+                        cachedTitleDataUrl = tObj.dataUrl;
+                        cachedTitleW = tObj.w; cachedTitleH = tObj.h;
+                    }
+
+                    let activeFontMerge = null;
+                    let titlePngMerge = null;
+
+                    if (isMerge || isBlank) {
+                        mergePdf = await PDFDocument.create();
+                        // Embed font and image ONCE per document for extreme speed and small size
+                        if (bNum) {
+                            mergePdf.registerFontkit(fontkit);
+                            activeFontMerge = cairoFontBytes ? await mergePdf.embedFont(cairoFontBytes) : await mergePdf.embedFont(PDFLib.StandardFonts.Helvetica);
+                        }
+                        if (cachedTitleDataUrl) {
+                            titlePngMerge = await mergePdf.embedPng(cachedTitleDataUrl);
+                        }
+                    }
+
+                    if (isBlank) {
+                        const bCount = parseInt(document.getElementById('blank-pages-count').value) || 10;
+                        for(let i=0; i<bCount; i++) {
+                            if (i % 50 === 0) { ui.status.innerText = `إنشاء الصفحة ${i+1}/${bCount}...`; await new Promise(r => setTimeout(r, 0)); }
+                            let p = mergePdf.addPage([wBase, hBase]); p.drawRectangle({ x:0, y:0, width:wBase, height:hBase, color:rgb(1,1,1) });
+                            if(lineEmptySpace) drawLines(p, rgb, 30, wBase-30, hBase-50, 50, lCount, lStyle, lOpacity);
+                            
+                            globalOriginalCounter++;
+                            if(bNum && activeFontMerge && (pageScope === 'all' || pageScope === 'original')) {
+                                let numStr = formatNumber(globalOriginalCounter, cairoFontBytes ? numLang : 'en');
+                                let cx=wBase/2, cy=25; if(numPos==='tc') cy=hBase-25; if(numPos==='tl'){cx=35;cy=hBase-35;} if(numPos==='tr'){cx=wBase-35;cy=hBase-35;}
+                                if(numPos==='bl'){cx=35;cy=35;} if(numPos==='br'){cx=wBase-35;cy=35;}
+                                const fSize = 12; const tW = activeFontMerge.widthOfTextAtSize(numStr, fSize);
+                                const rad = Math.max(14, (tW / 2) + 6);
+                                p.drawCircle({ x:cx, y:cy, size:rad, color:rgb(1,1,1), opacity:1, borderColor:rgb(0.2,0.2,0.2), borderWidth:1.5 });
+                                p.drawText(numStr, { x: cx - tW/2, y: cy - (fSize/2) + 2, size: fSize, font: activeFontMerge, color: rgb(0,0,0) });
+                            }
+                        }
+                    } 
+                    else {
+                        // FAST PATH Condition: No crop, no rotate, standard layout, no line spacing
+                        const isFastPath = (currentLayout === 'standard' && currentFilter === 'none' && pageRot === 0 && !lineEmptySpace && !doCrop);
+
+                        for (let fileIdx = 0; fileIdx < selectedFiles.length; fileIdx++) {
+                            const fObj = selectedFiles[fileIdx];
+                            
+                            if (fObj.isGroup && isMerge) {
+                                tocData.push({ title: fObj.name, pageObjIndex: mergePdf.getPageCount(), isGroup: true, ref: null });
+                                continue;
+                            }
+
+                            const sourcePdf = await PDFDocument.load(await readFileAsAB(fObj.file));
+                            let workingPdf = isMerge ? mergePdf : await PDFDocument.create();
+                            
+                            let currentActiveFont = activeFontMerge;
+                            let currentTitlePng = titlePngMerge;
+
+                            if (!isMerge) {
+                                if (bNum) {
+                                    workingPdf.registerFontkit(fontkit);
+                                    currentActiveFont = cairoFontBytes ? await workingPdf.embedFont(cairoFontBytes) : await workingPdf.embedFont(PDFLib.StandardFonts.Helvetica);
+                                }
+                                if (cachedTitleDataUrl) {
+                                    currentTitlePng = await workingPdf.embedPng(cachedTitleDataUrl);
+                                }
+                            }
+                            
+                            let titleStr = fObj.name.replace(/\.[^/.]+$/, ""); 
+                            let firstPageRefForToc = null;
+
+                            const copiedPages = await workingPdf.copyPages(sourcePdf, sourcePdf.getPageIndices());
+                            let localOriginalCounter = 0; let localExtraCounter = 0;
+
+                            for (let pIdx = 0; pIdx < copiedPages.length; pIdx += (currentLayout === 'two-up' ? 2 : 1)) {
+                                if (pIdx % 50 === 0) { 
+                                    ui.status.innerText = `الملف (${fileIdx+1}/${selectedFiles.length}): [${titleStr}] - دمج الصفحة ${pIdx + 1} من ${copiedPages.length}...`; 
+                                    await new Promise(r => setTimeout(r, 0)); 
+                                }
+                                
+                                let nPage;
+                                const orig1 = copiedPages[pIdx];
+
+                                // FAST PATH execution for max speed and min file size
+                                if (isFastPath) {
+                                    nPage = workingPdf.addPage(orig1);
+                                    if (!firstPageRefForToc) firstPageRefForToc = nPage.ref;
+                                } else {
+                                    nPage = workingPdf.addPage([wBase, hBase]); 
+                                    nPage.drawRectangle({ x:0, y:0, width:wBase, height:hBase, color:rgb(1,1,1) });
+                                    if (!firstPageRefForToc) firstPageRefForToc = nPage.ref;
+
+                                    const embed1 = await workingPdf.embedPage(orig1);
+                                    
+                                    if (currentLayout === 'two-up') {
+                                        const orig2 = (pIdx+1 < copiedPages.length) ? copiedPages[pIdx+1] : null; const embed2 = orig2 ? await workingPdf.embedPage(orig2) : null;
+                                        if (document.getElementById('page-orientation').value === 'landscape') {
+                                            renderEmbeddedPage(nPage, embed1, orig1.getSize().width, orig1.getSize().height, wBase/2 + 20, 20, wBase/2 - 40, hBase - 40, doCrop, currentFilter, pageRot, BlendMode, PDFLib);
+                                            if(embed2) renderEmbeddedPage(nPage, embed2, orig2.getSize().width, orig2.getSize().height, 20, 20, wBase/2 - 40, hBase - 40, doCrop, currentFilter, pageRot, BlendMode, PDFLib);
+                                            nPage.drawLine({ start: {x: wBase/2, y: 20}, end: {x: wBase/2, y: hBase-20}, thickness: 1, color: rgb(0.8,0.8,0.8) });
+                                        } else {
+                                            renderEmbeddedPage(nPage, embed1, orig1.getSize().width, orig1.getSize().height, 20, hBase/2 + 20, wBase - 40, hBase/2 - 40, doCrop, currentFilter, pageRot, BlendMode, PDFLib);
+                                            if(embed2) renderEmbeddedPage(nPage, embed2, orig2.getSize().width, orig2.getSize().height, 20, 20, wBase - 40, hBase/2 - 40, doCrop, currentFilter, pageRot, BlendMode, PDFLib);
+                                            nPage.drawLine({ start: {x: 20, y: hBase/2}, end: {x: wBase-20, y: hBase/2}, thickness: 1, color: rgb(0.8,0.8,0.8) });
+                                        }
+                                    }
+                                    else if (currentLayout === 'center') {
+                                        let bx=wBase*0.125, by=hBase*0.125, bw=wBase*0.75, bh=hBase*0.75;
+                                        if(lineEmptySpace) drawLines(nPage, rgb, 20, wBase-20, hBase-20, 20, lCount, lStyle, lOpacity);
+                                        nPage.drawRectangle({ x:bx-2, y:by-2, width:bw+4, height:bh+4, color:rgb(1,1,1) }); renderEmbeddedPage(nPage, embed1, orig1.getSize().width, orig1.getSize().height, bx, by, bw, bh, doCrop, currentFilter, pageRot, BlendMode, PDFLib);
+                                    }
+                                    else if (currentLayout.startsWith('notebook')) {
+                                        let isR = currentLayout === 'notebook-r'; let isL = currentLayout === 'notebook-l'; let isT = currentLayout === 'notebook-t'; let isB = currentLayout === 'notebook-b';
+                                        let bx, by, bw, bh, lx1, ly1, lx2, ly2, divX1, divY1, divX2, divY2; 
+                                        if (isR || isL) {
+                                            bw = wBase/2 - 30; bh = hBase - 40; by = 20; bx = isR ? wBase/2 + 10 : 20;
+                                            divX1 = wBase/2; divY1 = 20; divX2 = wBase/2; divY2 = hBase-20;
+                                            lx1 = isR ? 30 : wBase/2 + 30; lx2 = isR ? wBase/2 - 30 : wBase - 30; ly1 = hBase - 40; ly2 = 20;
+                                        } else {
+                                            bw = wBase - 40; bh = hBase/2 - 30; bx = 20; by = isT ? hBase/2 + 10 : 20;
+                                            divX1 = 20; divY1 = hBase/2; divX2 = wBase-20; divY2 = hBase/2;
+                                            lx1 = 40; lx2 = wBase - 40; ly1 = isT ? hBase/2 - 30 : hBase - 40; ly2 = isT ? 20 : hBase/2 + 30;
+                                        }
+                                        if(lineEmptySpace) drawLines(nPage, rgb, lx1, lx2, ly1, ly2, lCount, lStyle, lOpacity);
+                                        nPage.drawLine({ start:{x:divX1, y:divY1}, end:{x:divX2, y:divY2}, thickness:1, color:rgb(0.8,0.8,0.8) });
+                                        renderEmbeddedPage(nPage, embed1, orig1.getSize().width, orig1.getSize().height, bx, by, bw, bh, doCrop, currentFilter, pageRot, BlendMode, PDFLib);
+                                    }
+                                    else { 
+                                        let bw=wBase*0.55-20, bh=hBase*0.55-20; let bx=20, by=20;
+                                        if(currentLayout==='tr'){bx=wBase-bw-20; by=hBase-bh-20;} if(currentLayout==='tl'){bx=20; by=hBase-bh-20;} if(currentLayout==='br'){bx=wBase-bw-20;}
+                                        if(currentLayout==='top'){bx=(wBase-bw)/2; by=hBase-bh-20;} if(currentLayout==='bottom'){bx=(wBase-bw)/2; by=20;}
+                                        if(currentLayout==='left'){bx=20; by=(hBase-bh)/2;} if(currentLayout==='right'){bx=wBase-bw-20; by=(hBase-bh)/2;}
+                                        if(lineEmptySpace) drawLines(nPage, rgb, 20, wBase-20, hBase-20, 20, lCount, lStyle, lOpacity);
+                                        nPage.drawRectangle({ x:bx-2, y:by-2, width:bw+4, height:bh+4, color:rgb(1,1,1) }); renderEmbeddedPage(nPage, embed1, orig1.getSize().width, orig1.getSize().height, bx, by, bw, bh, doCrop, currentFilter, pageRot, BlendMode, PDFLib);
+                                    }
+                                }
+
+                                globalOriginalCounter++; localOriginalCounter++;
+                                if (bNum && currentActiveFont && (pageScope === 'all' || pageScope === 'original')) {
+                                    let numVal = pageScope === 'all' ? (isMerge ? (globalOriginalCounter + globalExtraCounter) : (localOriginalCounter + localExtraCounter)) : (isMerge ? globalOriginalCounter : localOriginalCounter);
+                                    let numStr = formatNumber(numVal, cairoFontBytes ? numLang : 'en');
+                                    let pWidth = nPage.getWidth(); let pHeight = nPage.getHeight(); // Dynamic for fast path
+                                    let cx=pWidth/2, cy=25; if(numPos==='tc') cy=pHeight-25; if(numPos==='tl'){cx=35;cy=pHeight-35;} if(numPos==='tr'){cx=pWidth-35;cy=pHeight-35;} if(numPos==='bl'){cx=35;cy=35;} if(numPos==='br'){cx=pWidth-35;cy=35;}
+                                    const fSize = 12; const tW = currentActiveFont.widthOfTextAtSize(numStr, fSize);
+                                    const rad = Math.max(14, (tW / 2) + 6);
+                                    nPage.drawCircle({ x:cx, y:cy, size:rad, color:rgb(1,1,1), opacity:1, borderColor:rgb(0.2,0.2,0.2), borderWidth:1.5 });
+                                    nPage.drawText(numStr, { x: cx - tW/2, y: cy - (fSize/2) + 2, size: fSize, font: currentActiveFont, color: rgb(0,0,0) });
+                                }
+
+                                if (bLined) {
+                                    for (let ep = 0; ep < ePagesCount; ep++) {
+                                        let extP = workingPdf.addPage([wBase, hBase]); extP.drawRectangle({ x:0, y:0, width:wBase, height:hBase, color:rgb(1,1,1) });
+                                        if(eEnableLines) drawLines(extP, rgb, 30, wBase-30, hBase-60, 40, lCount, lStyle, lOpacity);
+                                        if (currentTitlePng) {
+                                            let tx = 30; if(lTitlePos==='center') tx = (wBase - cachedTitleW)/2; if(lTitlePos==='right') tx = wBase - cachedTitleW - 30;
+                                            extP.drawImage(currentTitlePng, { x: tx, y: hBase - cachedTitleH - 15, width: cachedTitleW, height: cachedTitleH });
+                                        }
+                                        globalExtraCounter++; localExtraCounter++;
+                                        if (bNum && currentActiveFont && (pageScope === 'all' || pageScope === 'extra')) {
+                                            let numVal = pageScope === 'all' ? (isMerge ? (globalOriginalCounter + globalExtraCounter) : (localOriginalCounter + localExtraCounter)) : (isMerge ? globalExtraCounter : localExtraCounter);
+                                            let numStr = formatNumber(numVal, cairoFontBytes ? numLang : 'en');
+                                            let cx=wBase/2, cy=25; if(numPos==='tc') cy=hBase-25; if(numPos==='tl'){cx=35;cy=hBase-35;} if(numPos==='tr'){cx=wBase-35;cy=hBase-35;} if(numPos==='bl'){cx=35;cy=35;} if(numPos==='br'){cx=wBase-35;cy=35;}
+                                            const fSize = 12; const tW = currentActiveFont.widthOfTextAtSize(numStr, fSize);
+                                            const rad = Math.max(14, (tW / 2) + 6);
+                                            extP.drawCircle({ x:cx, y:cy, size:rad, color:rgb(1,1,1), opacity:1, borderColor:rgb(0.2,0.2,0.2), borderWidth:1.5 });
+                                            extP.drawText(numStr, { x: cx - tW/2, y: cy - (fSize/2) + 2, size: fSize, font: currentActiveFont, color: rgb(0,0,0) });
+                                        }
+                                    }
+                                }
+                            }
+
+                            // Only store refs for actual files
+                            if (isMerge && firstPageRefForToc && !fObj.isGroup) {
+                                tocData.push({ title: titleStr, pageObjIndex: mergePdf.getPageCount() - copiedPages.length - (bLined ? copiedPages.length * ePagesCount : 0), isGroup: false, ref: firstPageRefForToc });
+                            }
+                            
+                            if (!isMerge) {
+                                applyFilters(workingPdf, currentFilter, PDFLib);
+                                outFilesBatch.push({ name: `معدل_${titleStr}.pdf`, bytes: await workingPdf.save(baseSaveOptions) });
+                            }
+                        }
+                    }
+
+                    if (isMerge || isBlank) {
+                        if (bAddToc && tocData.length > 0 && !isBlank) {
+                            ui.status.innerText = 'بناء الفهرس التفاعلي والروابط...';
+                            let tocPagesCount = 1; let simY = hBase - 130;
+                            for (let item of tocData) { if (simY < 50) { tocPagesCount++; simY = hBase - 60; } simY -= 35; }
+                            
+                            let currentTocPageIndex = tocPos === 'start' ? 0 : mergePdf.getPageCount();
+                            let tocP = tocPos === 'start' ? mergePdf.insertPage(currentTocPageIndex, [wBase, hBase]) : mergePdf.addPage([wBase, hBase]);
+                            tocP.drawRectangle({ x:0, y:0, width:wBase, height:hBase, color:rgb(1,1,1) });
+                            
+                            let curY = hBase - 60; let tObj = await createTextPngObj('الفهرس العام', '28', true, 'Tajawal', '#000000', 'center'); let tPng = await mergePdf.embedPng(tObj.dataUrl);
+                            tocP.drawImage(tPng, { x:(wBase-tObj.w)/2, y:curY, width:tObj.w, height:tObj.h }); curY -= 70;
+
+                            // Link processing group items to the next real file
+                            let lastValidRef = null;
+                            for (let i = tocData.length - 1; i >= 0; i--) {
+                                if (!tocData[i].isGroup && tocData[i].ref) lastValidRef = tocData[i].ref;
+                                else if (tocData[i].isGroup && lastValidRef) tocData[i].ref = lastValidRef;
+                            }
+
+                            for (let item of tocData) {
+                                if (curY < 50) { 
+                                    currentTocPageIndex++; tocP = tocPos === 'start' ? mergePdf.insertPage(currentTocPageIndex, [wBase, hBase]) : mergePdf.addPage([wBase, hBase]);
+                                    tocP.drawRectangle({ x:0, y:0, width:wBase, height:hBase, color:rgb(1,1,1) });
+                                    curY = hBase - 60;
+                                }
+                                
+                                let bObj = await createTextPngObj(item.title.substring(0,60), '14', item.isGroup, 'Tajawal', '#000000', 'right'); let bPng = await mergePdf.embedPng(bObj.dataUrl);
+                                tocP.drawImage(bPng, { x:wBase - bObj.w - 40, y:curY, width:bObj.w, height:bObj.h });
+                                
+                                if (!item.isGroup) {
+                                    let displayPageNum = (tocPos === 'start' ? item.pageObjIndex + tocPagesCount : item.pageObjIndex) + 1;
+                                    let pObj = await createTextPngObj(formatNumber(displayPageNum, cairoFontBytes ? numLang : 'en'), '14', false, 'Tajawal', '#000000', 'left'); let pPng = await mergePdf.embedPng(pObj.dataUrl);
+                                    tocP.drawImage(pPng, { x: 50, y: curY, width: pObj.w, height: pObj.h });
+                                    tocP.drawLine({ start: {x: 60 + pObj.w + 10, y: curY+8}, end: {x: wBase - bObj.w - 50, y: curY+8}, thickness: 1.5, color: rgb(0.8,0.8,0.8), dashArray:[2,4] });
+                                }
+                                
+                                if (item.ref) {
+                                    // CRITICAL FIX: The link Destination uses PDFName.of('Fit') correctly now!
+                                    let linkAnn = mergePdf.context.obj({ Type: 'Annot', Subtype: 'Link', Rect: [40, curY-5, wBase-40, curY+25], Border: [0,0,0], A: { Type: 'Action', S: 'GoTo', D: [item.ref, PDFName.of('Fit')] } });
+                                    let linkRef = mergePdf.context.register(linkAnn); let annots = tocP.node.Annots(); if (annots) annots.push(linkRef); else tocP.node.set(mergePdf.context.obj('Annots'), mergePdf.context.obj([linkRef]));
+                                }
+                                curY -= 35;
+                            }
+                        }
+
+                        ui.status.innerText = 'تطبيق الفلاتر والبناء النهائي...'; await new Promise(r => setTimeout(r, 10));
+                        applyFilters(mergePdf, currentFilter, PDFLib);
+                        
+                        downloadBlob(await mergePdf.save(baseSaveOptions), `${outNameBase}.pdf`);
+                    } 
+                    else if (outFilesBatch.length > 0) {
+                        if (dlFormat === 'pdf') {
+                            ui.status.innerText = 'جاري التحميل كملفات منفصلة...';
+                            for (let f of outFilesBatch) { downloadBlob(f.bytes, f.name); await new Promise(r => setTimeout(r, 300)); }
+                        } else {
+                            ui.status.innerText = 'جاري ضغط الملفات...';
+                            outFilesBatch.forEach(f => zip.file(f.name, f.bytes));
+                            const zipBlob = await zip.generateAsync({ type: "blob", compression: doCompress ? "DEFLATE" : "STORE" });
+                            downloadBlob(zipBlob, `${outNameBase}_تعديل.zip`);
+                        }
+                    }
+                }
+
+                ui.status.innerText = '✅ اكتملت العملية بنجاح وتم التحميل!';
+                ui.status.className = 'text-green-600 dark:text-green-400 mt-2 block bg-green-50 dark:bg-green-900/30 p-2.5 rounded-xl border border-green-100 dark:border-green-800 shadow-sm';
+
+            } catch (err) {
+                console.error(err);
+                ui.status.innerText = '❌ حدث خطأ: ' + err.message;
+                ui.status.className = 'text-red-600 dark:text-red-400 mt-2 block bg-red-50 dark:bg-red-900/30 p-2.5 rounded-xl border border-red-100 dark:border-red-800 shadow-sm';
+            } finally {
+                ui.processBtn.disabled = false; ui.spinner.classList.add('hidden');
+                setTimeout(() => { updateModeUI(); ui.status.innerText=''; ui.status.className=''; }, 6000);
+            }
+        });
+    </script>
+</body>
+</html>

@@ -970,22 +970,24 @@
         }
 
         function applyFilters(pdf, filter, PDFLib) {
-            if (filter === 'none') return;
+            if (filter === 'none' || filter === 'contrast') return;
             const { rgb, BlendMode } = PDFLib;
             const pages = pdf.getPages();
             for (const p of pages) {
                 const { width, height } = p.getSize();
-                if (filter === 'contrast') {
-                    p.drawRectangle({ x:0, y:0, width, height, color:rgb(1,1,1), blendMode: BlendMode.ColorDodge, opacity: 0.1 });
-                    p.drawRectangle({ x:0, y:0, width, height, color:rgb(0,0,0), blendMode: BlendMode.Overlay, opacity: 0.1 });
+                if (filter === 'grayscale') {
+                    p.drawRectangle({ x:0, y:0, width, height, color:rgb(0,0,0), blendMode: BlendMode.Color });
                 }
                 else if (filter === 'bw') {
-                    p.drawRectangle({ x:0, y:0, width, height, color:rgb(1,1,1), blendMode: BlendMode.Saturation });
-                    p.drawRectangle({ x:0, y:0, width, height, color:rgb(0.8,0.8,0.8), blendMode: BlendMode.ColorBurn });
+                    p.drawRectangle({ x:0, y:0, width, height, color:rgb(0,0,0), blendMode: BlendMode.Saturation });
+                    p.drawRectangle({ x:0, y:0, width, height, color:rgb(1,1,1), blendMode: BlendMode.ColorDodge, opacity: 0.2 });
                 }
-                else if (filter.startsWith('dark')) {
+                else if (filter === 'dark') {
                     p.drawRectangle({ x:0, y:0, width, height, color:rgb(1,1,1), blendMode: BlendMode.Difference });
-                    if (filter === 'dark-gray') p.drawRectangle({ x:0, y:0, width, height, color:rgb(0.15,0.15,0.15), blendMode: BlendMode.Screen });
+                }
+                else if (filter === 'dark-gray') {
+                    p.drawRectangle({ x:0, y:0, width, height, color:rgb(1,1,1), blendMode: BlendMode.Difference });
+                    p.drawRectangle({ x:0, y:0, width, height, color:rgb(0.15,0.15,0.15), blendMode: BlendMode.Screen });
                 } 
                 else if (filter === 'sepia') { p.drawRectangle({ x:0, y:0, width, height, color:rgb(0.97,0.93,0.85), blendMode: BlendMode.Multiply }); }
                 else if (filter === 'green') { p.drawRectangle({ x:0, y:0, width, height, color:rgb(0.88,0.95,0.88), blendMode: BlendMode.Multiply }); }

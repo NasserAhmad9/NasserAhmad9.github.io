@@ -6,21 +6,8 @@
 <title>قلادة الأديب — كتاب تفاعلي</title>
 <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-:root{
-  --bg:#f7f3eb;--paper:#fff;--ink:#2b2118;--ink-soft:#5a4a3a;--muted:#8a7968;
-  --accent:#8b5a2b;--accent-2:#c9a227;--accent-3:#1f5e3a;--border:#e0d5c3;
-  --highlight:#fdf0d5;--ok:#2d8659;--err:#c73e3e;--pend:#d97706;
-  --pend-bg:#fff8e1;--pend-border:#f59e0b;--ok-bg:#e8f5ed;
-  --shadow:0 10px 30px -12px rgba(75,50,20,.18);--radius:14px;
-  --font-body:'Amiri',serif;--font-ui:'Cairo',sans-serif;--sw:300px;
-}
-[data-theme="dark"]{
-  --bg:#14100c;--paper:#1f1a14;--ink:#f0e6d6;--ink-soft:#c7b8a3;--muted:#9a8a75;
-  --accent:#d4a76a;--accent-2:#e0c060;--accent-3:#6fb98f;--border:#2e2519;
-  --highlight:#2a2116;--ok:#6fb98f;--err:#e07a7a;--pend:#f0c060;
-  --pend-bg:#3a2a10;--pend-border:#d4a76a;--ok-bg:#1e3a28;
-  --shadow:0 10px 30px -12px rgba(0,0,0,.6);
-}
+:root{--bg:#f7f3eb;--paper:#fff;--ink:#2b2118;--ink-soft:#5a4a3a;--muted:#8a7968;--accent:#8b5a2b;--accent-2:#c9a227;--accent-3:#1f5e3a;--border:#e0d5c3;--highlight:#fdf0d5;--ok:#2d8659;--err:#c73e3e;--pend:#d97706;--pend-bg:#fff8e1;--pend-border:#f59e0b;--ok-bg:#e8f5ed;--shadow:0 10px 30px -12px rgba(75,50,20,.18);--radius:14px;--font-body:'Amiri',serif;--font-ui:'Cairo',sans-serif;--sw:300px}
+[data-theme="dark"]{--bg:#14100c;--paper:#1f1a14;--ink:#f0e6d6;--ink-soft:#c7b8a3;--muted:#9a8a75;--accent:#d4a76a;--accent-2:#e0c060;--accent-3:#6fb98f;--border:#2e2519;--highlight:#2a2116;--ok:#6fb98f;--err:#e07a7a;--pend:#f0c060;--pend-bg:#3a2a10;--pend-border:#d4a76a;--ok-bg:#1e3a28;--shadow:0 10px 30px -12px rgba(0,0,0,.6)}
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth;scroll-padding-top:90px}
 body{font-family:var(--font-body);background:var(--bg);color:var(--ink);line-height:1.9;font-size:18px;transition:background .28s,color .28s;overflow-x:hidden}
@@ -89,8 +76,12 @@ main{min-width:0;padding:0 0 80px}
 .fn-popover .fn-close{position:absolute;top:6px;left:8px;background:transparent;border:none;color:var(--muted);cursor:pointer;font-size:18px;line-height:1;padding:4px;border-radius:4px}
 .fn-popover .fn-close:hover{color:var(--accent);background:var(--bg)}
 .poem-entry{background:var(--paper);border:1px solid var(--border);border-radius:var(--radius);padding:32px 34px;margin:0 0 30px;box-shadow:var(--shadow);scroll-margin-top:84px}
+.poem-entry.pending-card{border-color:var(--pend-border);box-shadow:0 10px 30px -12px rgba(217,119,6,.3)}
+.poem-entry.saved-card{border-color:var(--ok)}
 .entry-head{display:flex;align-items:flex-start;gap:16px;margin-bottom:20px;padding-bottom:16px;border-bottom:1px dashed var(--border)}
 .entry-num{flex-shrink:0;width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#fff;display:flex;align-items:center;justify-content:center;font-family:var(--font-ui);font-weight:700;font-size:17px}
+.pending-card .entry-num{background:var(--pend)}
+.saved-card .entry-num{background:var(--ok)}
 .entry-meta{flex:1;min-width:0}
 .entry-meta h3{font-family:var(--font-body);font-size:26px;font-weight:700;line-height:1.25;margin-bottom:4px}
 .entry-meta .poet{font-family:var(--font-ui);font-size:13.5px;color:var(--accent);font-weight:600}
@@ -115,6 +106,10 @@ main{min-width:0;padding:0 0 80px}
 .tool-btn:hover{background:var(--paper);color:var(--accent);border-color:var(--accent-2)}
 .tool-btn.saved{background:var(--ok-bg);color:var(--ok);border-color:var(--ok);font-weight:700}
 .tool-btn.pending{background:var(--pend-bg);color:var(--pend);border-color:var(--pend-border);font-weight:700}
+.tool-btn.commit-one{background:var(--ok);color:#fff;border-color:var(--ok);font-weight:700;padding:9px 16px}
+.tool-btn.commit-one:hover{background:var(--accent-3);border-color:var(--accent-3);color:#fff;transform:translateY(-1px);box-shadow:0 6px 16px -6px rgba(45,134,89,.6)}
+.tool-btn.remove-one{color:var(--err);border-color:var(--err)}
+.tool-btn.remove-one:hover{background:var(--err);color:#fff;border-color:var(--err)}
 .tool-btn svg{width:14px;height:14px;flex-shrink:0}
 .tool-btn.saved svg{fill:currentColor}
 .modal-page{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:1000;display:none;padding:20px;overflow-y:auto;backdrop-filter:blur(4px)}
@@ -135,35 +130,29 @@ main{min-width:0;padding:0 0 80px}
 .back-link:hover{border-color:var(--accent-2);color:var(--accent)}
 .back-link svg{width:14px;height:14px}
 .page-body{max-width:960px;margin:0 auto;padding:24px 40px 60px}
-.page-section{margin-bottom:30px}
-.page-section h2{font-family:var(--font-body);font-size:24px;font-weight:700;color:var(--ink);margin-bottom:14px;display:flex;align-items:center;gap:10px}
-.page-section h2 .count{background:var(--border);color:var(--ink-soft);font-family:var(--font-ui);font-size:13px;padding:2px 10px;border-radius:12px;font-weight:600}
-.page-section.pending-section h2 .count{background:var(--pend);color:#fff}
-.saved-empty{text-align:center;padding:60px 20px;color:var(--muted);font-family:var(--font-ui);font-size:15px;line-height:1.8;background:var(--paper);border:2px dashed var(--border);border-radius:12px}
-.saved-empty svg{width:60px;height:60px;margin-bottom:14px;color:var(--border);display:block;margin-left:auto;margin-right:auto}
-.saved-item{background:var(--paper);border:1px solid var(--border);border-radius:12px;padding:18px 20px;margin-bottom:12px;display:flex;gap:16px;align-items:flex-start;transition:all .2s}
-.saved-item:hover{box-shadow:var(--shadow)}
-.saved-item.pending{border-color:var(--pend-border);background:var(--pend-bg)}
-.saved-item.saved{border-color:var(--ok)}
-.saved-item .num{flex-shrink:0;width:36px;height:36px;border-radius:9px;background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#fff;display:flex;align-items:center;justify-content:center;font-family:var(--font-ui);font-weight:700;font-size:15px}
-.saved-item.pending .num{background:var(--pend)}
-.saved-item.saved .num{background:var(--ok)}
-.saved-item .info{flex:1;min-width:0}
-.saved-item h4{font-family:var(--font-body);font-size:20px;color:var(--ink);margin-bottom:4px;line-height:1.3}
-.saved-item .poet-sm{font-family:var(--font-ui);font-size:12px;color:var(--accent);margin-bottom:8px}
-.saved-item .verse-preview{font-family:var(--font-body);font-size:15px;color:var(--ink-soft);line-height:1.7;margin-bottom:12px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
-.saved-item .actions{display:flex;gap:6px;flex-wrap:wrap}
-.saved-item .actions button{padding:6px 11px;font-size:12px;background:transparent;border:1px solid var(--border);border-radius:6px;color:var(--ink-soft);cursor:pointer;font-family:var(--font-ui);transition:all .2s}
-.saved-item .actions button:hover{background:var(--bg);color:var(--accent);border-color:var(--accent-2)}
-.saved-item .actions button.remove{color:var(--err)}
-.saved-item .actions button.remove:hover{background:#fff0f0;border-color:var(--err);color:var(--err)}
-[data-theme="dark"] .saved-item .actions button.remove:hover{background:#3a1a1a}
-.commit-bar{background:linear-gradient(135deg,var(--pend-bg),var(--paper));border:2px solid var(--pend-border);border-radius:14px;padding:20px 24px;margin-bottom:24px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
-.commit-bar .commit-text{flex:1;min-width:200px;font-family:var(--font-ui);font-size:14px;color:var(--ink)}
-.commit-bar .commit-text strong{color:var(--pend);font-size:16px;display:block;margin-bottom:2px}
-.commit-btn{background:var(--pend);color:#fff;border:none;padding:12px 26px;border-radius:10px;font-family:var(--font-ui);font-size:14px;font-weight:700;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:8px}
+.page-section{margin-bottom:36px}
+.page-section-head{display:flex;align-items:center;gap:10px;margin-bottom:16px;padding-bottom:10px;border-bottom:2px solid var(--border)}
+.page-section-head.pending{border-color:var(--pend-border)}
+.page-section-head.saved{border-color:var(--ok)}
+.page-section-head .title{font-family:var(--font-body);font-size:24px;font-weight:700;color:var(--ink)}
+.page-section-head.pending .title{color:var(--pend)}
+.page-section-head.saved .title{color:var(--ok)}
+.page-section-head .count{background:var(--border);color:var(--ink-soft);font-family:var(--font-ui);font-size:13px;padding:2px 10px;border-radius:12px;font-weight:600;margin-right:auto}
+.page-section-head.pending .count{background:var(--pend);color:#fff}
+.page-section-head.saved .count{background:var(--ok);color:#fff}
+.commit-bar{background:var(--pend-bg);border:2px solid var(--pend-border);border-radius:14px;padding:16px 20px;margin-bottom:24px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.commit-bar .commit-text{flex:1;min-width:200px;font-family:var(--font-ui);font-size:13.5px;color:var(--ink)}
+.commit-bar .commit-text strong{color:var(--pend);display:block;margin-bottom:2px;font-size:15px}
+.commit-btn{background:var(--pend);color:#fff;border:none;padding:11px 22px;border-radius:10px;font-family:var(--font-ui);font-size:13.5px;font-weight:700;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:8px}
 .commit-btn:hover{background:#b45309;transform:translateY(-1px);box-shadow:0 6px 16px -6px rgba(217,119,6,.6)}
 .commit-btn svg{width:16px;height:16px}
+.empty-state{text-align:center;padding:60px 20px;color:var(--muted);font-family:var(--font-ui);font-size:15px;line-height:1.8;background:var(--paper);border:2px dashed var(--border);border-radius:12px}
+.empty-state svg{width:60px;height:60px;margin-bottom:14px;color:var(--border);display:block;margin-left:auto;margin-right:auto}
+.page-actions{display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap;padding-top:20px;margin-top:20px;border-top:1px solid var(--border)}
+.btn-secondary{padding:10px 20px;background:transparent;color:var(--ink-soft);border:1px solid var(--border);border-radius:10px;font-family:var(--font-ui);font-size:13px;cursor:pointer;transition:all .2s}
+.btn-secondary:hover{border-color:var(--accent-2);color:var(--accent)}
+.btn-danger{padding:10px 20px;background:transparent;color:var(--err);border:1px solid var(--err);border-radius:10px;font-family:var(--font-ui);font-size:13px;cursor:pointer;transition:all .2s}
+.btn-danger:hover{background:var(--err);color:#fff}
 .quiz-config{background:var(--paper);border:1px solid var(--border);border-radius:14px;padding:24px;margin-bottom:20px}
 .quiz-config h3{font-family:var(--font-body);font-size:22px;color:var(--ink);margin-bottom:6px}
 .quiz-config .sub{color:var(--muted);font-family:var(--font-ui);font-size:13px;margin-bottom:18px}
@@ -181,7 +170,6 @@ main{min-width:0;padding:0 0 80px}
 .opt-btn.selected .opt-desc{color:var(--accent)}
 .start-quiz-btn{width:100%;padding:16px;background:var(--accent);color:#fff;border:none;border-radius:10px;font-family:var(--font-ui);font-size:15px;font-weight:700;cursor:pointer;transition:all .2s;margin-top:8px}
 .start-quiz-btn:hover{background:var(--accent-3)}
-.start-quiz-btn:disabled{opacity:.5;cursor:not-allowed}
 .quiz-running{padding:6px 0}
 .quiz-progress{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-family:var(--font-ui);font-size:13px;color:var(--muted)}
 .quiz-progress-bar{flex:1;height:6px;background:var(--border);border-radius:3px;margin:0 14px;overflow:hidden}
@@ -201,10 +189,6 @@ main{min-width:0;padding:0 0 80px}
 .quiz-foot{display:flex;justify-content:center;margin-top:18px;gap:10px}
 .btn-primary{padding:12px 28px;background:var(--accent);color:#fff;border:none;border-radius:10px;font-family:var(--font-ui);font-size:14px;font-weight:700;cursor:pointer;transition:all .2s}
 .btn-primary:hover{background:var(--accent-3)}
-.btn-secondary{padding:10px 20px;background:transparent;color:var(--ink-soft);border:1px solid var(--border);border-radius:10px;font-family:var(--font-ui);font-size:13px;cursor:pointer;transition:all .2s}
-.btn-secondary:hover{border-color:var(--accent-2);color:var(--accent)}
-.btn-danger{padding:10px 20px;background:transparent;color:var(--err);border:1px solid var(--err);border-radius:10px;font-family:var(--font-ui);font-size:13px;cursor:pointer;transition:all .2s}
-.btn-danger:hover{background:var(--err);color:#fff}
 .quiz-results{text-align:center;padding:20px}
 .score-ring{width:160px;height:160px;border-radius:50%;margin:0 auto 24px;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;background:conic-gradient(var(--accent) var(--pct),var(--border) 0)}
 .score-ring::after{content:'';position:absolute;inset:12px;background:var(--bg);border-radius:50%}
@@ -229,12 +213,12 @@ footer .fm{font-family:var(--font-body);font-size:24px;color:var(--accent);margi
   .sidebar-overlay{position:fixed;inset:64px 0 0 0;background:rgba(0,0,0,.4);z-index:840;display:none}
   .sidebar-overlay.show{display:block}
   .content-wrap{padding:0 20px}
-  .page-header{padding:16px 20px;top:64px}
-  .page-header h1{font-size:22px}
+  .page-header{padding:14px 16px;top:64px}
+  .page-header h1{font-size:20px;width:100%}
   .page-body{padding:16px 20px 60px}
   .hero{padding:50px 20px 40px}
-  .poem-entry{padding:24px 20px}
-  .verses{padding:18px 20px;font-size:19px}
+  .poem-entry{padding:22px 16px}
+  .verses{padding:16px 18px;font-size:19px}
   .verses .bayt{flex-direction:column;gap:6px}
   .verses .bayt .sadr,.verses .bayt .ajz{flex:1 1 100%}
   .search-wrap{flex:1 1 auto;max-width:none}
@@ -243,17 +227,17 @@ footer .fm{font-family:var(--font-body);font-size:24px;color:var(--accent);margi
   body{font-size:17px}
   .modal-page{padding:10px}
   .modal-box{margin:10px auto}
+  .tool-btn{font-size:11.5px;padding:7px 10px}
+  .tool-btn.commit-one{padding:8px 14px}
 }
 @media (max-width:480px){
   .hero .authors{gap:20px}
   .section-head h2{font-size:26px}
   .poem-entry h3{font-size:21px}
   .config-options{grid-template-columns:1fr 1fr}
-  .page-header h1{font-size:19px}
-  .saved-item .actions button{font-size:11px;padding:4px 8px}
 }
 @media print{
-  .topbar,.sidebar,.back-top,.progress-bar,.search-wrap,.collapse-btn,.poem-toolbar,.modal-page,.toast,.page-header{display:none!important}
+  .topbar,.sidebar,.back-top,.progress-bar,.search-wrap,.collapse-btn,.poem-toolbar,.modal-page,.toast,.page-header,.commit-bar,.page-actions{display:none!important}
   .layout{grid-template-columns:1fr}
   .poem-entry{box-shadow:none;border:1px solid #ccc;page-break-inside:avoid}
   body{background:#fff;color:#000;font-size:13pt}
@@ -289,7 +273,6 @@ footer .fm{font-family:var(--font-body);font-size:24px;color:var(--accent);margi
   <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
   <main id="top">
-    <!-- READING VIEW -->
     <div class="view active" id="readingView">
       <section class="hero">
         <div class="decor">✦ ❖ ✦</div>
@@ -324,7 +307,6 @@ footer .fm{font-family:var(--font-body);font-size:24px;color:var(--accent);margi
       <footer><div class="fm">✦ قلادة الأديب ✦</div><div>حقوق الطبع محفوظة — شركة آفاق المعرفة للنشر والتوزيع، ١٤٤٤هـ</div></footer>
     </div>
 
-    <!-- SAVED PAGE VIEW -->
     <div class="view" id="savedPageView">
       <div class="page-header">
         <a href="#" class="back-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg> العودة للقراءة</a>
@@ -337,7 +319,6 @@ footer .fm{font-family:var(--font-body);font-size:24px;color:var(--accent);margi
       <div class="page-body" id="savedPageBody"></div>
     </div>
 
-    <!-- QUIZ PAGE VIEW -->
     <div class="view" id="quizPageView">
       <div class="page-header">
         <a href="#" class="back-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg> العودة للقراءة</a>
@@ -350,15 +331,11 @@ footer .fm{font-family:var(--font-body);font-size:24px;color:var(--accent);margi
 
 <button class="back-top" id="backTop" aria-label="أعلى"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="m18 15-6-6-6 6"/></svg></button>
 
-<!-- Copy fallback modal -->
 <div class="modal-page" id="copyModal">
   <div class="modal-box" style="max-width:600px">
-    <header class="modal-head">
-      <h2>انسخ النص يدويًا</h2>
-      <button class="modal-close" id="copyModalClose">×</button>
-    </header>
+    <header class="modal-head"><h2>انسخ النص يدويًا</h2><button class="modal-close" id="copyModalClose">×</button></header>
     <div class="modal-body">
-      <p style="margin-bottom:14px;color:var(--ink-soft);font-size:14px;line-height:1.7">تعذّر النسخ التلقائي (يحدث في بعض المتصفحات عند فتح الملف مباشرة). النص محدد بالكامل في المربع أدناه — اضغط <strong>Ctrl+C</strong> (أو <strong>Cmd+C</strong> على Mac) للنسخ.</p>
+      <p style="margin-bottom:14px;color:var(--ink-soft);font-size:14px;line-height:1.7">تعذّر النسخ التلقائي. النص محدد في المربع أدناه — اضغط <strong>Ctrl+C</strong> (أو <strong>Cmd+C</strong>) للنسخ.</p>
       <textarea id="copyModalText" class="copy-area" readonly></textarea>
       <div style="margin-top:14px;display:flex;gap:8px;justify-content:flex-end">
         <button class="btn-secondary" id="copyModalDone">تم</button>
@@ -373,7 +350,7 @@ footer .fm{font-family:var(--font-body);font-size:24px;color:var(--accent);margi
 
 <script>
 /* ============================================================
-   DATA — استبدل هذا المصفوف بمصفوف القصائد الـ81 بنفس الصيغة
+   بيانات القصائد — استبدل هذا المصفوف بمصفوف القصائد الـ81
    ============================================================ */
 var POEMS = [
 {n:1,title:"وهو منطلق",poet:"جُؤَيَّة بن النَّضْر",meter:"بحر البسيط",
@@ -381,8 +358,8 @@ var POEMS = [
  explain:["اشتكت امرأة هذا الشاعر إليه سرعةَ فَناءِ أموالهم، فقال: إن دراهمنا إذا اجتمعت تسابقت إلى مسالك المعروف.","<span class='gloss'>الصُّرَّة</span>: تُحفظ بها الدراهم. الدرهم لا يستقر بها، وإنما يمر عَلَيْهَا ثم ينطلق إلى سبل المعروف.","تعبيره بالاسم (منطلق) أبلغ من الفعل، لأن الاسم فيه معنى الثبوت. قال عبد القاهر: «هذا هو الحسَنُ اللائق بالمعنى»."]},
 
 {n:2,title:"دبيب الكسالى",poet:"حَوْط بن رِئَاب الأسدي",meter:"بحر البسيط",
- verses:[["دَبَيْتَ لِلْمَجْدِ وَالسَّاعُونَ قَدْ بَلَغُوا","جَهْدَ النُّفُوسِ وَأَلْقَوْا دُونَهُ الْأُزْرَا"],["فَكَابَدُوا الْمَجْدَ حَتَّى مَلَّ أَكْثَرُهُمْ","وَعَانَقَ الْمَجْدَ مَنْ أَوْفَى وَمَنْ صَبَرَا"],["لَا تَحْسَبِ الْمَجْدَ تَمْرًا أَنْتَ آكِلُهُ","لَنْ تَبْلُغَ الْمَجْدَ حَتَّى تَلْعَقَ الصَّبِرَا"]],
- explain:["<span class='gloss'>الدبيب</span>: المشي المتئد. <span class='gloss'>الأُزْر</span>: جمع إزار، وإلقاؤه كناية عن الاجتهاد.","<span class='gloss'>مَنْ أَوْفَى</span>: من الوفاء. <span class='gloss'>وَمَنْ صَبَرَا</span>: على الشدائد. لم ينل المجد إلا أهل الصبر.","<span class='gloss'>الصَّبِر</span>: عصارة شَجَر مُرٌّ. لا تتوهّم أن المجد سهل ينال بوسائد الراحة، فإنه لا ينال إلا بتحمل المشاق."]},
+ verses:[["دَبَيْتَ لِلْمَجْدِ وَالسَّاعُونَ قَدْ بَلَغُوا","جَهْدَ النُّفُوسِ وَأَلْقَوْا دُونَهُ الْأُزُرَا"],["فَكَابَدُوا الْمَجْدَ حَتَّى مَلَّ أَكْثَرُهُمْ","وَعَانَقَ الْمَجْدَ مَنْ أَوْفَى وَمَنْ صَبَرَا"],["لَا تَحْسَبِ الْمَجْدَ تَمْرًا أَنْتَ آكِلُهُ","لَنْ تَبْلُغَ الْمَجْدَ حَتَّى تَلْعَقَ الصَّبِرَا"]],
+ explain:["<span class='gloss'>الدبيب</span>: المشي المتئد. <span class='gloss'>الأُزُر</span>: جمع إزار (بضم الزاي)، وإلقاؤه كناية عن الاجتهاد.","<span class='gloss'>مَنْ أَوْفَى</span>: من الوفاء. <span class='gloss'>وَمَنْ صَبَرَا</span>: على الشدائد. لم ينل المجد إلا أهل الصبر.","<span class='gloss'>الصَّبِر</span>: عصارة شَجَر مُرٌّ. لا تتوهّم أن المجد سهل ينال بوسائد الراحة، فإنه لا ينال إلا بتحمل المشاق."]},
 
 {n:5,title:"فليتك تحلو",poet:"أبو فراس الحمداني",meter:"بحر الطويل",
  verses:[["إِذَا الْخِلُّ لَمْ يَهْجُرْكَ إِلَّا مَلَالَةٌ","فَلَيْسَ لَهُ إِلَّا الْفِرَاقُ عِتَابُ"],["بِمَنْ يَثِقُ الْإِنْسَانُ فِيمَا يَنُوبُهُ","وَمِنْ أَيْنَ لِلْحُرِّ الْكَرِيمِ صِحَابُ؟"],["وَقَدْ صَارَ هَذَا النَّاسُ إِلَّا أَقَلَّهُمْ","ذِئَابًا عَلَى أَجْسَادِهِنَّ ثِيَابُ"],["فَلَيْتَكَ تَحْلُو وَالْحَيَاةُ مَرِيرَةٌ","وَلَيْتَكَ تَرْضَى وَالْأَنَامُ غِضَابُ"],["وَلَيْتَ الَّذِي بَيْنِي وَبَيْنَكَ عَامِرٌ","وَبَيْنِي وَبَيْنَ الْعَالَمِينَ خَرَابُ"]],
@@ -461,6 +438,7 @@ function poemState(n){
   if (pendingPoems.indexOf(n) !== -1) return 'pending';
   return 'none';
 }
+
 function toggleSave(n){
   var s = poemState(n);
   if (s === 'saved'){
@@ -473,11 +451,31 @@ function toggleSave(n){
     pendingPoems.push(n);
     persistPending();
   }
-  refreshSaveButtons();
-  updateBadges();
-  if (document.getElementById('savedPageView').classList.contains('active')) renderSavedPage();
+  afterStateChange();
 }
-function commitPending(){
+function commitOne(n){
+  var idx = pendingPoems.indexOf(n);
+  if (idx >= 0) pendingPoems.splice(idx,1);
+  if (savedPoems.indexOf(n) === -1) savedPoems.push(n);
+  persistPending(); persistSaved();
+  afterStateChange();
+  toast('✓ تم حفظ القصيدة');
+}
+function cancelPending(n){
+  var idx = pendingPoems.indexOf(n);
+  if (idx >= 0) pendingPoems.splice(idx,1);
+  persistPending();
+  afterStateChange();
+  toast('تم الإلغاء');
+}
+function removeFromSaved(n){
+  var idx = savedPoems.indexOf(n);
+  if (idx >= 0) savedPoems.splice(idx,1);
+  persistSaved();
+  afterStateChange();
+  toast('تمت الإزالة');
+}
+function commitAllPending(){
   if (pendingPoems.length === 0) return;
   var added = 0;
   pendingPoems.forEach(function(n){
@@ -485,8 +483,15 @@ function commitPending(){
   });
   pendingPoems = [];
   persistPending(); persistSaved();
-  refreshSaveButtons(); updateBadges(); renderSavedPage();
-  toast('✓ تم إتمام الحفظ — ' + added + ' قصيدة جديدة');
+  afterStateChange();
+  toast('✓ تم إتمام الحفظ — ' + added + ' قصيدة');
+}
+function afterStateChange(){
+  refreshSaveButtons();
+  updateBadges();
+  if (document.getElementById('savedPageView').classList.contains('active')){
+    renderSavedPage();
+  }
 }
 function refreshSaveButtons(){
   var btns = document.querySelectorAll('.tool-btn[data-action="save"]');
@@ -509,7 +514,7 @@ function updateBadges(){
 }
 
 /* ============================================================
-   COPY SYSTEM (3 طبقات)
+   COPY SYSTEM
    ============================================================ */
 function copyText(text){
   return new Promise(function(resolve){
@@ -545,7 +550,6 @@ function showManualCopy(text){
   document.body.style.overflow = 'hidden';
   setTimeout(function(){ a.focus(); a.select(); try{ a.setSelectionRange(0, text.length); }catch(e){} }, 120);
 }
-
 function buildVersesText(p){
   return (p.verses||[]).map(function(v){ return Array.isArray(v) ? v.join(' *** ') : v; }).join('\n');
 }
@@ -560,10 +564,7 @@ function buildFullText(p){
 function doCopy(kind, n){
   var p = getPoem(n); if (!p) return;
   var text = kind==='verses' ? buildVersesText(p) : kind==='explain' ? buildExplainText(p) : buildFullText(p);
-  copyText(text).then(function(r){
-    if (r === 'copied') toast('✓ تم النسخ إلى الحافظة');
-    // إذا manual: لا نعرض توست، المودال ظاهر
-  });
+  copyText(text).then(function(r){ if (r === 'copied') toast('✓ تم النسخ إلى الحافظة'); });
 }
 function doShare(n){
   var p = getPoem(n); if (!p) return;
@@ -571,78 +572,107 @@ function doShare(n){
   if (navigator.share){
     navigator.share({ title: p.title + ' — ' + p.poet, text: text }).catch(function(){});
   } else {
-    copyText(text).then(function(r){
-      if (r === 'copied') toast('✓ تم النسخ — الصقها للمشاركة');
-    });
+    copyText(text).then(function(r){ if (r === 'copied') toast('✓ تم النسخ — الصقها للمشاركة'); });
   }
 }
 
 /* ============================================================
-   ROUTING
-   ============================================================ */
-function showView(name){
-  var views = { reading: $('readingView'), saved: $('savedPageView'), quiz: $('quizPageView') };
-  for (var k in views){
-    if (views[k]) views[k].classList.toggle('active', k === name);
-  }
-}
-function handleRoute(){
-  var hash = (location.hash || '').replace(/^#/, '');
-  if (hash === 'saved'){
-    renderSavedPage();
-    showView('saved');
-    window.scrollTo({top:0, behavior:'auto'});
-  } else if (hash === 'quiz'){
-    showView('quiz');
-    window.scrollTo({top:0, behavior:'auto'});
-    if (quizState.mode === 'config') renderQuizConfig();
-  } else {
-    showView('reading');
-    if (hash.indexOf('poem-') === 0){
-      setTimeout(function(){
-        var el = document.getElementById(hash);
-        if (el){
-          var y = el.getBoundingClientRect().top + window.scrollY - 80;
-          window.scrollTo({top:y, behavior:'smooth'});
-        }
-      }, 80);
-    }
-  }
-}
-window.addEventListener('hashchange', handleRoute);
-
-/* ============================================================
-   RENDER READING
+   RENDER: POEM CARD (موحّد للصفحة الرئيسية والمحفوظات)
    ============================================================ */
 function renderBayt(bayt){
   if (!Array.isArray(bayt)) return '';
   if (bayt.length === 1) return '<div class="bayt"><span class="sadr">'+bayt[0]+'</span></div>';
   return '<div class="bayt"><span class="sadr">'+bayt[0]+'</span><span class="ajz">'+(bayt[1]||'')+'</span></div>';
 }
+
+function renderPoemCard(p, opts){
+  opts = opts || {};
+  var prefix = opts.idPrefix || '';
+  var ctx = opts.context || 'reading';
+  var explId = prefix + 'expl-' + p.n;
+  var articleId = prefix + 'poem-' + p.n;
+
+  var versesHTML = (p.verses||[]).map(renderBayt).join('');
+  var explainHTML = (p.explain||[]).map(function(x){ return '<p>'+x+'</p>'; }).join('');
+
+  var cardClass = 'poem-entry';
+  if (ctx === 'pending') cardClass += ' pending-card';
+  else if (ctx === 'saved') cardClass += ' saved-card';
+
+  // أزرار خاصة بالسياق
+  var extraButtons = '';
+  if (ctx === 'pending'){
+    extraButtons +=
+      '<button class="tool-btn commit-one" data-action="commit" data-n="'+p.n+'" type="button">'+
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>'+
+        '<span>إتمام الحفظ</span>'+
+      '</button>'+
+      '<button class="tool-btn remove-one" data-action="cancel-pending" data-n="'+p.n+'" type="button">'+
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>'+
+        '<span>إلغاء</span>'+
+      '</button>';
+  } else if (ctx === 'saved'){
+    extraButtons +=
+      '<button class="tool-btn remove-one" data-action="remove-saved" data-n="'+p.n+'" type="button">'+
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>'+
+        '<span>إزالة من المحفوظات</span>'+
+      '</button>';
+  } else {
+    var state = poemState(p.n);
+    var lbl = state === 'saved' ? '✓ محفوظ' : state === 'pending' ? '⏳ قيد الحفظ' : 'حفظ';
+    var cls = state === 'saved' ? 'saved' : state === 'pending' ? 'pending' : '';
+    extraButtons +=
+      '<button class="tool-btn '+cls+'" data-action="save" data-n="'+p.n+'" type="button">'+
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>'+
+        '<span>'+lbl+'</span>'+
+      '</button>';
+  }
+
+  var commonButtons =
+    '<button class="tool-btn" data-action="copy-verses" data-n="'+p.n+'" type="button">'+
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>'+
+      '<span>نسخ الأبيات</span>'+
+    '</button>'+
+    '<button class="tool-btn" data-action="copy-explain" data-n="'+p.n+'" type="button">'+
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>'+
+      '<span>نسخ الشرح</span>'+
+    '</button>'+
+    '<button class="tool-btn" data-action="copy-both" data-n="'+p.n+'" type="button">'+
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="8" y="2" width="13" height="20" rx="2"/><path d="M3 7v13a2 2 0 0 0 2 2h11"/></svg>'+
+      '<span>نسخ الكل + العزو</span>'+
+    '</button>'+
+    '<button class="tool-btn" data-action="share" data-n="'+p.n+'" type="button">'+
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.59 13.51 6.83 3.98M15.41 6.51l-6.82 3.98"/></svg>'+
+      '<span>مشاركة</span>'+
+    '</button>';
+
+  return '<article class="'+cardClass+'" id="'+articleId+'">'+
+    '<div class="entry-head">'+
+      '<div class="entry-num">'+p.n+'</div>'+
+      '<div class="entry-meta">'+
+        '<h3>'+p.title+'</h3>'+
+        '<div class="poet">قال '+p.poet+'</div>'+
+        '<div class="meter">'+p.meter+'</div>'+
+      '</div>'+
+    '</div>'+
+    '<div class="verses">'+versesHTML+'</div>'+
+    '<button class="collapse-btn" data-target="'+explId+'" type="button">'+
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="m6 9 6 6 6-6"/></svg>'+
+      '<span>عرض الشرح</span>'+
+    '</button>'+
+    '<div class="explanation collapsed" id="'+explId+'">'+
+      '<h4>الشرح والتعليق</h4>'+explainHTML+
+    '</div>'+
+    '<div class="poem-toolbar">'+extraButtons+commonButtons+'</div>'+
+  '</article>';
+}
+
 function renderPoems(){
   var cont = $('poemsContainer'); if (!cont) return;
   cont.innerHTML = '';
   POEMS.forEach(function(p){
-    var article = document.createElement('article');
-    article.className = 'poem-entry';
-    article.id = 'poem-'+p.n;
-    var versesHTML = (p.verses||[]).map(renderBayt).join('');
-    var explainHTML = (p.explain||[]).map(function(x){ return '<p>'+x+'</p>'; }).join('');
-    article.innerHTML =
-      '<div class="entry-head"><div class="entry-num">'+p.n+'</div><div class="entry-meta"><h3>'+p.title+'</h3><div class="poet">قال '+p.poet+'</div><div class="meter">'+p.meter+'</div></div></div>'+
-      '<div class="verses">'+versesHTML+'</div>'+
-      '<button class="collapse-btn" data-target="expl-'+p.n+'" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="m6 9 6 6 6-6"/></svg><span>عرض الشرح</span></button>'+
-      '<div class="explanation collapsed" id="expl-'+p.n+'"><h4>الشرح والتعليق</h4>'+explainHTML+'</div>'+
-      '<div class="poem-toolbar">'+
-        '<button class="tool-btn" data-action="save" data-n="'+p.n+'" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg><span>حفظ</span></button>'+
-        '<button class="tool-btn" data-action="copy-verses" data-n="'+p.n+'" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg><span>نسخ الأبيات</span></button>'+
-        '<button class="tool-btn" data-action="copy-explain" data-n="'+p.n+'" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg><span>نسخ الشرح</span></button>'+
-        '<button class="tool-btn" data-action="copy-both" data-n="'+p.n+'" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="8" y="2" width="13" height="20" rx="2"/><path d="M3 7v13a2 2 0 0 0 2 2h11"/></svg><span>نسخ الكل + العزو</span></button>'+
-        '<button class="tool-btn" data-action="share" data-n="'+p.n+'" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.59 13.51 6.83 3.98M15.41 6.51l-6.82 3.98"/></svg><span>مشاركة</span></button>'+
-      '</div>';
-    cont.appendChild(article);
+    cont.insertAdjacentHTML('beforeend', renderPoemCard(p, {idPrefix:'', context:'reading'}));
   });
-  refreshSaveButtons();
 }
 
 function buildTOC(){
@@ -655,96 +685,81 @@ function buildTOC(){
 }
 
 /* ============================================================
-   RENDER SAVED PAGE
+   RENDER: SAVED PAGE — بطاقات كاملة
    ============================================================ */
 function renderSavedPage(){
   var body = $('savedPageBody'); if (!body) return;
   var html = '';
-  // pending section
-  if (pendingPoems.length > 0){
-    html += '<div class="commit-bar">'+
-      '<div class="commit-text"><strong>لديك '+pendingPoems.length+' قصيدة قيد الحفظ</strong>راجع القائمة ثم اضغط «إتمام الحفظ» لتثبيتها.</div>'+
-      '<button class="commit-btn" id="commitBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>إتمام الحفظ</button>'+
-    '</div>';
-    html += '<div class="page-section pending-section"><h2>⏳ قيد الحفظ <span class="count">'+pendingPoems.length+'</span></h2>';
-    html += renderSavedItemsList(pendingPoems, 'pending');
-    html += '</div>';
-  }
-  // saved section
-  if (savedPoems.length > 0){
-    html += '<div class="page-section"><h2>✓ المحفوظات <span class="count">'+savedPoems.length+'</span></h2>';
-    html += renderSavedItemsList(savedPoems, 'saved');
-    html += '</div>';
-  }
-  // empty
+
   if (pendingPoems.length === 0 && savedPoems.length === 0){
-    html = '<div class="saved-empty">'+
+    html = '<div class="empty-state">'+
       '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>'+
-      'لا توجد قصائد محفوظة بعد.<br>ارجع للقراءة، واضغط زر <strong>«حفظ»</strong> على أي قصيدة.<br>ستظهر هنا كـ«قيد الحفظ» ثم تضغط <strong>«إتمام الحفظ»</strong> لتثبيتها.'+
+      'لا توجد قصائد محفوظة بعد.<br>ارجع للقراءة، واضغط زر <strong>«حفظ»</strong> على أي قصيدة.<br>ستظهر هنا كـ«قيد الحفظ» ثم اضغط <strong>«إتمام الحفظ»</strong> بجانبها لتثبيتها.'+
     '</div>';
+    body.innerHTML = html;
+    return;
   }
-  // actions bar at bottom
-  if (pendingPoems.length > 0 || savedPoems.length > 0){
-    html += '<div style="margin-top:24px;display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;padding-top:20px;border-top:1px solid var(--border)">';
-    html += '<button class="btn-danger" id="clearAllBtn">مسح الكل</button>';
+
+  // Pending section
+  if (pendingPoems.length > 0){
+    html += '<div class="page-section">'+
+      '<div class="commit-bar">'+
+        '<div class="commit-text"><strong>لديك '+pendingPoems.length+' قصيدة قيد الحفظ</strong>راجع كل قصيدة أدناه، ثم اضغط «إتمام الحفظ» بجانبها، أو أتمّ الكل دفعة واحدة.</div>'+
+        '<button class="commit-btn" id="commitAllBtn">'+
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>'+
+          'إتمام الكل'+
+        '</button>'+
+      '</div>'+
+      '<div class="page-section-head pending">'+
+        '<span class="title">⏳ قيد الحفظ</span>'+
+        '<span class="count">'+pendingPoems.length+'</span>'+
+      '</div>';
+
+    pendingPoems.slice().sort(function(a,b){return a-b;}).forEach(function(n){
+      var p = getPoem(n); if (!p) return;
+      html += renderPoemCard(p, {idPrefix:'pend-', context:'pending'});
+    });
     html += '</div>';
   }
+
+  // Saved section
+  if (savedPoems.length > 0){
+    html += '<div class="page-section">'+
+      '<div class="page-section-head saved">'+
+        '<span class="title">✓ المحفوظات</span>'+
+        '<span class="count">'+savedPoems.length+'</span>'+
+      '</div>';
+
+    savedPoems.slice().sort(function(a,b){return a-b;}).forEach(function(n){
+      var p = getPoem(n); if (!p) return;
+      html += renderPoemCard(p, {idPrefix:'sav-', context:'saved'});
+    });
+    html += '</div>';
+  }
+
+  html += '<div class="page-actions">'+
+    '<button class="btn-danger" id="clearAllBtn">مسح الكل</button>'+
+  '</div>';
+
   body.innerHTML = html;
 
-  // wire buttons
-  var commitBtn = $('commitBtn');
-  if (commitBtn) commitBtn.addEventListener('click', commitPending);
+  var commitAllBtn = $('commitAllBtn');
+  if (commitAllBtn) commitAllBtn.addEventListener('click', commitAllPending);
+
   var clearBtn = $('clearAllBtn');
   if (clearBtn) clearBtn.addEventListener('click', function(){
     if (confirm('هل تريد مسح جميع المحفوظات وقيد الحفظ؟')){
       savedPoems = []; pendingPoems = [];
       persistSaved(); persistPending();
-      refreshSaveButtons(); updateBadges(); renderSavedPage();
+      afterStateChange();
       toast('✓ تم مسح الكل');
     }
   });
-  // item actions
-  body.querySelectorAll('button[data-act]').forEach(function(btn){
-    btn.addEventListener('click', function(){
-      var act = btn.getAttribute('data-act');
-      var n = parseInt(btn.getAttribute('data-n'),10);
-      if (act === 'remove'){ toggleSave(n); renderSavedPage(); }
-      else if (act === 'copy-verses'){ doCopy('verses', n); }
-      else if (act === 'copy-both'){ doCopy('both', n); }
-      else if (act === 'goto'){ location.hash = 'poem-' + n; }
-    });
-  });
-}
-function renderSavedItemsList(arr, cls){
-  return arr.slice().sort(function(a,b){return a-b;}).map(function(n){
-    var p = getPoem(n); if (!p) return '';
-    var preview = '';
-    if (p.verses && p.verses[0]) preview = (p.verses[0]||[]).join(' — ');
-    return '<div class="saved-item '+cls+'" data-n="'+n+'">'+
-      '<div class="num">'+n+'</div>'+
-      '<div class="info">'+
-        '<h4>'+p.title+'</h4>'+
-        '<div class="poet-sm">قال '+p.poet+'</div>'+
-        '<div class="verse-preview">'+preview+'</div>'+
-        '<div class="actions">'+
-          '<button data-act="goto" data-n="'+n+'">فتح</button>'+
-          '<button data-act="copy-verses" data-n="'+n+'">نسخ الأبيات</button>'+
-          '<button data-act="copy-both" data-n="'+n+'">نسخ الكل</button>'+
-          '<button class="remove" data-act="remove" data-n="'+n+'">'+(cls==='pending'?'إلغاء':'إزالة')+'</button>'+
-        '</div>'+
-      '</div>'+
-    '</div>';
-  }).join('');
 }
 
 /* ============================================================
-   RENDER QUIZ PAGE
+   RENDER: QUIZ PAGE
    ============================================================ */
-function renderQuizPage(){
-  if (quizState.mode === 'config') renderQuizConfig();
-  else if (quizState.mode === 'running') renderQuestion();
-  else if (quizState.mode === 'results') renderQuizResults();
-}
 function renderQuizConfig(){
   quizState.mode = 'config';
   var body = $('quizPageBody'); if (!body) return;
@@ -754,54 +769,35 @@ function renderQuizConfig(){
 
   var html = '<div class="quiz-config">'+
     '<h3>إعداد الاختبار</h3>'+
-    '<p class="sub">اختر مسار الاختبار، ثم عدد الأسئلة، ثم نوعها.</p>';
-
-  // Path
-  html += '<div class="config-row">'+
-    '<div class="config-label">مسار الاختبار</div>'+
-    '<div class="config-options">'+
+    '<p class="sub">اختر مسار الاختبار، ثم عدد الأسئلة، ثم نوعها.</p>'+
+    '<div class="config-row"><div class="config-label">مسار الاختبار</div><div class="config-options">'+
       '<button class="opt-btn '+(quizState.path==='saved'?'selected':'')+'" data-path="saved" '+(canUseSaved?'':'disabled')+'>'+
-        '<span class="opt-icon">📚</span>'+
-        '<span class="opt-name">المحفوظات فقط</span>'+
+        '<span class="opt-icon">📚</span><span class="opt-name">المحفوظات فقط</span>'+
         '<span class="opt-desc">'+savedCount+' قصيدة محفوظة'+(canUseSaved?'':' — احفظ 4 على الأقل')+'</span>'+
       '</button>'+
       '<button class="opt-btn '+(quizState.path==='all'?'selected':'')+'" data-path="all">'+
-        '<span class="opt-icon">🌍</span>'+
-        '<span class="opt-name">كل القصائد</span>'+
+        '<span class="opt-icon">🌍</span><span class="opt-name">كل القصائد</span>'+
         '<span class="opt-desc">'+allCount+' قصيدة متاحة</span>'+
       '</button>'+
-    '</div>'+
-  '</div>';
-
-  // Count
-  html += '<div class="config-row">'+
-    '<div class="config-label">عدد الأسئلة</div>'+
-    '<div class="config-options">'+
+    '</div></div>'+
+    '<div class="config-row"><div class="config-label">عدد الأسئلة</div><div class="config-options">'+
       [5,10,15,20].map(function(c){
         return '<button class="opt-btn '+(quizState.count===c?'selected':'')+'" data-count="'+c+'">'+
           '<span class="opt-name">'+c+' سؤال</span>'+
           '<span class="opt-desc">'+(c<=5?'سريع':c<=10?'متوسط':'شامل')+'</span>'+
         '</button>';
       }).join('')+
-    '</div>'+
+    '</div></div>'+
+    '<div class="config-row"><div class="config-label">نوع الأسئلة</div><div class="config-options">'+
+      '<button class="opt-btn '+(quizState.type==='poet'?'selected':'')+'" data-type="poet"><span class="opt-icon">👤</span><span class="opt-name">من القائل؟</span><span class="opt-desc">اعرف الشاعر</span></button>'+
+      '<button class="opt-btn '+(quizState.type==='complete'?'selected':'')+'" data-type="complete"><span class="opt-icon">✍️</span><span class="opt-name">أكمل الشطر</span><span class="opt-desc">اختر العجز</span></button>'+
+      '<button class="opt-btn '+(quizState.type==='mixed'?'selected':'')+'" data-type="mixed"><span class="opt-icon">🎲</span><span class="opt-name">مزيج</span><span class="opt-desc">النوعان</span></button>'+
+    '</div></div>'+
+    '<button class="start-quiz-btn" id="startQuizBtn">ابدأ الاختبار</button>'+
   '</div>';
-
-  // Type
-  html += '<div class="config-row">'+
-    '<div class="config-label">نوع الأسئلة</div>'+
-    '<div class="config-options">'+
-      '<button class="opt-btn '+(quizState.type==='poet'?'selected':'')+'" data-type="poet"><span class="opt-icon">👤</span><span class="opt-name">من القائل؟</span><span class="opt-desc">اعرف الشاعر من الأبيات</span></button>'+
-      '<button class="opt-btn '+(quizState.type==='complete'?'selected':'')+'" data-type="complete"><span class="opt-icon">✍️</span><span class="opt-name">أكمل الشطر</span><span class="opt-desc">اختر العجز المناسب</span></button>'+
-      '<button class="opt-btn '+(quizState.type==='mixed'?'selected':'')+'" data-type="mixed"><span class="opt-icon">🎲</span><span class="opt-name">مزيج</span><span class="opt-desc">النوعان معًا</span></button>'+
-    '</div>'+
-  '</div>';
-
-  html += '<button class="start-quiz-btn" id="startQuizBtn">ابدأ الاختبار</button>';
-  html += '</div>';
 
   body.innerHTML = html;
 
-  // wire path
   body.querySelectorAll('[data-path]').forEach(function(b){
     b.addEventListener('click', function(){
       if (b.disabled) return;
@@ -809,38 +805,29 @@ function renderQuizConfig(){
       renderQuizConfig();
     });
   });
-  // wire count
   body.querySelectorAll('[data-count]').forEach(function(b){
     b.addEventListener('click', function(){
       quizState.count = parseInt(b.getAttribute('data-count'),10);
       renderQuizConfig();
     });
   });
-  // wire type
   body.querySelectorAll('[data-type]').forEach(function(b){
     b.addEventListener('click', function(){
       quizState.type = b.getAttribute('data-type');
       renderQuizConfig();
     });
   });
-  // start
   var startBtn = $('startQuizBtn');
   if (startBtn) startBtn.addEventListener('click', startQuiz);
 }
 
 function buildQuestions(path, type, count){
-  var pool;
-  if (path === 'saved'){
-    pool = savedPoems.slice();
-  } else {
-    pool = POEMS.map(function(p){ return p.n; });
-  }
+  var pool = path === 'saved' ? savedPoems.slice() : POEMS.map(function(p){ return p.n; });
   if (pool.length < 4) return [];
   var allNums = POEMS.map(function(p){ return p.n; });
   var questions = [];
   var maxQ = Math.min(count, pool.length * 3);
   var attempts = 0, maxAttempts = maxQ * 30;
-
   while (questions.length < maxQ && attempts < maxAttempts){
     attempts++;
     var qType = type === 'mixed' ? (Math.random() < 0.5 ? 'poet' : 'complete') : type;
@@ -848,14 +835,11 @@ function buildQuestions(path, type, count){
     var p = getPoem(n);
     if (!p || !p.verses || !p.verses[0]) continue;
     var bayt = p.verses[0];
-
-    // تجنب التكرار
     var dup = false;
     for (var q = 0; q < questions.length; q++){
       if (questions[q].n === n && questions[q].kind === qType){ dup = true; break; }
     }
     if (dup) continue;
-
     if (qType === 'poet'){
       var dist = [];
       var sh = shuffle(allNums.slice());
@@ -891,7 +875,6 @@ function startQuiz(){
   quizState.idx = 0;
   quizState.score = 0;
   quizState.answered = false;
-  quizState.mode = 'running';
   renderQuestion();
 }
 
@@ -899,7 +882,7 @@ function renderQuestion(){
   quizState.mode = 'running';
   var body = $('quizPageBody'); if (!body) return;
   var q = quizState.questions[quizState.idx];
-  if (!q){ quizState.mode = 'results'; renderQuizResults(); return; }
+  if (!q){ renderQuizResults(); return; }
   var num = quizState.idx + 1;
   var pct = (quizState.idx / quizState.questions.length) * 100;
   var html = '<div class="quiz-running">'+
@@ -938,7 +921,7 @@ function renderQuestion(){
           quizState.idx++;
           quizState.answered = false;
           if (quizState.idx < quizState.questions.length) renderQuestion();
-          else { quizState.mode = 'results'; renderQuizResults(); }
+          else renderQuizResults();
         });
       }
     });
@@ -970,6 +953,38 @@ function renderQuizResults(){
 }
 
 /* ============================================================
+   ROUTING
+   ============================================================ */
+function showView(name){
+  var views = { reading: $('readingView'), saved: $('savedPageView'), quiz: $('quizPageView') };
+  for (var k in views){ if (views[k]) views[k].classList.toggle('active', k === name); }
+}
+function handleRoute(){
+  var hash = (location.hash || '').replace(/^#/, '');
+  if (hash === 'saved'){
+    renderSavedPage();
+    showView('saved');
+    window.scrollTo({top:0, behavior:'auto'});
+  } else if (hash === 'quiz'){
+    showView('quiz');
+    window.scrollTo({top:0, behavior:'auto'});
+    if (quizState.mode === 'config') renderQuizConfig();
+  } else {
+    showView('reading');
+    if (hash.indexOf('poem-') === 0){
+      setTimeout(function(){
+        var el = document.getElementById(hash);
+        if (el){
+          var y = el.getBoundingClientRect().top + window.scrollY - 80;
+          window.scrollTo({top:y, behavior:'smooth'});
+        }
+      }, 80);
+    }
+  }
+}
+window.addEventListener('hashchange', handleRoute);
+
+/* ============================================================
    EVENTS
    ============================================================ */
 document.addEventListener('click', function(e){
@@ -985,12 +1000,15 @@ document.addEventListener('click', function(e){
     if (s) s.textContent = c ? 'إخفاء الشرح' : 'عرض الشرح';
     return;
   }
-  // Toolbar
+  // Toolbar buttons
   var tb = e.target.closest('.tool-btn');
   if (tb){
     var act = tb.getAttribute('data-action');
     var n = parseInt(tb.getAttribute('data-n'),10);
     if (act === 'save') toggleSave(n);
+    else if (act === 'commit') commitOne(n);
+    else if (act === 'cancel-pending') cancelPending(n);
+    else if (act === 'remove-saved') removeFromSaved(n);
     else if (act === 'copy-verses') doCopy('verses', n);
     else if (act === 'copy-explain') doCopy('explain', n);
     else if (act === 'copy-both') doCopy('both', n);
@@ -1025,7 +1043,7 @@ document.addEventListener('click', function(e){
     document.body.style.overflow = '';
     return;
   }
-  // Saved/Quiz page actions
+  // Saved page actions
   if (e.target.closest('#copyAllSaved')){ copyAllSaved(); return; }
   if (e.target.closest('#exportSaved')){ exportSaved(); return; }
 });
@@ -1037,9 +1055,7 @@ function copyAllSaved(){
     var p = getPoem(n); if (!p) return '';
     return '【'+p.title+'】 قال '+p.poet+'\n'+buildVersesText(p);
   }).filter(Boolean).join('\n\n─────────\n\n');
-  copyText(txt).then(function(r){
-    if (r === 'copied') toast('✓ تم نسخ ' + items.length + ' قصيدة');
-  });
+  copyText(txt).then(function(r){ if (r === 'copied') toast('✓ تم نسخ ' + items.length + ' قصيدة'); });
 }
 function exportSaved(){
   var items = savedPoems.slice().sort(function(a,b){return a-b;});
@@ -1155,9 +1171,7 @@ if (fnClose) fnClose.addEventListener('click', function(){ $('fnPopover').classL
   mt.addEventListener('click', function(){ sb.classList.toggle('open'); ov.classList.toggle('show'); });
   ov.addEventListener('click', function(){ sb.classList.remove('open'); ov.classList.remove('show'); });
   sb.addEventListener('click', function(e){
-    if (e.target.closest('a') && window.innerWidth <= 900){
-      sb.classList.remove('open'); ov.classList.remove('show');
-    }
+    if (e.target.closest('a') && window.innerWidth <= 900){ sb.classList.remove('open'); ov.classList.remove('show'); }
   });
 })();
 
@@ -1172,8 +1186,9 @@ if (fnClose) fnClose.addEventListener('click', function(){ $('fnPopover').classL
     var max = h.scrollHeight - h.clientHeight;
     var pct = max > 0 ? (h.scrollTop / max) * 100 : 0;
     if (pf) pf.style.width = pct + '%';
-    if (bt) bt.classList.toggle('show', h.scrollTop > 600 && $('readingView').classList.contains('active'));
-    if (!links.length) return;
+    var readingActive = $('readingView').classList.contains('active');
+    if (bt) bt.classList.toggle('show', h.scrollTop > 600 && readingActive);
+    if (!links.length || !readingActive) return;
     var sections = document.querySelectorAll('#readingView section.chapter, #readingView .poem-entry');
     var cur = null, y = window.scrollY + 120;
     for (var i=0;i<sections.length;i++){ if (sections[i].offsetTop <= y) cur = sections[i]; else break; }
@@ -1212,7 +1227,6 @@ document.addEventListener('keydown', function(e){
   try { renderPoems(); } catch(e){ console.error('render', e); }
   try { buildTOC(); } catch(e){ console.error('toc', e); }
   try { updateBadges(); } catch(e){ console.error('badge', e); }
-  try { refreshSaveButtons(); } catch(e){ console.error('btnstate', e); }
   try { handleRoute(); } catch(e){ console.error('route', e); }
   console.log('[Qilada] ready — poems:', POEMS.length, '— saved:', savedPoems.length, '— pending:', pendingPoems.length);
 })();

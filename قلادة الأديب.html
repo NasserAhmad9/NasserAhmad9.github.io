@@ -1,0 +1,1630 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>قلادة الأديب — كتاب تفاعلي</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f7f3eb; --paper:#fff; --ink:#2b2118; --ink-soft:#5a4a3a;
+  --muted:#8a7968; --accent:#8b5a2b; --accent-2:#c9a227; --accent-3:#1f5e3a;
+  --border:#e0d5c3; --highlight:#fdf0d5;
+  --shadow:0 10px 30px -12px rgba(75,50,20,.18);
+  --radius:14px;
+  --font-body:'Amiri',serif; --font-ui:'Cairo',sans-serif;
+  --sidebar-w:300px;
+}
+[data-theme="dark"]{
+  --bg:#14100c; --paper:#1f1a14; --ink:#f0e6d6; --ink-soft:#c7b8a3;
+  --muted:#9a8a75; --accent:#d4a76a; --accent-2:#e0c060; --accent-3:#6fb98f;
+  --border:#2e2519; --highlight:#2a2116;
+  --shadow:0 10px 30px -12px rgba(0,0,0,.6);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:90px}
+body{font-family:var(--font-body);background:var(--bg);color:var(--ink);line-height:1.9;font-size:18px;transition:background .28s,color .28s}
+::selection{background:var(--accent-2);color:#fff}
+
+.progress-bar{position:fixed;top:0;right:0;left:0;height:3px;z-index:1000}
+.progress-bar span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--accent-2),var(--accent));transition:width .1s}
+
+.topbar{position:sticky;top:0;z-index:900;background:var(--bg);border-bottom:1px solid var(--border);height:64px;display:flex;align-items:center;padding:0 20px;gap:14px}
+.brand{display:flex;align-items:center;gap:10px;font-family:var(--font-ui);font-weight:700;font-size:15px;color:var(--ink);text-decoration:none}
+.brand .logo{width:38px;height:38px;border-radius:50%;background:radial-gradient(circle at 30% 30%,var(--accent-2),var(--accent) 70%);display:flex;align-items:center;justify-content:center;color:#fff;font-family:var(--font-body);font-weight:700;font-size:20px}
+.brand-title{display:flex;flex-direction:column;line-height:1.15}
+.brand-title small{font-family:var(--font-body);font-size:11px;font-weight:400;color:var(--muted)}
+.topbar-spacer{flex:1}
+.icon-btn{width:42px;height:42px;border-radius:12px;background:transparent;border:1px solid transparent;color:var(--ink);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .28s}
+.icon-btn:hover{background:var(--paper);border-color:var(--border)}
+.icon-btn svg{width:20px;height:20px;stroke-width:1.8}
+#menuToggle{display:none}
+
+.search-wrap{flex:0 1 320px;position:relative;display:flex;align-items:center}
+.search-wrap svg{position:absolute;right:12px;width:17px;height:17px;color:var(--muted)}
+.search-wrap input{width:100%;height:40px;border-radius:12px;border:1px solid var(--border);background:var(--paper);padding:0 38px 0 14px;font-family:var(--font-ui);font-size:13.5px;color:var(--ink);outline:none;transition:all .28s}
+.search-wrap input:focus{border-color:var(--accent-2);box-shadow:0 0 0 3px rgba(201,162,39,.25)}
+
+.layout{display:grid;grid-template-columns:var(--sidebar-w) 1fr;max-width:1400px;margin:0 auto}
+.sidebar{position:sticky;top:64px;height:calc(100vh - 64px);overflow-y:auto;padding:20px 16px 40px;border-left:1px solid var(--border);background:var(--bg);font-family:var(--font-ui)}
+.sidebar h3{font-size:11.5px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin:18px 8px 8px}
+.sidebar h3:first-child{margin-top:4px}
+.toc-list{list-style:none}
+.toc-list li a{display:block;padding:8px 14px;color:var(--ink-soft);text-decoration:none;font-size:13.5px;border-radius:8px;transition:all .28s;border-right:3px solid transparent;line-height:1.5}
+.toc-list li a:hover{background:var(--paper);color:var(--accent);border-right-color:var(--accent-2)}
+.toc-list li a.active{background:var(--highlight);color:var(--accent);border-right-color:var(--accent);font-weight:600}
+.toc-list li a .num{color:var(--muted);font-size:11.5px;margin-left:6px}
+
+main{min-width:0;padding:0 0 80px}
+.hero{padding:90px 40px 70px;text-align:center;position:relative;border-bottom:1px solid var(--border)}
+.hero .decor{font-family:var(--font-body);font-size:22px;color:var(--accent-2);letter-spacing:8px;margin-bottom:18px}
+.hero h1{font-family:var(--font-body);font-size:clamp(48px,7vw,84px);font-weight:700;line-height:1.1;margin-bottom:8px}
+.hero h1 span{color:var(--accent)}
+.hero .subtitle{font-size:clamp(20px,2.2vw,26px);color:var(--ink-soft);margin-top:22px;line-height:1.5}
+.hero .divider{width:60px;height:2px;background:var(--accent-2);margin:30px auto 26px}
+.hero .authors{display:flex;justify-content:center;gap:40px;flex-wrap:wrap;margin-top:28px;font-family:var(--font-ui)}
+.hero .author{text-align:center}
+.hero .author .name{font-family:var(--font-body);font-size:22px;font-weight:700;color:var(--accent);line-height:1.4}
+.hero .author .role{font-size:11.5px;color:var(--muted);letter-spacing:1px;margin-top:4px}
+.hero .edition{margin-top:34px;font-family:var(--font-ui);font-size:12px;color:var(--muted);letter-spacing:2px}
+
+.content-wrap{max-width:960px;margin:0 auto;padding:0 40px}
+section.chapter{padding:40px 0}
+.section-head{margin:30px 0;padding-bottom:20px;border-bottom:2px solid var(--border)}
+.section-head .kicker{font-family:var(--font-ui);font-size:11.5px;letter-spacing:2px;color:var(--accent-2);font-weight:700;margin-bottom:8px}
+.section-head h2{font-family:var(--font-body);font-size:clamp(30px,3.6vw,42px);line-height:1.2;font-weight:700}
+.section-head p{color:var(--ink-soft);margin-top:10px;font-size:17px}
+
+.intro-text p{margin-bottom:18px;text-align:justify;font-size:19px;line-height:2}
+.intro-text p:first-of-type::first-letter{font-size:3.2em;float:right;line-height:0.9;color:var(--accent);font-weight:700;padding:4px 8px 0 0;margin-left:8px}
+.intro-text blockquote{border-right:4px solid var(--accent-2);padding:14px 24px;margin:20px 0;background:var(--paper);border-radius:8px;color:var(--ink-soft);font-style:italic}
+
+.fn-ref{display:inline-flex;align-items:center;justify-content:center;min-width:19px;height:19px;padding:0 5px;background:var(--accent-2);color:#fff;border-radius:6px;font-size:11.5px;font-weight:700;font-family:var(--font-ui);cursor:pointer;vertical-align:super;line-height:1;margin:0 3px;position:relative;top:-2px;border:none}
+.fn-ref:hover{background:var(--accent)}
+
+.poem-entry{background:var(--paper);border:1px solid var(--border);border-radius:var(--radius);padding:32px 34px;margin:0 0 30px;box-shadow:var(--shadow);scroll-margin-top:84px;position:relative}
+.poem-entry .entry-head{display:flex;align-items:flex-start;gap:16px;margin-bottom:20px;padding-bottom:16px;border-bottom:1px dashed var(--border)}
+.poem-entry .entry-num{flex-shrink:0;width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#fff;display:flex;align-items:center;justify-content:center;font-family:var(--font-ui);font-weight:700;font-size:17px}
+.poem-entry .entry-meta{flex:1;min-width:0}
+.poem-entry h3{font-family:var(--font-body);font-size:26px;font-weight:700;line-height:1.25;margin-bottom:4px}
+.poem-entry .poet{font-family:var(--font-ui);font-size:13.5px;color:var(--accent);font-weight:600}
+.poem-entry .meter{font-family:var(--font-ui);font-size:11.5px;color:var(--muted);background:var(--highlight);padding:3px 10px;border-radius:20px;display:inline-block;margin-top:8px}
+
+.verses{background:var(--highlight);border-radius:8px;padding:24px 28px;margin:18px 0 22px;border-right:3px solid var(--accent-2);font-size:21px;line-height:2.1}
+.verses .bayt{display:flex;gap:22px;flex-wrap:wrap;padding:6px 0;align-items:baseline}
+.verses .bayt .sadr,.verses .bayt .ajz{flex:1 1 40%;min-width:180px}
+.verses .bayt .ajz{color:var(--ink-soft)}
+.verses .bayt + .bayt{border-top:1px dotted var(--border);padding-top:12px;margin-top:6px}
+
+.explanation{margin-top:24px;padding:22px 26px;background:var(--bg);border-radius:8px;border:1px solid var(--border)}
+.explanation h4{font-family:var(--font-ui);font-size:12px;font-weight:700;letter-spacing:2px;color:var(--accent-3);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.explanation h4::before{content:'';width:16px;height:2px;background:var(--accent-3)}
+.explanation p{margin-bottom:14px;text-align:justify;line-height:1.95;color:var(--ink-soft);font-size:18px}
+.explanation p:last-child{margin-bottom:0}
+.explanation .gloss{display:inline-block;background:var(--highlight);padding:0 8px;border-radius:6px;font-weight:700;color:var(--accent);font-size:.95em}
+
+.collapse-btn{background:transparent;border:1px solid var(--border);color:var(--ink-soft);padding:8px 16px;border-radius:8px;cursor:pointer;font-family:var(--font-ui);font-size:12.5px;font-weight:600;display:inline-flex;align-items:center;gap:6px;transition:all .28s}
+.collapse-btn:hover{background:var(--paper);color:var(--accent);border-color:var(--accent-2)}
+.collapse-btn svg{width:14px;height:14px;transition:transform .28s}
+.collapse-btn.open svg{transform:rotate(180deg)}
+.explanation.collapsed{display:none}
+
+.fn-popover{position:fixed;z-index:1100;max-width:380px;background:var(--paper);border:1px solid var(--border);border-radius:8px;padding:16px 18px;box-shadow:var(--shadow);font-family:var(--font-body);font-size:16px;line-height:1.8;color:var(--ink-soft);display:none}
+.fn-popover.show{display:block}
+.fn-popover .fn-num{display:inline-block;background:var(--accent-2);color:#fff;padding:1px 8px;border-radius:5px;font-family:var(--font-ui);font-size:11.5px;font-weight:700;margin-left:6px}
+.fn-popover .fn-close{position:absolute;top:6px;left:8px;background:transparent;border:none;color:var(--muted);cursor:pointer;font-size:18px;line-height:1;padding:4px;border-radius:4px}
+.fn-popover .fn-close:hover{color:var(--accent);background:var(--bg)}
+
+.search-results{position:absolute;top:100%;left:0;right:0;margin-top:8px;background:var(--paper);border:1px solid var(--border);border-radius:8px;box-shadow:var(--shadow);max-height:400px;overflow-y:auto;display:none;z-index:950;font-family:var(--font-ui)}
+.search-results.show{display:block}
+.search-results a{display:block;padding:12px 16px;text-decoration:none;color:var(--ink);border-bottom:1px solid var(--border);font-size:13.5px}
+.search-results a:hover{background:var(--bg)}
+.search-results a:last-child{border-bottom:none}
+.search-results a .res-title{font-weight:600;display:block;margin-bottom:2px}
+.search-results a .res-snippet{color:var(--muted);font-size:12px;font-family:var(--font-body)}
+.search-results .no-res{padding:20px;text-align:center;color:var(--muted);font-size:13px}
+
+.back-top{position:fixed;bottom:24px;left:24px;z-index:800;width:46px;height:46px;border-radius:50%;background:var(--accent);color:#fff;border:none;display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow);cursor:pointer;opacity:0;pointer-events:none;transform:translateY(20px);transition:all .28s}
+.back-top.show{opacity:1;pointer-events:auto;transform:none}
+.back-top:hover{background:var(--accent-3)}
+.back-top svg{width:20px;height:20px}
+
+footer{background:var(--paper);border-top:1px solid var(--border);padding:40px 20px;text-align:center;font-family:var(--font-ui);font-size:13px;color:var(--muted);margin-top:40px}
+footer .footer-mark{font-family:var(--font-body);font-size:26px;color:var(--accent);margin-bottom:8px}
+
+@media (max-width:900px){
+  .layout{grid-template-columns:1fr}
+  #menuToggle{display:flex}
+  .sidebar{position:fixed;top:64px;right:0;bottom:0;width:85%;max-width:340px;transform:translateX(100%);transition:transform .28s;z-index:850;box-shadow:-10px 0 30px -10px rgba(0,0,0,.2);border-left:none}
+  .sidebar.open{transform:none}
+  .sidebar-overlay{position:fixed;inset:64px 0 0 0;background:rgba(0,0,0,.4);z-index:840;display:none}
+  .sidebar-overlay.show{display:block}
+  .content-wrap{padding:0 20px}
+  .hero{padding:60px 20px 50px}
+  .poem-entry{padding:24px 20px}
+  .verses{padding:18px 20px;font-size:19px}
+  .verses .bayt{flex-direction:column;gap:6px}
+  .verses .bayt .sadr,.verses .bayt .ajz{flex:1 1 100%}
+  .search-wrap{flex:1 1 auto;max-width:none}
+  .brand-title small{display:none}
+  .topbar{padding:0 12px;gap:8px}
+  body{font-size:17px}
+}
+@media (max-width:480px){
+  .hero .authors{gap:20px}
+  .hero .author .name{font-size:18px}
+  .section-head h2{font-size:28px}
+  .poem-entry h3{font-size:22px}
+}
+@media print{
+  .topbar,.sidebar,.back-top,.progress-bar,.search-wrap,.collapse-btn,.fn-popover{display:none!important}
+  .layout{grid-template-columns:1fr}
+  .poem-entry{box-shadow:none;border:1px solid #ccc;page-break-inside:avoid}
+  body{background:#fff;color:#000;font-size:14pt}
+  .explanation.collapsed{display:block!important}
+}
+</style>
+</head>
+<body>
+<div class="progress-bar"><span id="progressFill"></span></div>
+
+<header class="topbar">
+  <button class="icon-btn" id="menuToggle" aria-label="فتح القائمة">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+  </button>
+  <a href="#top" class="brand">
+    <div class="logo">ق</div>
+    <div class="brand-title"><span>قلادة الأديب</span><small>مختارات شعرية من العصور الأولى</small></div>
+  </a>
+  <div class="topbar-spacer"></div>
+  <div class="search-wrap">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+    <input type="search" id="searchInput" placeholder="ابحث في الكتاب..." aria-label="بحث">
+    <div class="search-results" id="searchResults"></div>
+  </div>
+  <button class="icon-btn" id="themeToggle" aria-label="تبديل المظهر">
+    <svg id="themeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+  </button>
+</header>
+
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <h3>الفهرس</h3>
+    <ul class="toc-list" id="tocList">
+      <li><a href="#intro">تمهيد</a></li>
+      <li><a href="#chapter1">الفصل الأول: المختارات الشعرية</a></li>
+      <li><a href="#chapter2">الفصل الثاني: شرح المختارات</a></li>
+    </ul>
+  </aside>
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+  <main id="top">
+    <section class="hero">
+      <div class="decor">✦ ❖ ✦</div>
+      <h1>قلادة <span>الأديب</span></h1>
+      <p class="subtitle">مختاراتٌ شعريَّة من العصور الأولى<br>مع تعاليق تكشف معانيها وتضيء معمَّياتها</p>
+      <div class="divider"></div>
+      <div class="authors">
+        <div class="author"><div class="name">د. سليمان بن ناصر العبودي</div><div class="role">مؤلف</div></div>
+        <div class="author"><div class="name">عثمان بن عبد الله العمودي</div><div class="role">مؤلف</div></div>
+      </div>
+      <div class="edition">الطبعة الثانية · ١٤٤٤هـ — ٢٠٢٣م</div>
+    </section>
+
+    <section class="chapter" id="intro">
+      <div class="content-wrap">
+        <div class="section-head"><div class="kicker">مقدمة</div><h2>تمهيد</h2></div>
+        <div class="intro-text">
+          <p>الحمد لله الذي خلق الإنسان وعلمه البيان، والصلاة والسلام على نبينا محمد صلى الله عليه وسلم. أما بعد، فإن الاطلاع على شِعْرِ العَرَب القدماء، والإحاطة بأبياتهم السائرة، والتضلع من مادتهم اللغوية في التعبير والمخاطبة هي الجادَّةُ القصير والوسيلة الأشهر — بعد معرفة الوحيين — لكلِّ من أراد أن يكون له الحظ الأوفى والقدح المعلى من القدرة على البيان.</p>
+          <p>ولهذا المقصد الشريف وغيره جرت عادة أهل العلم قديما وحديثا على حفظ بعض المنتخبات الشعرية، فقد صحح الأصمعي شعرَ هذيل على الإمام الشافعي رحمهما الله، وحَفِظَ الطبري ديوان الطرماح بن حكيم، وروى ابن عبد البر شعرَ أبي العتاهية، إدراكًا تاما من هؤلاء الأئمة أنك إن حنيت رقبتك للغة عاما، فإنها ستخدمك دهرا.</p>
+          <blockquote>وقد روى ابن أبي حاتم في كتابه آداب الشافعي ومناقبه بسنده عن الشافعي قال: «أصحاب العربية جن الإنس، يبصرون ما لا يبصر غيرهم»<button class="fn-ref" data-fn="1">1</button>.</blockquote>
+          <p>وكأن الشافعي باتساعه اللغوي المعروف يروي في هذا النص تجربته الشخصية التي ورثها عن علم اللغة، ورأى أن تبحره اللغوي نمى عنده ملكة النظر والاستنباط. وقد توارد على هذا المعنى عدد من العلماء، فيقول ابن المقفع: «بالأدب تنمى العقول وتزكو»<button class="fn-ref" data-fn="2">2</button>، ويقول الفراء: «قل رجل أنعم النظر في العربية وأراد علما غيره إلا سهل عليه»<button class="fn-ref" data-fn="3">3</button>، ويقول ابن تيمية: «اعتياد اللغة يؤثر في العقل»<button class="fn-ref" data-fn="4">4</button>، وقال ابن خلدون: «سبقت له عجمة في لسانه، فربطت عن ذهنه»<button class="fn-ref" data-fn="5">5</button>.</p>
+          <p>وكلمات العلماء في تأثير اللغة على العقل كثيرة، وبالإمكان أن نذكر علة واحدة: أن العقل البشري ينتج عمليات في غاية التعقيد، وهذه العمليات لا تشعر بها الحواس، وإنما يكشف عنها البيان، والألفاظ الثوب الذي تلبسه المعاني، فإذا اتسع الثوب استطاع أن يغطي قدرا واسعا من المعاني، وإذا ضاق ظلت المعاني محبوسة. وهذا مندرج في كلمة عبد القاهر الجرجاني: «فإنه لن تتسع المعاني حتى تتسع الألفاظ»<button class="fn-ref" data-fn="6">6</button>، والعرب — كما يقول الشاطبي — «إنما كانت عنايتها بالمعاني، وإنما أصلحت الألفاظ من أجلها»<button class="fn-ref" data-fn="7">7</button>.</p>
+          <h3 style="font-family:var(--font-body);font-size:26px;margin:30px 0 14px;color:var(--accent)">أثر معرفة القواعد في الأسلوب الأدبي</h3>
+          <p>حين تريد أن تعبر عن لقائك بصاحبك عيسى وهو راكب، فربما كتبت: «لقيت عيسا راكب». فإذا تعلمت النحو فقط: «لقيت عيسا راكبا». وإذا تعلمت الصرف فقط: «لَقيتُ عيسا راكبا». وإذا تعلمت الإملاء: «لَقيتُ عيسى راكبا». لعلك تلاحظ أن الجملة تغيرت مرارا مع كل علم يضع طرف بنانه على شباة قلمك.</p>
+          <p>لكن علينا أن ندرك حدود تأثير هذه العلوم، فهذا المثال قصد به تقريب صورة حدود التأثير. أما هدم البناء اللغوي للجملة من أساسها، ثم افتراع جمل أخرى أكثر أناقة، فهذا — مع شرط وجود الملكة — إرث القراءة الدقيقة في الأساليب العالية المودعة كتاب الله تعالى، والمشتملة عليه البلاغة النبوية العظيمة. وقد نبَّه على هذا المعنى أبو حيان الأندلسي فقال: «أكثر أئمة العربية هم بمعزل عن التصرف في الفصاحة والتفنن في البلاغة»<button class="fn-ref" data-fn="8">8</button>.</p>
+          <h3 style="font-family:var(--font-body);font-size:26px;margin:30px 0 14px;color:var(--accent)">قلادة الأديب</h3>
+          <p>وبعد.. فهذه مختارات شعرية من العصور الأولى مضمنة شرحها والتعليق عليها، وهي مادة انتخبناها للحفظ والاستشهاد، وعَلَّقْنا عليها بشرح مقتضب يجلِّي إشكال الأبيات ويحلُّ مُغْلقاتها. وقد قسمنا هذا الكتاب — بعد المقدمة — إلى فصلين: الفصل الأول: المختارات الشعرية. الفصل الثاني: شرح المختارات. ونسأل الله تعالى أن يبارك في هذا الجمع الأدبي.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="chapter" id="chapter1">
+      <div class="content-wrap">
+        <div class="section-head"><div class="kicker">الفصل الأول</div><h2>المختارات الشعرية</h2><p>قصائدُ مختارةٌ من عصور العرب الأولى، مرتَّبةٌ ومشروحة.</p></div>
+        <div id="poemsContainer"></div>
+      </div>
+    </section>
+
+    <section class="chapter" id="chapter2">
+      <div class="content-wrap">
+        <div class="section-head"><div class="kicker">الفصل الثاني</div><h2>شرح المختارات</h2><p>شرحٌ لكل قطعة، مع فوائد وشواهد ومناسبات.</p></div>
+        <div id="explanationsContainer"></div>
+      </div>
+    </section>
+
+    <footer>
+      <div class="footer-mark">✦ قلادة الأديب ✦</div>
+      <div>حقوق الطبع محفوظة — شركة آفاق المعرفة للنشر والتوزيع، ١٤٤٤هـ</div>
+      <div style="margin-top:6px;opacity:.7">كتاب تفاعلي — الإصدار الإلكتروني</div>
+    </footer>
+  </main>
+</div>
+
+<button class="back-top" id="backTop" aria-label="العودة للأعلى">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="m18 15-6-6-6 6"/></svg>
+</button>
+
+<div class="fn-popover" id="fnPopover">
+  <button class="fn-close" id="fnClose" aria-label="إغلاق">×</button>
+  <span class="fn-num" id="fnNum">1</span>
+  <span id="fnText"></span>
+</div>
+
+<script>
+/* ============================================================
+   DATA
+   ============================================================ */
+var poems = [
+  {
+    n: 1, title: "وهو منطلق", poet: "جُؤَيَّة بن النَّضْر", meter: "بحر البسيط",
+    verses: [
+      ["إِنَّا إِذا اجتمعت يَوْمًا دَرَاهِمُنا", "ظَلَّتْ إِلَى طُرقِ الْمَعْرُوفِ تَسْتَبِقُ"],
+      ["لا يألفُ الدَّرْهُم المضْرُوبُ صُرَّتَنَا", "لكِنْ يَمُرُّ عَلَيْهَا وَهُوَ مُنْطَلِقُ"]
+    ],
+    explain: [
+      "اشتكت امرأة هذا الشاعر إليه سرعةَ فَناءِ أموالهم، فقال لها: إن دراهمنا إذا اجتمعت تسابقت إلى مسالك المعروف.",
+      "<span class='gloss'>الدرهم المضروب</span>: المسكوك. و<span class='gloss'>الصُّرَّة</span>: تُحفظ بها الدراهم. يقول: الدرهم لا يألف صُرَّتنا ولا يستقر بها، وإنما يمر عَلَيْهَا مرورًا ثم ينطلق إلى سبل المعروف.",
+      "وتعبيره بالاسم <span class='gloss'>(منطلق)</span> أبلغ من الفعل (ينطلق)، لأن الاسم فيه معنى الثبوت، والفعل فيه معنى الحدوث. قال عبد القاهر الجرجاني: «هذا هو الحسَنُ اللائق بالمعنى». وقد أخذ المتنبي هذا المعنى: «وكلما لقي الدينار صاحبه في ملكه افترقا»."
+    ]
+  },
+  {
+    n: 2, title: "دبيب الكسالى", poet: "حوط بن رئاب الأسدي", meter: "بحر البسيط",
+    verses: [
+      ["دَبَيْتَ للمَجْدِ والسَّاعون قد بَلَغُوا", "جَهْدَ النُّفوسِ والقوا دونَه الأُذُرا"],
+      ["فكابدوا المجد حتى مَلَّ أكثرهم", "وعانَقَ المجدَ مَنْ أَوفى وَمَنْ صَبَرًا"],
+      ["لا تحسب المجد تمرا أنتَ أكله", "لن تبلغ المجد حتى تَلْعَقَ الصَّبِرا"]
+    ],
+    explain: [
+      "<span class='gloss'>دببت الدبيب</span> هو المشي المتئد. <span class='gloss'>الساعون</span>: الماشون بسرعة. <span class='gloss'>الأزرا</span>: جمع إِزار، وإلقاؤه كناية عن الاجتهاد. المعنى: أنت تدب نحو المجد، وغيرك بذل جهدًا عظيما، فلن تصل.",
+      "<span class='gloss'>فكابدوا المجد</span>: تحمَّلوا المشاق. <span class='gloss'>مَن أوفى</span>: مِن الوَفَاء. <span class='gloss'>ومَن صَبَرا</span>: على الشدائد. لم ينل المجد إلا أهل الصبر.",
+      "<span class='gloss'>الصبر</span>: عصارة شَجَر مُرٌّ. لا تتوهّم أن تحصيل المجد سهل ينال بملازمة وسائد الراحة، فإنه لن ينال إلا بتحمل المشاق."
+    ]
+  },
+  {
+    n: 3, title: "صخرة الأسرار", poet: "مسكين الدارمي", meter: "بحر الطويل",
+    verses: [
+      ["وفتيانِ صدقٍ لَسْتُ مطلع بعضهم", "على سِرِّ بعض غيرَ أَنِي جِمَاعُها"],
+      ["لكلِّ امرىءٍ شِعْبٌ مِنَ الْقَلبِ فَارِغ", "وموضع نجوى لا يُرامُ اطَّلاعُها"],
+      ["يَظُلُّونَ شتى في البلاد، وسرُّهم", "إلى صخرة أعيا الرجال انصداعُها"]
+    ],
+    explain: [
+      "<span class='gloss'>وفتيان</span> بالجر، والتقدير وربَّ فتيان. <span class='gloss'>جماعها</span>: اسم لما يجمع به الشيء. فيقول: ربَّ فتيان وثقوا بي، واستودعوني أسرارهم، لا أطلع بعضهم على أسرار بعض.",
+      "لكل واحد منهم مكان في الفؤاد لا يشركه فيه غيره، قد فُرّغ لنجواه، وانقطعت أطماع الخلق من الاطلاع عليه.",
+      "يغيبون عنه، ورغم ذلك يبقى سرهم مكتوما، كأن سِرَّهم أُودع صخرة صماء أعجز الرجالَ صَدْعُها. أشار إلى ثلاثة معان: عدم إفشاء سر أحدهم للآخر، وثبات موضع السر، وشبه صدره بالصخرة التي لا تنصدع."
+    ]
+  },
+  {
+    n: 4, title: "مقابر المحاسن", poet: "قَعْنَب بن ضَمْرة", meter: "بحر البسيط",
+    verses: [
+      ["إن يسمعوا ريبة طاروا بها فَرَحًا", "مِنِّي، وما سمعوا من صالح دفنوا"],
+      ["صم إذا سمعوا خيرا ذُكِرتُ به", "وإِنْ ذُكِرْتُ بِشَرٌ عِنْدَهم أَذِنـوا"]
+    ],
+    explain: [
+      "إذا سمعوا عنّي سيئة طاروا بها فرحا وأشاعوها، وإذا سمعوا حسنة كتموها ودفنوها.",
+      "<span class='gloss'>صُم</span>: أي هم صُمٌّ. <span class='gloss'>أَذنوا</span>: استمعوا. من شأنهم أنهم يمسون صُمَّا إذا ذُكِرت محاسني، لكن إذا عُرضت عيوبي وجدتهم أشد الناس إنصاتا. وهذا يشبه: «إن يعلموا الخيرَ يُخفوه، وإن علموا شرا أذاعوا»."
+    ]
+  },
+  {
+    n: 5, title: "فليتك تحلو", poet: "أبو فراس الحمداني", meter: "بحر الطويل",
+    verses: [
+      ["إذا الخِلُّ لَمْ يَهْجُرْكَ إِلا مَلالَةٌ", "فَلَيْسَ لَهُ إلا الفراق عتاب"],
+      ["بِمَن يَثِقُ الإِنسانُ فيما يَنوبُهُ", "وَمِنْ أينَ للحُرِّ الكَريم صحاب؟"],
+      ["وَقَدْ صَارَ هَذَا النَّاسُ إِلا أَقَلَّهُمْ", "ذئابا على أجسادِهِنَّ ثياب!"],
+      ["وما كلُّ فَعَالٍ يُجازى بِفِعْلِهِ", "ولا كُلُّ قَوالٍ لديَّ يُجابُ"],
+      ["وربَّ كلامٍ مر فوقَ مَسامِعي", "كما طَنَّ فِي لَوحِ الهجيرِ ذُبَابُ!"],
+      ["فليتك تحلو والحياة مريرة", "وليتك ترضى والأنام غضابُ"],
+      ["وليت الذي بيني وبينك عامر", "وبيني وبين العالمين خَـراب"]
+    ],
+    explain: [
+      "إذا هجرك خَلِيلُكَ بلا سبب إلا الملل؛ فلا خير في صحبته، ولا ينفع في معاتبته إلا فراقه!",
+      "ومن الصاحب الذي يوثق فيه حين تنزل النازلة! ومن أين يجد الحُرّ صحابا أصفياء؟!",
+      "فإن الناس قد أمسوا — إلا قليلا — ذئابا تتقنّع بأقنعة البشر! وروي عن سهل بن حنيف: «يا خال، إن الناس ليسوا بالناس الذي كنت تعهد، إنما هم الذئاب عليهم الثياب فاحذرهم».",
+      "ولربما أثقل أحدهم عليّ بالكلام الفاحش، فلم أُعزه اهتماما، ومرّ كلامه فوق مسامعي كَما يمرُّ طَنين الذُّباب في شدّة الحرّ.",
+      "فليتك — أيها الخلّ — تحلو، ولا أبالي بمُرّ الحياة، وليتك ترضى، وكل غضب غير غضبك هين. وهذان البيتان كثيرا ما يجريان على ألسنة الناس في باب الابتهال إلى الله. قال ابن كثير: بلغني عن شيخ الإسلام ابن تيمية أنه كان ينكر على المتنبي هذه المبالغة في مخلوق، ويقول: إنما يصلح هذا لجناب الله. وأخبرني ابن القيم أنه سمع شيخ الإسلام يقول: ربما قلت هذين البيتين في السجود أدعو الله بما تضمناه من الذل والخضوع."
+    ]
+  },
+  {
+    n: 6, title: "الغلو ذريعة الانتقاص", poet: "ابن الرومي", meter: "بحر المتقارب",
+    verses: [
+      ["إذا ما وَصَفْتَ امراً لامرىء", "فَلا تَغْلُ في وَصْفِه واقصِـدِ"],
+      ["فإِنَّكَ إِن تغلُ تغلُ الظُّنو", "نُ فِيهِ إِلَى الْأَمَدِ الْأَبْعِدِ"],
+      ["فينقُصُ مِن حيث عَظَّمْتَه", "لفضل المغيب على المشهد"]
+    ],
+    explain: [
+      "إذا وصفت امراً غائبا فلا تبالغ في الثناء، لأن زيادة الثناء تأتي بنقيض المقصود.",
+      "إنك إن غلوت فيه غَلَت الظنون وجنحت إلى مدى بعيد يتجاوز حقيقته، فإذا حضر طفقت النفوس تطالبه بما هو خارج عن طاقته.",
+      "فيحصل خلاف مقصودك، وينقص قدره من جهة تعظيمك إياه، لأن الخبر عن الغائب يكون فوق حقيقة الحال. وقد قال ابن القيم: «مِنَ المدح ما يكون ذما وموجبا لسقوط مرتبة الممدوح عند الناس»."
+    ]
+  },
+  {
+    n: 7, title: "شقاء المحب", poet: "أحدهم", meter: "بحر الوافر",
+    verses: [
+      ["وما في الأرض أشقى مِن مُحِبُّ", "وَإِنْ وَجَدَ الهوى حُلْوَ المذاقِ"],
+      ["تراه باكيا في كل حين", "مَخَافَةَ فُرقةٍ أَو لاشتياق"],
+      ["فَيَبْكِي إِنْ نَأوا شوقا إِلَيْهِم", "وَيَبْكِي إِنْ دَنَـوا خـوفَ الْفِرَاقِ"],
+      ["فَتَسْخَنُ عينُه عِنْد الثَّنائي", "وَتَسْخَنُ عينُه عِنْد التلاقي"]
+    ],
+    explain: [
+      "أكثر الناس يعانون من محبوباتهم أكثر من مبغوضاتهم. وهذا كله في المحبوبات الدنيوية، فإنها كلما أوغلت في الفؤاد كانت أشدّ ألما. قال ابن تيمية: «فمن أحب شيئًا لغير الله فالضرر حاصل له إن وجد، أو فقد».",
+      "وهذه الأبيات تفصل شيئا من هذا الشقاء الروحي مع اختلاف الأحوال بين حصول المحبوب وفقده. ومعنى <span class='gloss'>تَسْخَن عينه</span> أي تبكي، ودمعة الغم حارة."
+    ]
+  },
+  {
+    n: 8, title: "استسهال البدايات", poet: "العباس بن الأحنف", meter: "بحر الكامل",
+    verses: [
+      ["الحبُّ أوّلُ ما يكون لجاجَةٌ", "تأتى به وتسوقه الأقدار"],
+      ["حتى إذا اقتحم الفتى لُجَجَ الهوى", "جاءت أمورٌ لا تُطاق كبار!"]
+    ],
+    explain: [
+      "اختلف الناس في العشق: هل هو اختياري أم اضطراري؟ وقد عرض ابن القيم الخلاف ثم ذكر أن مبادئ العشق وأسبابه اختيارية داخلة تحت التكليف، فإذا أتى بالأسباب كان ترتب المسبب عليها بغير اختياره. فهناك مرحلة اختيار وقبول يذكرها العاشق جيدا، ثم يجد نفسه في مرحلة المتاعب الكبار مسيرا لا مخيرا!",
+      "وقد أحسن العباس بن الأحنف في تصوير هاتين المرحلتين: أول الحب لجاجة من المحب، ثم بعد التمادي وَفَدَت الأمور الكبار التي لا تطاق!"
+    ]
+  },
+  {
+    n: 9, title: "سباع بشرية", poet: "أبو الطيب المتنبي", meter: "بحر الخفيف",
+    verses: [
+      ["إنما أَنْفُسُ الأنيس سباعٌ", "يَتَفَارَسْنَ جَهْرَةً وَاغْتيالا"],
+      ["مَنْ أَطاقَ التماسَ شَيءٍ غِلابا", "وَاغْتِصابا، لم يَلْتَمِسْهُ سؤالا!"],
+      ["كُلُّ غَادٍ لحاجَةٍ يَتَمَنَّى", "أن يكونَ الغَضَنْفَرَ الرَّقْبالا"]
+    ],
+    explain: [
+      "أراد بـ<span class='gloss'>الأنيس</span> الناس، فجعل نفوسهم مثل السِّباع الضارية، يفرسُ بعضها بعضًا إما مجاهرة أو مخادعة.",
+      "<span class='gloss'>الغلاب</span>: المغالبة. <span class='gloss'>الاغتصاب</span>: الأخذ بالقهر. من قدر على مراده بالقوة لم يطلبه بالسؤال.",
+      "<span class='gloss'>الغضنفر والرئبال</span>: مِنْ أسماء الأسد. وقال محمود شاكر عن اختيار لفظ (الأنيس): «فهو قد اختار اللفظ الذي يدل على المؤانسة والرفق، ليظهر لك أنها تخفي تحت هذا كله طباعًا وحشية ضارية»."
+    ]
+  },
+  {
+    n: 10, title: "لذة السعي إلى الأماني", poet: "أبو الطيب المتنبي", meter: "بحر الطويل",
+    verses: [
+      ["وأحلى الهوى ما شك في الوَصْلِ رَبُّه", "وفي الهجر، فهو الدهر يرجو وَيَتَّقي"],
+      ["ولم أر كالألحاظ يوم رحيلهم", "بَعَثْنَ بِكُلِّ القَتْلِ مِن كُلِّ مُشْفِقِ"],
+      ["أَدَرْنَ عُيُونًا حائراتٍ كأَنَّها", "مُرَكَّبَةٌ أحداقُها فوقَ زِئبقِ"],
+      ["عشية يعدونا عن النظر البكا", "وَعَنْ لذَّةِ التَّودِيـع خـوفُ التَّفرِقِ"]
+    ],
+    explain: [
+      "أحلى الهوى ما كان صاحبه مرتابًا في حصول الوَصْلِ متخوفًا من الهَجْر. فعامة الأماني إذا تحققت فقدت بريقها، والسعادة الحقيقية تكمن في السعي إلى الأماني وهي تلوح من بعيد.",
+      "<span class='gloss'>الألحاظ</span>: العيون. لم أرَ مثل صنيع العيون يوم رحيلهم، كيف اجتمع فيها القتل والشفقة!",
+      "كنا نُقَلِّبُ عيونا حائرات عند وَدَاعِنا، كأنما وضعت أحداقها على الزئبق فهي حائرة لا تسكن.",
+      "<span class='gloss'>عشية</span>: وقت العشيَّة. <span class='gloss'>يعدونا</span>: يمنعنا. عشيَّة يصرفنا البكاء عن النظر إلى من نحب، ويصرفنا خوف الفراق عن لذة التوديع."
+    ]
+  },
+  {
+    n: 11, title: "استبداد الشعور", poet: "الطرمَّاح بن حكيم", meter: "بحر الطويل",
+    verses: [
+      ["متى مَا يَسُوظَنُّ امرئ بِصَدِيقِهِ", "وللظنِّ أسباب عراضُ المَسارِحِ"],
+      ["يُصَدِّق أمورا لم يجثه يقينها", "عليه، ويعشـق سـمـعـه كـل كـاشِـح"]
+    ],
+    explain: [
+      "<span class='gloss'>المسرح</span>: المرعى. <span class='gloss'>الكاشح</span>: العدو. شبه المرعى بالذهن الذي تجول فيه الظنون. إذا ساءَ ظنُّ المرء بصاحبه صدق عنه أمورا لم يتيقن من صدقها، ويُرْخِي سمعه لكل عدو كاشح.",
+      "فكلما هبت نسائم الظنون استقرت بذرة التصديق بلا دليل. ولذلك يقول المتنبي: «إنما تنجح المقالة في المـرء إذا صادفـت هـوى في الفؤادِ»."
+    ]
+  },
+  {
+    n: 12, title: "قبول المعاذير", poet: "أحدهم", meter: "بحر البسيط",
+    verses: [
+      ["اقبَلْ مَعاذير مَن يأتيك مُعْتَذِرا", "إِنْ بَرَّ عِندكَ فيما قالَ أو فَجَرا"],
+      ["فَقَدْ أَطاعكَ مَن يُرضِيكَ ظَاهِرُهُ", "وَقَدْ أَجَلَّكَ مَن يَعْصِيكَ مُستَتِرا"]
+    ],
+    explain: [
+      "اقبلْ عُذر من اعتذر إليك سواء صدق أو كذب، ولا تفتش وراء العذر، فيكفيك أن أرضاك ظاهره، وأنه لا يخالفك إلا في السِّرِّ إجلالا لك."
+    ]
+  },
+  {
+    n: 13, title: "حزازات النفوس", poet: "زفر بن الحارث الكلابي", meter: "بحر الطويل",
+    verses: [
+      ["أَيَذْهَب يوم واحدٌ إِن أَسَأْتُهُ", "بصالح أَيَّامي وحُسْنِ بلائيـا"],
+      ["وَقَدْ يَنْبُتُ المَرْعَى على دِمَنِ الثَّرَى", "وَتَبْقَى حَزازاتُ النفوسِ كما هيا"]
+    ],
+    explain: [
+      "هرب زفر في وقعة مرج راهط، وقال معتذرا: إن لي من حسن البلاء في الحروب ما لا ينكره أحد، أفيذهب هذا ويُنسى ليوم واحد هربت فيه؟!",
+      "<span class='gloss'>دِمَن الثّرى</span>: ما تخلّفه الماشية من أبوال وأبعار. <span class='gloss'>حزازات النفوس</span>: ما يحز في النفس من غيظ. قد يصلح النبات الفاسد وتغسله الأمطار، أما حزازات النفوس فلا يكاد يغسلها شيء."
+    ]
+  },
+  {
+    n: 14, title: "ربما أفسد التمادي", poet: "أعرابي", meter: "بحر المديد",
+    verses: [
+      ["ما لعيني تُحِلَتْ بالسُّهادِ", "وَلِجَنْبي نابِيا عَنْ وِسادِي"],
+      ["لا أذوقُ النَّومَ إلا غرارا", "مِثلَ حَسْوِ الطَّيرِ مَاءَ الثَّمَـادِ"],
+      ["أَبتغي إصلاحَ سُعْدَى بِجُهْدي", "وهي تسعى جهدها في فسادي"],
+      ["فتتاركنا على غير شيءٍ", "رُبَّما أفسد طولُ التَّمادي"]
+    ],
+    explain: [
+      "<span class='gloss'>السهاد</span>: الأَرَق. <span class='gloss'>نابيا</span>: مرتفعا. <span class='gloss'>الوساد</span>: المِخَدَّة. ما بال عيني لا تذوق النوم، وما بال جنبي لا يستقر على الوساد.",
+      "<span class='gloss'>الغرار</span>: القليل. <span class='gloss'>الثّماد</span>: الماء القليل في الحُفر. لا أذوق من النوم إلا مثل ما يحسو الطائر من الماء المجتمع في الحُفَر.",
+      "أبذل طاقتي في السعي لما يصلح أحوال سُعدى، بينما هي تسعى في فساد أحوالي.",
+      "<span class='gloss'>التتارك</span>: ترك بعضنا بعضا. <span class='gloss'>التمادي</span>: الإلحاح. ربما تطاول هذا التتارك فأفسد حالَيْنَا. وهذا يشبه قول العباس بن الأحنف: «إن التباعد إن تطاول منكما... دب السـلـو لـه فَعَزَّ المطلب»."
+    ]
+  },
+  {
+    n: 15, title: "وملت سليمى", poet: "صخر بن الشريد", meter: "بحر الطويل",
+    verses: [
+      ["أرى أمَّ صَخْرٍ لا تملُّ عِيادَتي", "وَملَّتْ سُلَيمى مَضْجَعِي وَمَكانِي"],
+      ["فأي امرىء سـاوَى بـأم حليلـة", "فلا عاش إلا في أذى وهوان"],
+      ["لعمري لقد نبهتِ مَنْ كان نَائِمًا", "وأَسْمَعْتِ مَنْ كانتْ له أُذُنَـانِ"],
+      ["أهم بأمر الحزم لو أستطيعه", "وقدْ حِيلَ بينَ العَير والنَّزَوانِ"],
+      ["وما كنتُ أخشى أن أكون جنازة", "عليكِ، وَمَـن يغتر بالحَدَثَانِ!"]
+    ],
+    explain: [
+      "طُعن صخر في معركة فمرض وطال مرضه، وكانت أمه وزوجته تقومان عليه. سمع زوجته تقول: «لا حيا فيرجى ولا ميتا فينسى»، وسمع أمه تثني عليه. فهمّ بقتل زوجته ولم يستطع، فأنشأ الأبيات.",
+      "أرى أمي لا تمل عيادتي، أما زوجتي سليمى فقد ملت مضجعي ومكاني. من سوّى بين أمه وزوجته فلا عاش إلا في أذى وهوان.",
+      "نبهتِ بهذا الموقف كلَّ نائم، وأسمعتِ كلَّ من له أذنان.",
+      "<span class='gloss'>العير</span>: حمار الوحش. أهم بقتلها لو أستطيع، ولكن حيل بيني وبين ذلك كما حيل بين العير والنزوان.",
+      "<span class='gloss'>جنازة</span>: ثقيل. <span class='gloss'>الحدثان</span>: نوائب الزمان. ما خشيت أن أكون ثقيلا عليك، ولكن من يغتر بحوادث الزمان؟!"
+    ]
+  },
+  {
+    n: 16, title: "الغياب الموجع", poet: "مُهَلْهِل بن ربيعة", meter: "بحر الكامل",
+    verses: [
+      ["بنْتُ أَنَّ النَّارَ بَعْدَكَ أُوقِدَتْ", "وَاسْتَبَّ بَعْدِكَ يا كُلَيْبُ المجلس"],
+      ["وَتَكَلَّمُوا فِي أَمْرِ كُلِّ عَظِيمَةٍ", "لو كنتَ شَاهِدَهُم بِها لم يَنْبِسوا"]
+    ],
+    explain: [
+      "قال مهلهل في رثاء أخيه كليب. <span class='gloss'>استب المجلس</span>: صار أهله يسبُّ بعضُهم بعضا. نبئت أن نيران الضيافة أضرمت بعد غيابك، وأن أهل المجلس تداولوا الأحاديث، وبالغوا في اطراح الكلفة حتى صاروا يسب بعضهم بعضًا. كان كليب مهيبا لا يجسر أحد على الحديث بين يديه.",
+      "<span class='gloss'>لم ينبسوا</span>: لم يتكلموا بحرف. تكلموا في الأمور الكبار، ولو كنت شاهدًا ما جسروا أن يتقدموا بين يديك. وهذان البيتان من أروع ما قيل في الرثاء."
+    ]
+  },
+  {
+    n: 17, title: "زفرة والد", poet: "أُمية بن أبي الصلت", meter: "بحر الطويل",
+    verses: [
+      ["غَذَوتُك مَولودًا، وعُلْتُك يَافِعًا", "تَعُلُّ بِمَا أُدْنِي إِلَيْكَ، وَتَنْهَـلُ"],
+      ["إذا لَيْلَةٌ نَابَتْكَ بالشَّكُو لم أَبِتْ", "لِشَكُواكَ إِلَّا سَاهِرًا أَتَمَلْمَلُ"],
+      ["كَأَنِّي أَنا المطروقُ دُونَكَ بِالَّذِي", "طُرِقْتَ بِهِ دُونِي فَعَيني تَهِمِلُ"],
+      ["تخَافُ الرَّدى نَفْسِي عَلَيْكَ، وَإِنَّهَا", "لَتَعْلَمُ أَن الْمَوْتَ حَتْمٌ مُؤَجَّلُ"],
+      ["فَلَمَّا بَلَغْتَ السِّنَّ والغايةَ الَّتِي", "إِلَيْهَا مَدَى مَا كنتُ فِيكَ أُؤَمِّل"],
+      ["جَعَلْتَ جَزَائِي غِلْظَةٌ وَفَظاظةً", "كَأَنَّكَ أَنْتَ المُنْعِمُ المُتَفَضّل"],
+      ["فَلَيْتَك إذ لم تَرْعَ حَقَّ أُبُوَّنِ", "فَعَلْتَ كَمَا الجَارُ المجاوِرُ يَفْعَلُ"]
+    ],
+    explain: [
+      "<span class='gloss'>غذوتك</span>: قمت بمؤنتك. <span class='gloss'>وعُلْتُك</span>: كفلتك. <span class='gloss'>اليافع</span>: الغلام. <span class='gloss'>تَنْهَل</span>: الشرب الأول. قمت بمؤنتك وأنت مولود، وكفيتك حاجاتك وقت شبابك. يذكره بأفضاله عليه لما رأى من عقوقه.",
+      "<span class='gloss'>التململ</span>: التقلب على الفراش. كنت إذا أصابك ما يؤذيك سَهِرَت عيني.",
+      "كأني في تململي أنا المصاب بما أصبت به، ولست أنت.",
+      "<span class='gloss'>الردى</span>: الهلاك. <span class='gloss'>الحتم</span>: الواجب الوقوع. مع علمي أن الموت حتم، كنت أحوطك وأخاف عليك.",
+      "لما بلغت المرحلة التي أؤملها.",
+      "جعلت جزائي غلظة، كأنَّ الفضل لك والإنعام منك!",
+      "ليتني حين فاتني حق الأُبَوَّة، ظَفِرْتُ ولو بحق الجوار!"
+    ]
+  },
+  {
+    n: 18, title: "فضيلة التغافل", poet: "الشريف الرضي", meter: "بحر الطويل",
+    verses: [
+      ["وكمْ صاحب كالرُّمْحِ زَاغَتْ كُعُوبُه", "أَبَى بَعدَ طُولِ الغَمْرِ أَنْ يَتَقَوّما"],
+      ["تَقَبَّلْتُ مِنْهُ ظاهرًا مُتَبَلِّجًا", "وَأَدْمَجَ دُونِي باطنًا مُتَجَهما"],
+      ["ولو أَنَّني كَشَفته عَن ضَمِيرِهِ", "أَقَمْتُ على ما بينَنـا اليـومَ مَأْتَمـا"],
+      ["إذا العُضْرُ لَمْ يُؤلِمُكَ إِلا قَطَعَتَهُ", "على مَضَضٍ لم تُبق لحما ولا دما"]
+    ],
+    explain: [
+      "<span class='gloss'>زاغَتْ</span>: مالَتْ. <span class='gloss'>كَعْب الرمح</span>: القصبة. <span class='gloss'>الغَمْز</span>: تليين الرُّمح. كم صاحب حاولت استصلاحه فلم يتم.",
+      "<span class='gloss'>المتبلج</span>: المشرق. <span class='gloss'>الإدماج</span>: الإخفاء. تقبلت منه وجها ظاهرا مشرقا، رغم علمي أنه أخفى وجها مختلفا.",
+      "لو أبديت له علمي بما أخفاه، لأقمت مأتما على ما بيننا. رأيت أن أتغافل وأستبقيه، فذلك خير من مكاشفته ثم خسارته.",
+      "إذا كان العضو كلما آلمك قطعته، لن تبقي لحما ولا دما. فكذلك أصدقاؤك إذا بادرت بالقطع لكل مقصر فلن يبقى لك أحد."
+    ]
+  },
+  {
+    n: 19, title: "عند الشدائد تذهب الأحقاد", poet: "عويف القوافي", meter: "بحر الكامل",
+    verses: [
+      ["ذَهَبَ الرُّقادُ فَمَا يُحَسُّ رُقادُ", "مما شَجَاكَ، وَنَامَتِ العُوَّادُ"],
+      ["لمَّا أتاني عَنْ عُيَيْنَةَ أَنَّه", "أَمْسَتْ عليه تَظاهَرُ الأَقِيادُ"],
+      ["نَخَلَـتْ لـه نفسـي النصيحة إنـه", "عند الشَّدائِدِ تَذْهَبُ الأَحقادُ"]
+    ],
+    explain: [
+      "كان عيينة متزوجًا أخت الشاعر عويف، ثم طلقها فغضب عويف. ثم تسلط الحجاج على عيينة وسجنه، فلما علم عويف ذهبت أحقاده. <span class='gloss'>العُوَّاد</span>: جمع عائد من العيادة. طار النوم عن عيني بسبب ما أهمك.",
+      "<span class='gloss'>تظاهر الأقياد</span>: جعلوا عليه الأقياد بعضها فوق بعض.",
+      "<span class='gloss'>نَخَلَت لَهُ</span>: أخلصت. لما أتاني الخبر زال ما في صدري من الغل، فإن نيران المصائب تحرق أكوام الضغائن. وهذا الشطر مثَل يُستشهد به وحده."
+    ]
+  },
+  {
+    n: 20, title: "رقية الحب", poet: "أم الضحاك المحاربية", meter: "بحر الطويل",
+    verses: [
+      ["سألت المحبّين الذين تحمّلوا", "تباريح هذا الحب من سالف الدهر"],
+      ["فقلت لهم: ما يُذهب الحبَّ بَعدَما", "تبوأ مـا بيــن الـجـوانــح والصدر؟"],
+      ["فقالوا: شـفـاء الحـب حـب يزيله", "لآخر، أو نأي طويل على هَجْرِ"],
+      ["أو اليأس حتى تذهل النفس بعدما", "رَجَتْ طمعًا، واليأس عون على الصبر"]
+    ],
+    explain: [
+      "كانت أم الضحاك تحب زوجها، ثم طلقها فحزنت. <span class='gloss'>تباريح الحب</span>: شدائده. سألت المحبّين الذين قاسوا شدائده.",
+      "<span class='gloss'>تبوأ</span>: نزل. <span class='gloss'>الجوانح</span>: الأضلاع. سألتهم ما علاج العشق المستحكم؟",
+      "<span class='gloss'>نأي</span>: بعد. أجابوني: شفاء الحب أحد ثلاثة: أن تبدلي الحب القديم بحب جديد، أو الهجر والبعد مدة طويلة.",
+      "<span class='gloss'>تذهل</span>: تنسى. أو اليأس من عودة الحب، فإن اليأس غنى، وفي قطع رقبة الطمع عون على الصبر."
+    ]
+  },
+  {
+    n: 21, title: "إن الشجا يبعث الشجا", poet: "متمم بن نويرة", meter: "بحر الطويل",
+    verses: [
+      ["لَقَدْ لَا مَني عِندَ القُبُور على البكا", "رفيقي لِتَذْرَافِ الدُّمُوعِ السوافك"],
+      ["فَقَالَ: أَتَبْكِي كل قبرٍ رَأَيْتَه", "لِقَبرِ نَوى بين اللوى فَالدَّعَادِكِ"],
+      ["فقلت له: إن الشَّجا يَبْعَثُ الشَّجا", "فَدَعْنِي، فَهَذَا كُلُّهُ قَبرُ مَالك!"]
+    ],
+    explain: [
+      "<span class='gloss'>تذراف</span>: تكثير الذرف. <span class='gloss'>السوافك</span>: الصَّب. لامني رفيقي لما رآني أبكي على القبور واستنكر كثرة إراقتي الدموع.",
+      "<span class='gloss'>ثوى</span>: أقام. <span class='gloss'>اللوى والدكادك</span>: موضعان. قال لي: أتبكي كل قبر تراه لأجل قبر أخيك الذي حل بين اللوى والدكادك؟",
+      "<span class='gloss'>الشجا</span>: الحزن. فقلت: إن الحزن يبعث الحزن، والذكرى تجرُّ أختها، فدعني، فإني أرى كل قبر أمامي قبر أخي مالك!"
+    ]
+  },
+  {
+    n: 22, title: "فكشفه التمحيص", poet: "عبد الله بن معاوية", meter: "بحر الطويل",
+    verses: [
+      ["رأيتُ فُضيلا كان شيئا مُلفّفًا", "فَكَشَفه التمحيص حتى بَدَاليا"],
+      ["أَأَنتَ أخي ما لم تكن لي حاجةٌ", "فَإِنْ عَرَضَتْ أَيقنتُ أَن لا أَخَالِيا!"],
+      ["كلانا غنيٌّ عن أَخيه حَيَاتَه", "وَنَحنُ إذا متنـا أشدُّ تغانيا"]
+    ],
+    explain: [
+      "كان فضيل شيئًا مستورا، لا يُدرى ما الذي انطوى عليه، فلما كان وقت الجد استبانت حقيقته.",
+      "أتكونُ أخي في الرخاء وتُظهر الود، ثم إن ألمت نازلة فقدتك! وأيقنت أن لا أخ لي على الحقيقة!",
+      "كلا منا في غنّى تام عن صاحبه حال حياته، ثم إذا متنا فأشدُّ استغناء. فالتباعد أليق بنا."
+    ]
+  },
+  {
+    n: 23, title: "فكأنها أحلام", poet: "أبو تمام", meter: "بحر الكامل",
+    verses: [
+      ["ولقد أراكِ، فَهَلْ أَراكِ بِغِبْطَةِ", "والعَيشُ غَضُ والزَّمانُ غُلَامُ؟!"],
+      ["أعوَامَ وَصْلِ كَادَ يُنْسِي طُولَها", "ذَكْرُ النَّوَى، فَكَأَنَّهَا أَيَّامُ"],
+      ["ثُمَّ انْبَرَتْ أَيَّامُ هَجْرٍ أَردَفَتْ", "بجوى أَسى، فكأَنَّها أَعْوَامُ"],
+      ["ثمَّ انْقَضَتْ تلك السنونَ وأَهلُها", "فكأَنَّها وَكَأَنَّهُمْ أَحلامُ"]
+    ],
+    explain: [
+      "<span class='gloss'>الغبطة</span>: السرور. <span class='gloss'>الغَضُّ</span>: الطري. هل سأبتهج برؤيتك ونحن في حياةٍ طرية والزمان سمح في مقتبل أيامه.",
+      "<span class='gloss'>النوى</span>: البعد. هل أراكِ بغبطة أعوامَ وَصل طويلة، حتى كاد يُنسي طولها تذكر الفراق، فكأنها أيام! قال الآمدي: «إنا كنا نذكر الفراق فتبادر السرور فكان ذلك يقصر من طولها».",
+      "<span class='gloss'>انبرت</span>: اعترضت. <span class='gloss'>الجوى</span>: الحرقة. حَلَّتْ بنا أيام هجر بعد الوصل، وبسبب ما فيها من الجوى كأنها أعوام.",
+      "تشبيه الحياة في سرعة انصرامها بالنوم والأحلام كثير عند الشعراء. ومنه قول التهامي: «فالعيش نوم والمنية يقظة»."
+    ]
+  },
+  {
+    n: 24, title: "حصاد السنين", poet: "أبو نواس", meter: "بحر الكامل",
+    verses: [
+      ["ولقد نَهَرْتُ مَعَ الغُواةِ بِدَلْوِهِم", "وَأَسَمْتُ سَرِحَ اللَّحْظِ حَيْثُ أَساموا"],
+      ["وَبَلَغْتُ ما بَلَغَ امرقٌ بِشَبابِهِ", "فَإِذا عُصَارَةُ كُلِّ ذَاكَ أَيَّامُ!"]
+    ],
+    explain: [
+      "<span class='gloss'>نهز الدلو</span>: ضربها في الماء لتمتلئ. <span class='gloss'>أسام الماشية</span>: أخرجها للمرعى. شاركتُ الغواة في غيهم، وبلغت غاية سعيهم.",
+      "<span class='gloss'>عصارة</span>: خلاصة. <span class='gloss'>أثام</span>: جزاء. قوله (ما بلغ امرؤ بشبابه) في هذا الإبهام معنى لطيف يستحسنه البلاغيون، والمقصود بلغت كل ما يخطر ببالك. قال ابن الأثير: «وهذا كقول القائل: لو رأيت عليا بين الصفين...». ولكنه لم يحصل من ذلك اللهو كله إلا الحسرة والخيبة!"
+    ]
+  },
+  {
+    n: 25, title: "أنفة العتاب", poet: "معن بن أوس", meter: "بحر الطويل",
+    verses: [
+      ["لعمرُكَ ما أدري - وإني لأوجَلُ -", "على أينـا تعـدو المنية أوّلُ"],
+      ["وإِنِّي أخوك الدائم العهد لم أَحُلْ", "إِنَّ ابرَاكَ خصمٌ أَو نَبَا بِكَ مَنزِلُ"],
+      ["أحارب من حاربت من ذي عداوة", "وأحبس مالي إِن غَرِمتَ فَأَعقِلُ"],
+      ["ستقطعُ في الدُّنيا إذا ما قطعتني", "يمينك، فانظُرْ أَي كَفَّ تَبَدَّلُ!"],
+      ["وفي النَّاسِ إِن رَّثْتُ حِبالُكَ واصل", "وفي الأرض عن دار القلَى مُتحول"],
+      ["إذا أنتَ لم تُنصف أخاك وجدتَهُ", "عَلَى طَرَفِ الهِجرانِ إِن كَانَ يَعْقِلُ"],
+      ["ويركبُ حَدَّ السَّيفِ مِن أَن تَضيمَهُ", "إذا لم يكن عن شَفرَةِ السَّيْفِ مَرْحَلُ"],
+      ["نصرفت نفسي عن الشيء لم تكذ إليه", "بوجه آخرَ الدّهرِ تُقبِلُ"]
+    ],
+    explain: [
+      "<span class='gloss'>العمرك</span>: الحياة، يُقسم بها. <span class='gloss'>أوجَلُ</span>: خائف. <span class='gloss'>تعدو المنية</span>: ينهض الموت. لا أدري على أي واحد منا يهجم الموت أولا.",
+      "<span class='gloss'>لم أحل</span>: لم أتغير. <span class='gloss'>ابزاك</span>: غلبك. <span class='gloss'>نبا بك</span>: ألجأك للتحول. أنا أخوك الذي لم تنقلب مودته، أنصرك إن تكالبت عليك الخصوم.",
+      "<span class='gloss'>مالي</span>: إبلي. <span class='gloss'>فأعقلُ</span>: أتكفّل بالدية. أحارب معك من تحارب، وأجعل مالي فداءً لك.",
+      "لئن عزمت على صُرمي، فإنك لن تضر إلا نفسك، وكأنما تقطع يمينك!",
+      "<span class='gloss'>ربَّت حبالك</span>: بليت. <span class='gloss'>القلي</span>: البغض. إذا بليت حبال مودتك فلي في وصال النَّاس حبال وثيقة، وإذا ضاقت بي دارك ففي الأرض متسع.",
+      "<span class='gloss'>الهجران</span>: الهجر. إذا لم تُنصف أخاك وجدته متجافيا، إن كان له عقل يحكمه.",
+      "<span class='gloss'>يركب حد السيف</span>: كناية عن الوقوف على مشارف الهلاك. <span class='gloss'>تضيمه</span>: تظلمه. <span class='gloss'>مزحل</span>: منتقل. تراه يرد موارد الخطر أنفةً من أن يُظلم.",
+      "إذا أشحت بوجهي عن شيء وصرفتُ قلبي عنه، فلا تكاد تراني راجعا إليه، فإنَّ لي نفساً كريمة إذا عافت الأمر فارقته."
+    ]
+  },
+  {
+    n: 26, title: "المناظر المتعبة", poet: "أحدهم", meter: "بحر الطويل",
+    verses: [
+      ["وكنتَ متى أرسلت طرفَكَ رائدًا", "لِقَلْبِكَ يومًا أَثْعَبَتْكَ المَناظِرُ"],
+      ["رأيت الذي لا كُله أنت قادر", "عليه، ولا عن بَعْضِـه أنـت صـابـرُ"]
+    ],
+    explain: [
+      "<span class='gloss'>الرائد</span>: المتقدم ليتأمل الماء والكلأ. جعل العين رائدا للقلب لأن القلب يتبع ما تراه. إذا أرسلت العين فإن المناظر سترهقك لأن القلب تابع. قال ابن القيم: «العين رائد القلب، فيبعث رائده لنظر ما هناك...».",
+      "إذا أطلقت طرفك رائدا لقلبك أتعبتك المناظر لكونك سترى ما لا تقدر على الوصول إليه ولا على الصبر عنه، فتوقع نفسك في رَهَق وحسرة."
+    ]
+  },
+  {
+    n: 27, title: "فليتق الله سائله", poet: "أبو تمام الطائي", meter: "بحر الطويل",
+    verses: [
+      ["هوَ اليَمُ مِنْ أَيِّ النواحي أَتَيْتَه", "فَلُجَّته المعروف والجودُ ساحِلة"],
+      ["تعوَّدَ بَسْطَ الكَفِّ حتى لوَانَّهُ", "ثَناهَا لِقَبْضِ لَمْ تُحِبُّهُ أَنامِلُه"],
+      ["ولو لم يَكُنْ فِي كَفِّهِ غَيْرُ رُوحِهِ", "لجادَ بها، فَلْيَتَّقِ اللهَ سائلة"]
+    ],
+    explain: [
+      "<span class='gloss'>اليم</span>: البحر. يقول عن ممدوحه بأنه كاليم من أي النواحي أتيته، وأعماقه المعروف وسواحله الجود.",
+      "اعتاد مدَّ الكف بالعطاء، ولو حاول ثني أنامله لاستعصت عليه لأنها تعودت البسط.",
+      "ليتق الله سائلُ هذا الرجل الكريم! فإنه سيعطيه ما في يده، ولو لم يكن في يده غير روحه لجاد بها."
+    ]
+  },
+  {
+    n: 28, title: "والمنايا رصد", poet: "السُّلَكة أم السليك", meter: "مجزوء المديد",
+    verses: [
+      ["طافَ يَبْغِي نَجْوَةٌ", "مِنْ هَلَاكِ فَهَلَكْ"],
+      ["ليتَ شِعْرِي ضَلَّةٌ", "أي شيء قَتَلَك؟"],
+      ["أَمَرِيضٌ لم تُعَدِّ؟", "أَمْ عَدُوٌّ خَتَلَكُ؟"],
+      ["کل شيء قاتل", "حينَ تَلْقَى أَجَلَكْ"],
+      ["والمنــــــــــايا رَصَــــــد", "للفتى حيثُ سَلَك"],
+      ["ليــــــت قــــــلبي ساعة", "صبره عنكَ مَلَكْ"],
+      ["لَيت نَفسي قُدِّمتْ", "للمنـايا بدلك"]
+    ],
+    explain: [
+      "كان السُّلَيك من صعاليك العرب، فخرج فقتله رجل. فقالت أمه ترثيه. <span class='gloss'>يبغي</span>: يطلب. <span class='gloss'>النجوة</span>: النجاة. خرج يطلب النجاة فكان هلاكه.",
+      "<span class='gloss'>ليت شعري</span>: ليتني أعلم. <span class='gloss'>ضلة</span>: ضلالة. ليتني أعلم أي شيء قتلك.",
+      "<span class='gloss'>ختلك</span>: خدعك. هل كنت مريضًا لم يعدك أحد؟ أم اغتالك عدو غدرا؟",
+      "أعرضت عن الأسباب، فكل شيء قاتل إذا حان الأجل المحتوم.",
+      "<span class='gloss'>المنايا</span>: الموت. المنايا للفتى بالمرصاد أينما ذهب، فابتغاء النجاة لا يدفع الموت.",
+      "ليت قلبي يملك الصبر عنك ولو ساعة.",
+      "أو ليتني افتديتك فقدمت للموت بدل نفسك."
+    ]
+  },
+  {
+    n: 29, title: "حنكته التجارب", poet: "عبد العزيز بن زرارة الكلابي", meter: "بحر البسيط",
+    verses: [
+      ["قَدْ عِشْتُ فِي الدَّهْرِ أَطوارًا عَلَى طُرُقٍ", "شَتَّى، فَصَادَفْتُ مِنْهُ اللينَ وَالْفَطَعَا"],
+      ["كُلًّا بَلَوتُ فَلا النَّعْمَاءُ تُبْطِرُنِي", "وَلَا تَخَشَسْعتُ مِنْ لأَوائِه جَزَعا"],
+      ["لا يملأ الهولُ صَدْرِي قَبلَ مَوْقِعِهِ", "وَلَا أَضِيقُ بِهِ ذَرْعًا إِذَا وَقَعا"]
+    ],
+    explain: [
+      "<span class='gloss'>الفظع</span>: الشدّة. عشتُ في دهري أطوارا على طرق مختلفة، فصادفت أياما لينة وأياما شديدة.",
+      "<span class='gloss'>بلوت</span>: جرّبت. <span class='gloss'>البَطَر</span>: الطغيان بالنعمة. <span class='gloss'>اللأواء</span>: الشدة. عرفتُ الحالين، فلم تُبطرني النعماء، ولا كسرتني اللأواء.",
+      "بلغ من ثبات قلبي أني أعلم أن الهول سيقع ولا يملأ قلبي الخوف قبل نزوله، ولا أضيق به بعد حلوله."
+    ]
+  },
+  {
+    n: 30, title: "وتقتلنا المنون بلا قتال", poet: "أبو الطيب المتنبي", meter: "بحر الوافر",
+    verses: [
+      ["نُعِدْ المَشْرَفيَّةَ والعوالي", "وتَقْتُلُنَا المَنونُ بِلا قِتالِ"],
+      ["نَصِيبُكَ فِي حَياتِكَ من حَبيبٍ", "نَصِيبُكَ فِي مَنامِكَ من خَيالِ"],
+      ["رماني الدهرُ بالأرزاءِ حَتَّى", "فُؤادي في غِشاءِ مِن نَّبَالِ"],
+      ["فَصِرْتُ إذا أصابَتْني سِهام", "تَكَسَرَتِ النَّصَالُ على النِّصَالِ"],
+      ["وهانَ فَمـا أُبالي بالرزايا", "لأنــي مـا انتفعت بـأن أُبالي"]
+    ],
+    explain: [
+      "<span class='gloss'>المشرفية</span>: السيوف. <span class='gloss'>العوالي</span>: الرماح. <span class='gloss'>المنون</span>: المنية. نعد السيوف للقتال، ولكن المنية تخترق الأسوار فتقتلنا بغير قتال.",
+      "نصيب الإنسان من وصال حبيبه في حياته كنصيبه من خياله في منامه، ينقطع بالموت كما ينقطع الحلم باليقظة.",
+      "<span class='gloss'>الأرزاء</span>: المصائب. <span class='gloss'>الغشاء</span>: الغطاء. كأن قلبي من توارد المصائب صار محاطا بغشاء من سهام.",
+      "<span class='gloss'>النصال</span>: جمع نصل. إذا أصابتني مصائب جديدة لم تجد موضعا تنفذ منه، فالنصال اللاحقة تتكسر على السابقة.",
+      "<span class='gloss'>هان</span>: خفَّ. خف علي الأمر وصبرت، فلا أبالي بالرزايا، لأني ما انتفعت بما باليتُ به قبل ذلك."
+    ]
+  },
+  {
+    n: 31, title: "لست الملوم", poet: "أبو الطيب المتنبي", meter: "بحر الكامل",
+    verses: [
+      ["أَبعَينِ مُفتقر إليك نظرتني", "فأهنتني وقذفتني من حالقِ"],
+      ["لست الملوم أنـا المـلـوم لأنني", "أنزلتُ آمالي بغير الخالقِ"]
+    ],
+    explain: [
+      "<span class='gloss'>الحالق</span>: المكان المشرف. هل هان عليك شأني حين نظرتني مفتقرا؟ فأهنتني وخذلتني وقذفتني من مكان مرتفع حتى تحطمت آمالي؟",
+      "ليست الملامة عليك، وإنما أنا الملوم لأنني عَلَّقْتُ آمالي بغير خالقي. قال الرازي: «الذي جربته من أول عمري إلى آخره أن الإنسان كلما عول على غير الله صار ذلك سببا إلى البلاء»."
+    ]
+  },
+  {
+    n: 32, title: "تزاحم الأضداد", poet: "أبو العلاء المعري", meter: "بحر الخفيف",
+    verses: [
+      ["صاحِ هَذي قُبورنا تملأ الرُّحْ", "بَ فَأَينَ القُورُ مِنْ عَهْدِ عَـادِ"],
+      ["خَفِّفَ الوَطْءَ مَا أَظُنْ أَدِيمَ الـ", "أَرْضِ إِلا مِنْ هَذِهِ الْأَجْسَادِ"],
+      ["رب لحد قَدْ صارَ لحدًا مِرارًا", "ضاحك مِن تَزَاحُــم الأَضداد"],
+      ["تعب كُلُّها الحياةُ فَما أَعْجَبُ", "إِلَّا مِنْ رَّاغب فِي ازْدِيـادِ"],
+      ["إِنَّ حُزْنَا فِي سَاعَةِ الموتِ أَضْعا", "فُ سُرور في ساعة الميلادِ"],
+      ["ضجعة الموتِ رَقْدَةٌ يَسْتَريحُ الـ", "جِسْمُ فيها والعَيشُ مِثْلُ السُّها"]
+    ],
+    explain: [
+      "<span class='gloss'>صاح</span>: يا صاحبي. <span class='gloss'>الرحب</span>: المكان المتّسع. إذا كانت قبورنا تملأ المكان المتّسع، فأين قبور السابقين؟ لا بد أنها اندرست.",
+      "<span class='gloss'>الوطء</span>: المشي. <span class='gloss'>أديم الأرض</span>: ظاهرها. خَفِّف مشيك فما تمشي إلا على أجساد سالفة.",
+      "<span class='gloss'>اللحد</span>: الشَّق في جانب القبر. رُبَّ لحد يضحك من اجتماع الأضداد فيه على مر الزمن.",
+      "الحياة كلها تعب، فما أعجب من الراغبين في الزيادة منها! وفي تقديم (تعب) على المبتدأ توكيد لمعنى التعب.",
+      "مقدار الحزن في ساعة الموت لا يساوي مقدار السرور في ساعة الميلاد.",
+      "<span class='gloss'>الضجعة</span>: الاضطجاع. <span class='gloss'>السهاد</span>: الأرق. شبه الموت بالنوم والعيش باليقظة. وليس في هذا إنكار لعذاب القبر، لأنه بالنسبة لما بعده كالرقاد."
+    ]
+  },
+  {
+    n: 33, title: "فيا حجر الشحذ", poet: "ابن تومرت", meter: "بحر المتقارب",
+    verses: [
+      ["أَخَذْتَ بِأَعْضَادِهِمْ إِذْ وَنَوا", "وَخَلَّفَـكَ القوم إِذْ أَسْرَعُوا"],
+      ["وَأَصْبَحْتَ تَهْدِي وَلَا تَهْتَدِي", "وَتُسْمِعُ وَعْظًا وَلَا تَسْمَعُ"],
+      ["فَيَا حَجَرَ الشَّحْذِ حَتَّى مَتَى", "تَسُنُّ الْحَدِيدَ وَلَا تَقْطَعُ"]
+    ],
+    explain: [
+      "حين شعر الناس بالتعب أخذت بأعضادهم وأعنتههم، وحين سلكوا الدرب سبقوك وتركوك خلفهم.",
+      "أصبحت تهدي الآخرين وتصف طريق الفلاح دون أن تسلكه، وتُسمعهم مواعظك دون أن تسمعها لنفسك.",
+      "<span class='gloss'>حَجَر الشَّحْذ</span>: المسَنّ. أشبهت حجر الشحذ: يَسُنُّ الحديد دون أن يقطع، وأنت تهدي الآخرين دون أن تهدي نفسك."
+    ]
+  },
+  {
+    n: 34, title: "زخرف القول", poet: "ابن الرومي", meter: "بحر البسيط",
+    verses: [
+      ["فِي زُخْرُفِ الْقَوْلِ تَزْيِينُ لِبَاطِلِهِ", "وَالْحَقُّ قَدْ يَعْتَرِيهِ سُوءُ تَعْبِيرِ"],
+      ["تَقُولُ: هَذَا مُجَاجُ النَّحْلِ تَمْدَحُهُ", "وَإِنْ ذَمَمْتَ تَقُلْ: قَيْءُ الزَّنَابِيرِ"],
+      ["مَدْحًا وَذَمَّا وَمَا جَاوَزْتَ وَصْفَهُمَا", "حُسْنُ الْبَيَانِ يُرِي الظَّلْمَاءَ كَالنُّورِ"]
+    ],
+    explain: [
+      "<span class='gloss'>زخرف القول</span>: المزيَّن المموَّه. في تزيين القول تزيين للمعاني الباطلة، والحق قد يعتريه سوء تعبير.",
+      "<span class='gloss'>المجاج</span>: الريق. <span class='gloss'>الزنابير</span>: الدبابير. حين أراد مدح العسل شبهه بمجاج النحل، وحين أراد ذمه شبهه بقيء الزنبور، وحقيقة العسل واحدة.",
+      "لم يتجاوز في العبارتين هذين الوصفين. وعلى العاقل أن ينتبه لهذا. قال ابن القيم: «إذا أردت الاطلاع على كُنْه المعنى هل هو حقٌّ أو بَاطِلٌ فَجرِّده من لِبَاسِ العبارة»."
+    ]
+  },
+  {
+    n: 35, title: "فضل التأني", poet: "ابن الرومي", meter: "بحر البسيط",
+    verses: [
+      ["نارُ الرَّويَّة نارٌ جِدُّ مُنْضِجَةٍ", "ولِلبَدِيهَةِ نارٌ ذَاتُ تَلْويحِ"],
+      ["وَقَدْ يَفضُلُهَا قَوْمٌ لِعَاجِلِها", "لكنَّه عاجِلٌ يَمْضِي مَعَ الريح"]
+    ],
+    explain: [
+      "<span class='gloss'>الروية</span>: إشباع الرأي وطول النظر. <span class='gloss'>البديهة</span>: ما كان بغير تأمل. يفضل أقوام البديهة لعاجلها، لكن أثرها لا يبقى، بخلاف نار الروية فإنها تدوم وتترك أثرا باقيا."
+    ]
+  },
+  {
+    n: 36, title: "عرض مصون", poet: "علي بن الجهم", meter: "بحر الوافر",
+    verses: [
+      ["بَلاءُ لَيسَ يُشبهُهُ بَلاءُ", "عَداوةُ غَيرِ ذِي حَسَبٍ وَدِينِ"],
+      ["يُبيحُكَ مِنْهُ عِرضا لَم يَصُنهُ", "وَيَرَتَعُ مِنكَ فِي عِرضٍ مَصونِ"]
+    ],
+    explain: [
+      "نال أحد الشعراء من علي بن الجهم بحضرة المتوكل فلم يجبه، ثم قال. <span class='gloss'>الحسَب</span>: الفِعال الجميلة. من أعظم البلاء أن تعادي رجلا لا دين له ولا حسب.",
+      "<span class='gloss'>الرتع</span>: الرعي. بالعداوة أباح لك عِرْضَه غير المصون، وأنت حين عاديته فتحت الطريق ليأكل من لحمك ويرتع في عرضك المصون. فأنت الخاسر في مخاصمته."
+    ]
+  },
+  {
+    n: 37, title: "عفو المقتدر", poet: "عبد الله بن الربيع الحارثي", meter: "بحر البسيط",
+    verses: [
+      ["لن يبلغ المجد أقوام - وإن شرفوا", "حتى يذلوا - وإن عـزُوا - لأقوامِ"],
+      ["ويشتموا فترى الألوان مسفرة", "لا صَفحَ ذُلُّ ولكن صفحَ أحلام"]
+    ],
+    explain: [
+      "لن يستطيع أحد أن يرتقي في درجات المجد إلا إذا أصابه بعضُ الذلّ في طريقه من السفهاء، والمقصود صورة الذل لا حقيقته.",
+      "<span class='gloss'>مسفرة</span>: مشرقة. <span class='gloss'>صفح</span>: ترك المؤاخذة. يتسلط عليهم السفهاء بالشتم فترى وجوههم مشرقة، وامتناعهم ليس لضعف بل هم مقتدرون يصفحون عن حلم."
+    ]
+  },
+  {
+    n: 38, title: "الشر يبدؤه صغاره", poet: "شبيب بن البرصاء", meter: "بحر الطويل",
+    verses: [
+      ["وإني لتراكُ الضَّغينة قد بدا", "ثراها من المولى، فما أستثيرها"],
+      ["مخافة أن تجني عليَّ، وإنَّما", "يَهِيجُ كبيراتِ الأمور صغيرُها"],
+      ["تبين أعقاب الأمور إذا مضَت", "وتُقبل أشباهـا عليـك صدورهــا"]
+    ],
+    explain: [
+      "<span class='gloss'>تراك</span>: كثير الترك. <span class='gloss'>بدا ثراها</span>: ظهر أثرها. <span class='gloss'>المولى</span>: القريب. <span class='gloss'>أستثيرها</span>: أنقب عنها. أجتنب الأحقاد وأتغافل حتى وإن بدت آثارها.",
+      "<span class='gloss'>تجني</span>: تجرّ سوءا. <span class='gloss'>يهيج</span>: يُشعل. أفعل ذلك لئلا يستفحل الشر، فإن الشر يبدأ صغيرًا ثم يتعاظم. قالت العرب: «الشرُّ يبدؤه صغاره».",
+      "<span class='gloss'>أعقاب الأمور</span>: أواخرها. <span class='gloss'>صدورها</span>: أوائلها. الأمور لا تستبين إلا في خواتيمها، أما أوائلها فتكون ملتبسة تغرّ الناظرين."
+    ]
+  },
+  {
+    n: 39, title: "إقدام على بصيرة", poet: "مضرس بن ربعي الأسدي", meter: "بحر الطويل",
+    verses: [
+      ["إياك والأمر الذي إن توسَّعَتْ", "مَوارده ضاقت عليك المصادر"],
+      ["فما حسَن أن يعذِرَ المرء نفسَهُ", "وليس له من سائر الناس عاذر"]
+    ],
+    explain: [
+      "<span class='gloss'>موارده</span>: مداخله. <span class='gloss'>المصادر</span>: مخارجه. احذر أن تأتي أمرًا مدخله سهل ومخرجه وعر، فإن من الحزم أن لا تقبل على أمر إلا وقد خبرته.",
+      "يقبح بالمرء أن يكون عند نفسه معذورا وعند الناس ملوما، وما جدوى إعذار المرء نفسه!"
+    ]
+  },
+  {
+    n: 40, title: "إحدى النوائب", poet: "ابن الرومي", meter: "بحر الطويل",
+    verses: [
+      ["وزهدني في الناس معرفتي بهم", "وطول اختباري صاحبًا بعد صاحب"],
+      ["فلم تُرني الأيامُ خِلا تسرُّني", "بواديه إلا ساءني في العواقب"],
+      ["ولا قلتُ أرجوه لدفع مُلمّة", "من الدهر إلا كان إحدى النوائب"]
+    ],
+    explain: [
+      "زهدتُ في الناس عن معرفة عميقة بأحوالهم وامتحان دقيق لطباعهم، فكم اختبرتُ صاحبًا تلو صاحب.",
+      "ما أرتني الأيامُ صديقا يسرني ظاهره إلا انكشف على حقيقته.",
+      "<span class='gloss'>الملمة والنائبة</span>: حوادث الدهر. ما قلتُ سأستعين به في نازلة إلا كان هو مصيبةً عليّ من حيث لم أحتسب."
+    ]
+  },
+  {
+    n: 41, title: "حظوظ", poet: "المعلوط القُريعي", meter: "بحر الطويل",
+    verses: [
+      ["وليس الغنى والفقر من شيمة الفتى", "ولكن أحاظ قسمت وجُدودُ"],
+      ["إذا المرء أعينه المشروعةُ ناشتا", "فمطلبها كهلا عليه شديد"]
+    ],
+    explain: [
+      "<span class='gloss'>شيمة الفتى</span>: اكتسابه. <span class='gloss'>أحاظ</span>: حظوظ. <span class='gloss'>جدود</span>: حظ. ليس الغنى والفقر مما يستطيعه الإنسان بكسبه فقط، ولكنها أرزاق يقسمها الله. وعطف (أحاظ) على (جدود) تنويعٌ فصيح.",
+      "<span class='gloss'>أعيته</span>: أتعبته. <span class='gloss'>المروءة</span>: مكارم الأخلاق. <span class='gloss'>ناشئا</span>: صغيرا. <span class='gloss'>كهلا</span>: كبيرا. ينبغي للمرء أن يعود نفسه الاجتهاد من صغره، فإن لم يحصلها صغيرًا صعُب عليه طلبها كبيرا."
+    ]
+  },
+  {
+    n: 42, title: "كنز الصبر", poet: "أبو الحسن الجرجاني", meter: "بحر الطويل",
+    verses: [
+      ["إذا شئت أن تستقرضَ المال مُنفِقًا", "على شهوات النفسِ في زمن العُسرِ"],
+      ["فسَل نفسك الإنفاق من كثر صبرها", "عليك، وإنـظـارًا إلى زمن اليُسر"],
+      ["فإن سمحت كنت الغني، وإن أنت فكلُّ", "منوع بعدها واسعُ العُذرِ"]
+    ],
+    explain: [
+      "<span class='gloss'>تستقرض</span>: تستدين. إذا أردت أن تستدين لتنفق على شهوات نفسك، فاسأل نفسك أن تنفق من الصبر ما تنتظر به زمن اليسر.",
+      "<span class='gloss'>أبت</span>: امتنعت. <span class='gloss'>منوع</span>: شديد المنع. إن سمحت لك نفسك بالصبر فزت بغنى النفس، وإن امتنعت فامتناع غيرها عن إقراضك أولى."
+    ]
+  },
+  {
+    n: 43, title: "مقالة السوء", poet: "محمد بن حازم الباهلي", meter: "بحر السريع",
+    verses: [
+      ["ومن دعا النَّاسَ إلى ذمّهِ", "ذَمُّوه بالحق وبالباطل"],
+      ["مقالة السُّوءِ إلى أهلها", "أسْرَعُ من مُنحدِرٍ سائل"]
+    ],
+    explain: [
+      "من عرض نفسه لذمّ الناس فإنهم سيَلِغُون في عرضه ويرمونه بأقبح التهم، حقًا كانت أو باطلا.",
+      "مقالة السوء تعود على قائليها أسرع من السائل المنحدر، فالوقيعة على الناس بالباطل تعود على قائلها ولا تضر من قيلت فيه."
+    ]
+  },
+  {
+    n: 44, title: "أقسم جسمي", poet: "عروة بن الورد", meter: "بحر الطويل",
+    verses: [
+      ["إني امرؤ عافي إنائي شِرْكةٌ", "وأنتَ امرؤ عافي إنائك واحد"],
+      ["أتهز ا مني أن سمنتَ؟ وأن ترى", "بوجهي شُحوب الحقِّ ؟ والحقُّ جَاهِدُ"],
+      ["أقسم جسمي في جسوم كثيرة", "وأحسو قراحَ الماء والماء بارد"]
+    ],
+    explain: [
+      "<span class='gloss'>عافي إنائي</span>: من يأتي يسأل طعامي. <span class='gloss'>شركة</span>: يشاركني طعامي كثيرون. أنا جواد لا يخلو بيتي من ضيف، أما أنت فشحيح لا تأكل إلا وحدك!",
+      "<span class='gloss'>الشحوب</span>: الهزال. <span class='gloss'>جاهد</span>: متعب. أتهزا مني لسمنك أما أنا فهزيل، وليس نحولي إلا من إكرام الضيفان. فـ«الجودُ يُفقِرُ والإقدام قتال»!",
+      "<span class='gloss'>قراح الماء</span>: الصافي. أؤثر غيري بطعامي فكأنما أوزع جسمي في أجسامهم، وأظلُّ أحسو الماء البارد. قال أبو فراس: «وكيف يُنـالُ المجد والجسم وادع...»."
+    ]
+  },
+  {
+    n: 45, title: "فصير آخره أولا", poet: "محمود الوراق", meter: "بحر المتقارب",
+    verses: [
+      ["يمثل ذو العقل في نفسه", "مصائبَهُ قَبْل أَن تَنْزِلا"],
+      ["فإن نزلت بَغْتَةً لم تَرعُهُ", "لِما كان في نفسه مثلا"],
+      ["رأى الأمرَ يُفْضِي إِلَى آخِرِ", "فَصَيَّرَ آخره أولا"]
+    ],
+    explain: [
+      "<span class='gloss'>لم ترعه</span>: لم تفزعه. صاحب العقل يوطّن نفسه على المصيبة قبل نزولها، فهو متصوّر لعواقب ما يقدِم عليه، وثمرة ذلك أن المصائب إذا حلت لم تفزعه.",
+      "صاحب العقل حين أيقن بأن الأمور ستؤول إلى أمر معين، اعتبر ذلك الأمر واقعا ووطن نفسه كأنه قد قام وحصل."
+    ]
+  },
+  {
+    n: 46, title: "علم الأباعر", poet: "مروان بن أبي حفصة", meter: "بحر الطويل",
+    verses: [
+      ["زَوامل للأشعار لا علم عندهم", "بجيدها إلا كعِلْم الأَباعِرِ"],
+      ["لَعَمْركَ ما يدري البعير إذا غدا", "بأوساقه أو راح ما في الغـرائـر"]
+    ],
+    explain: [
+      "<span class='gloss'>زوامل</span>: جمع زاملة، البعير الذي يُحمل عليه. شبه حفظة الأشعار دون فهم بالأباعر التي تحمل المتاع. <span class='gloss'>الأوساق</span>: الأحمال. <span class='gloss'>الغرائر</span>: أوعية توضع على ظهر البعير.",
+      "الأصل في الغدوّ الذهاب أول النهار، وفي الرواح بعد الزوال. يحفظون الأشعار وليس لهم علم بجيّدها إلا كعلم البعير بما في غرائره."
+    ]
+  },
+  {
+    n: 47, title: "الحمق الجميل", poet: "لقيط بن زرارة", meter: "بحر الطويل",
+    verses: [
+      ["أَغَرَّكُمُ أني بأحسن شيمة", "بصير وأني بالفواحش أخـرَقُ"],
+      ["وإن تـك قـد سـاببتني فَقَهرتني", "هنيئًا مريئًا أنت بالفُحش أحذقُ"]
+    ],
+    explain: [
+      "<span class='gloss'>الشيمة</span>: الخلق. <span class='gloss'>أخرق</span>: أحمق. أغركم بي معرفتي بأحسن الأخلاق وجهلي بأضدادها؟",
+      "إن وقع بيننا مسابة فغلبتني، فهنيئًا لك، فأنت أبصر بهذا الباب وأنا أخرق، وإنما أنا بصير بمحاسن الأخلاق."
+    ]
+  },
+  {
+    n: 48, title: "المنزل الخشن", poet: "دعبل الخزاعي", meter: "بحر البسيط",
+    verses: [
+      ["وإن أولى البرايا أن تواسيه", "عند السرور لمن واساك في الحزَنِ"],
+      ["إن الكرام إذا ما أيسروا ذكروا", "من كان يألفهم في المنزل الخشن"]
+    ],
+    explain: [
+      "<span class='gloss'>البرايا</span>: الخلق. أولى الناس بمواساتك ذلك الذي وقف معك في أيام شدّتك.",
+      "الكرام إذا انقلبت أحوالهم من الفقر إلى الغنى تذكروا من كان يألفهم في أيام حاجتهم، فإنه لمن اللؤم أن يتنكر الإنسان لرفاق دربه لمجرَّد أنه حصل مالا."
+    ]
+  },
+  {
+    n: 49, title: "أحلام الكرى", poet: "عمران بن حطان السدوسي", meter: "بحر الرمل",
+    verses: [
+      ["يأسفُ المرء على ما فاته", "من لُبانـات إذا لم يقضها"],
+      ["وتراه فَرِحًا مستبشرًا", "بالتي أمضى كأن لم يُمضها"],
+      ["إنهـا عنـدي كأحـلام الكـرى", "لقريب بعضها من بعضها"]
+    ],
+    explain: [
+      "<span class='gloss'>لبانات</span>: حاجات. <span class='gloss'>الكرى</span>: النوم. المرء يأسف على الحاجات التي فاته تحصيلها، وتراه فَرِحا بالتي حققها. وحقيقة الحال أن ما حصله يشبه ما فاته، فليس للإنسان إلا ما في يده الآن، وكل الشهوات تحصل ثم تذهب، فما حصل وما فات كأنه أحلام النوم."
+    ]
+  },
+  {
+    n: 50, title: "نعمة الأذى", poet: "أبو الطيب المتنبي", meter: "بحر البسيط",
+    verses: [
+      ["فارقتكم فإذا ما كان عندكم", "قبل الفراق أذى، بعد الفراق يـدُ"],
+      ["إذا تذكرت ما بيني وبينكم", "أعانَ قلبي على الشوق الذي أجدُ"]
+    ],
+    explain: [
+      "فارقتكم فإذا الذي كنت أعتبره أذًى قبل الفراق أصبحت أعده الآن نعمة.",
+      "إذا تذكرت ما كنت ألقاه منكم من الجفاء، أعانتني تلك الذكرى على مغالبة الشوق، فكلُّ ما كان مؤديا أيام الوصال أصبح نعمةً في أيام الفراق."
+    ]
+  },
+  {
+    n: 51, title: "الحب والأذى", poet: "أسماء بن خارجة الفزاري", meter: "بحر الطويل",
+    verses: [
+      ["خُذِي العَفْوَ منى تستديمي مودتي", "ولا تنطقي في سَوْرتي حينَ أغضبُ"],
+      ["فإني رأيتُ الحبَّ في القلب والأذى", "إذا اجتمعا لم يَلْبثِ الحبُّ يذهبُ"]
+    ],
+    explain: [
+      "<span class='gloss'>السورة</span>: شدة الغضب. خذي المتيسر من طيب أخلاقي، ولا تحمليني على التكلف، فإن اطراح التكلف استدامة للمودة. وإذا تملكتني سلطة الغضب فدعيني حتى أسكن.",
+      "إذا اجتمع الحب مع الأذى في قلب إنسان، فإن الحب يوشك أن يرحل، فالحب والأذى ضدان لا يجتمعان!"
+    ]
+  },
+  {
+    n: 52, title: "تلقت القلب", poet: "الشريف الرضي", meter: "بحر الكامل",
+    verses: [
+      ["ولقد مررتُ على ديارهم", "وطُلُولُها بيد البلى نَهْبُ"],
+      ["فوقفتُ حتى ضج من لغَبِ", "نِضْوِي، ولج بعذليَ الرَّكْبُ"],
+      ["وتَلَفَّتَتْ عيني، فَمُذْ خَفِيَتْ", "عنِّي الطُّلُولُ تَلَفَّتَ القلب"]
+    ],
+    explain: [
+      "<span class='gloss'>الطلول</span>: آثار الديار. <span class='gloss'>البلى</span>: الفناء. مررت على ديار الأحبة فما وجدت إلا آثارا، ويد الفناء تنهب طلولها.",
+      "<span class='gloss'>اللغب</span>: التعب. <span class='gloss'>النضو</span>: البعير المهزول. <span class='gloss'>العذل</span>: اللوم. <span class='gloss'>الرَّكب</span>: أصحاب الإبل. أطال الوقوف حتى ضجّ بعيره وحتى لج رفاقه في عتابه.",
+      "تلفتت عيني حتى إذا خفيت المعالم عن ناظري، انتقل التلفت من العين إلى القلب، فالديار ما زالت ماثلة في القلب."
+    ]
+  },
+  {
+    n: 53, title: "من الحمام إلى الحمام", poet: "أبو الطيب المتنبي", meter: "بحر الوافر",
+    verses: [
+      ["يقــول لـي الطبيب: أكلت شيئًا", "وداؤك في شرابِكَ والطَّعامِ"],
+      ["وما في طبه أني جواد", "أضر بجسمه طولُ الحِمامِ"],
+      ["تعود أن يُغَبر في السرايا", "ويدخل من قتام في قتامِ"],
+      ["فإن أمرض فمـا مـرض اصطباري", "وإن أُحْمـمْ فمـا حُـمَّ اعتزامي"],
+      ["وإن أسلم فما أبقى ولكن", "سَلِمْتُ من الحِمامِ إلى الحِمامِ"]
+    ],
+    explain: [
+      "<span class='gloss'>الحمام</span>: الراحة. طبيبي يتوهم أن سبب مرضي من طعامي وشرابي، وليس في علمه أن الذي أضرَّ بي هو طول مكثي وترك الأسفار، كالفرس الجواد يضر بنشاطه طول حبسه.",
+      "<span class='gloss'>السرايا</span>: كتائب الجيش. <span class='gloss'>القتام</span>: الغبار. تعود هذا الجواد أن يثير الغبار في المعارك، ويخرج من حرب إلى حرب.",
+      "<span class='gloss'>أحمم</span>: من الحمى. إن مرض جسمي فاصطباري واعتزامي باقيان.",
+      "إن سلمت من هذه الحمى فلن أبقى حيّا، وإنما أسلم من الموت بهذا العارض إلى الموت بعارض آخر."
+    ]
+  },
+  {
+    n: 54, title: "إعراض كريم", poet: "زهير بن أبي سلمى", meter: "بحر الطويل",
+    verses: [
+      ["وذي خطَل في القول يحسَب أَنَّهُ", "مُصيب فما يُلمم به فهو قائله"],
+      ["عَبَاتُ له حلمًا، وأكرمتُ غيرَهُ", "وأعرضت عنه وهـو بـاد مقاتلة"]
+    ],
+    explain: [
+      "<span class='gloss'>الخطَل</span>: المنطق الفاسد. <span class='gloss'>يلمم به</span>: يحضره. <span class='gloss'>عباتُ</span>: جهزت. <span class='gloss'>باد مقاتله</span>: ظاهرة عيوبه. رُبَّ رجل كثير الغلط سليط اللسان يظن أنه مصيب، فإذا حضره شيء تكلم به من فوره، كافأته بحلمي وأكرمت نفسي عن الخوض في سفهه."
+    ]
+  },
+  {
+    n: 55, title: "هم منتشر", poet: "كعب بن زهير", meter: "بحر البسيط",
+    verses: [
+      ["لو كنتُ أعجَبُ من شيءٍ لأعجبني", "سعي الفتى وهو مخبوء لـه القـدَرُ"],
+      ["يسعى الفتى لأمور ليس مُدرِكَها", "فالنفس واحدة والهم منتشر"],
+      ["والمرء ما عاش ممدود له أمَلٌ", "لا تنتهي العين حتى ينتهي الأثر"]
+    ],
+    explain: [
+      "لو كنتُ أعجبُ من شيء لعجبتُ مما أرى الفتى يسعى ويجتهد إلا أن القدر محجوب عنه، فهو لا يعلم أيحصل ما يسعى إليه.",
+      "فيا عجبا من سعي الفتى لأمور لا يُدركها، وتراه وإن كانت نفسه واحدة إلا أن همه واسع منتشر!",
+      "الإنسان طويل الأمل في حياته لا يقنع باليسير، فهو كالعين التي لا تكف عن النظر ما دامت الآثار باقية، فإذا انمحت انصرفت."
+    ]
+  },
+  {
+    n: 56, title: "لين العزة", poet: "أبو الشيص", meter: "بحر الطويل",
+    verses: [
+      ["كريم يغض الطرف فضل حيائه", "ويدنو وأطرافُ الرماح دَوانِ"],
+      ["وكالسيف إن لاينته لان مسه", "وحداهُ إِن حَاشَنَتَهُ خَشِنانِ"]
+    ],
+    explain: [
+      "<span class='gloss'>فضل حيائه</span>: حياؤه الزائد. الرجل كريم عفيف، تراه من شدة حيائه كاسرًا طرفه، فأما في الحرب فتعجب من قوة اقتحامه حتى يقترب من أطراف الرماح!",
+      "<span class='gloss'>لاينته</span>: عاملته باللين. <span class='gloss'>خاشنته</span>: بالخشونة. هو كالسيف: إن عاملته باللين لاقيت لينا، وإن عاملته بالحدة لاقيت حدة. وهذا اللين يُحمد في الشريف المُقتدر."
+    ]
+  },
+  {
+    n: 57, title: "لولا بنيات", poet: "حطان بن المعلى", meter: "بحر السريع",
+    verses: [
+      ["لولا بُنَيَّاتٌ كَزُغْبِ القَطا", "رُدِدْنَ من بعض إلى بعض"],
+      ["لكان لي مُضطَرَبٌ واسع", "في الأرض ذات الطول والعرض"],
+      ["وإنما أولادنا بيننا", "أكبادنا تمشي على الأرض"],
+      ["لو هبت الريحُ على بعضهم", "لا متنعت عيني من الغمض"]
+    ],
+    explain: [
+      "<span class='gloss'>زغب القطا</span>: فراخ الطير. <span class='gloss'>مضطرب</span>: متنقل. لولا بنات لي صغيرات لكان لي في الأرض الواسعة مذهب فسيح، ولأكثرتُ التنقل، ولكني أخاف ضياعهن.",
+      "أولادنا محلّ الأكباد من الأجواف، لا نطيق لهم فراقا، فلو هبت الريح فسفت التراب على أحدهم لما استلذ لي نوم."
+    ]
+  },
+  {
+    n: 58, title: "زجاجة بشرية", poet: "قيس بن الملوح", meter: "بحر الطويل",
+    verses: [
+      ["أُقضي نهاري بالحديث وبالمثنى", "ويجمعنـي والـهـم بالليل جامعُ"],
+      ["لقد ثبتت في القلب منكِ محبَّةٌ", "كما ثبتت في الراحتين الأصابع"],
+      ["وأنتِ التي صيَّرتِ جسمي زجاجة", "تنم على ما تحتويه الأضالع"]
+    ],
+    explain: [
+      "أقضي نهاري بالحديث عنها والأماني، حتى إذا أتى الليل خلا بي جيش الهم وانفردت بي الحسرة.",
+      "محبتكِ باقية دائمة، وثبت هواكِ في قلبي كما ثبتت في راحة اليد الأصابع.",
+      "<span class='gloss'>تنم</span>: تدلّ. هويت فنحلت وبدت عليّ آثار الهوى، حتى أضحى جسمي كالزجاجة التي تكشف ما في جوفها."
+    ]
+  },
+  {
+    n: 59, title: "قتل الأحرار", poet: "أبو الطيب المتنبي", meter: "بحر الطويل",
+    verses: [
+      ["وما قتل الأحرار كالعفو عنهم", "ومن لك بالحرّ الذي يحفظ اليدا؟"],
+      ["إذا أنت أكرمت الكريم ملكته", "وإن أنت أكرمت اللئيم تمردا"],
+      ["ووضع الندى في موضع السيف بالعلا", "مضر كوضع السيف في موضع الندى"]
+    ],
+    explain: [
+      "العفو عن الأحرار هو قتل لهم، والمراد قتلهم بالإحسان وتملك رقابهم بالمعروف، ولكن أين الحر الذي يحفظ النعمة؟!",
+      "الكريم إذا أحسنت إليه شكرك فكأنما ملكته، واللئيم لا يزيده المعروف إلا تمردا.",
+      "<span class='gloss'>الندى</span>: العطاء. ينبغي أن يعامل كل إنسان بما يصلحه ويناسب طبيعته."
+    ]
+  },
+  {
+    n: 60, title: "هوى الفؤاد", poet: "أبو الطيب المتنبي", meter: "بحر الخفيف",
+    verses: [
+      ["صار ما أوضعَ المخبون فيه", "من عتاب زيادة في الوداد"],
+      ["وكلام الوشاة ليس على الأحـ", "باب، سلطانه على الأضداد"],
+      ["إنما تُنْجِحُ المقالة في المـر", "ء إذا صادفـت هـوى في الفؤادِ"]
+    ],
+    explain: [
+      "<span class='gloss'>المخبون</span>: الذين يحثون مطاياهم. صار ما أراده الوشاة سببا في زيادة الوداد.",
+      "كلام الوشاة ليس له سلطان على الأحباب، وإنما سلطانه على الأضداد.",
+      "<span class='gloss'>أنجح حاجته</span>: أصابها. القول لا يؤثر إلا إذا صادف هوى في القلب، كما قال الطرماح: «متى مَا يَسُوظَنُّ امرئ بِصَدِيقِهِ...»."
+    ]
+  },
+  {
+    n: 61, title: "مماطلة", poet: "الشاعر", meter: "بحر البسيط",
+    verses: [
+      ["إن كنت لم تنو فيما قلت لي صلة", "فما انتفاعُك من حبسي وترديدي؟"],
+      ["فالمنعُ أجمله ما كان أعجلَهُ", "والمَطلُ من غير عُسر آفة الجودِ"]
+    ],
+    explain: [
+      "<span class='gloss'>صلة</span>: عطاء. إن لم ترد أن تفي بوعدك، فماذا تنتفع بمماطلتي؟ فاليأس أيسر على النفس من رجاء لا يتحقق!",
+      "<span class='gloss'>المطل</span>: التسويف. <span class='gloss'>عُسر</span>: قلة ذات اليد. <span class='gloss'>آفة</span>: عيب. أجمل المنع ما كان عاجلًا، وأعظم ما يُعاب به المرء أن يكون مماطلا من غير عُسر."
+    ]
+  },
+  {
+    n: 62, title: "شيمتك الحياء", poet: "أمية بن أبي الصلت", meter: "بحر الوافر",
+    verses: [
+      ["أأذكر حاجتي؟ أم قد كفاني", "حياؤك؟ إن شيمتك الحياء"],
+      ["وعلمك بالحقوق وأنتَ فـرح", "لك الحسَبُ المهذَّبُ والسناء"],
+      ["إذا أثنى عليك المرء يوما", "كفاه من تعرضه الثناء"]
+    ],
+    explain: [
+      "<span class='gloss'>شيمتك</span>: خُلقك. هل أذكر حاجتي أم أصمتُ معتمدًا على فطنتك؟ إذ الحياء غالب فيك.",
+      "<span class='gloss'>الحسب المهذب</span>: كريم الفعال. <span class='gloss'>السناء</span>: العلو. يكفيني علمك بالحقوق وفرحك بأصل كريم جمع الحسَبَ والنسب الشريف.",
+      "إذا أثنى عليك إنسان بكريم الخصال، لم يحتج أن يسألك حاجته، لأنك ستغنيه بإحسانك."
+    ]
+  },
+  {
+    n: 63, title: "لا أرى أحدا", poet: "دعبل الخزاعي", meter: "بحر البسيط",
+    verses: [
+      ["ما أكثر الناس لا بَلْ ما أَقلَّهُمُ", "اللهُ يَعْلَم أَنِّي لم أَقُلْ فَنَدَا"],
+      ["إنِّي لأفتحُ عَيْنِي حِينَ أَفْتَحُها", "على كثير، ولكن لا أرى أحــدا"]
+    ],
+    explain: [
+      "<span class='gloss'>الفند</span>: الكذب. ما أكثر الناس، بل ما أقل الناس! فما أكثرهم عددا وما أقلهم نوعا. وفي الصحيح: «إنما الناس كإبل مئة لا تكاد تجد فيها راحلة»."
+    ]
+  },
+  {
+    n: 64, title: "لم يستوف قط كريم", poet: "الخطابي", meter: "بحر الطويل",
+    verses: [
+      ["تسامح ولا تستوفِ حَقَّكَ كُلَّهُ", "وأبق، فلم يستوف قـط كريم"],
+      ["ولا تغلُ في شيء من الأمر واقتصد", "كلا طرفي قَصْدِ الأمور ذميم"]
+    ],
+    explain: [
+      "تسامح ولا تحرص على استقصاء حقوقك كاملة، كما قال علي بن أبي طالب: ما استقصى كريم قط!",
+      "اقتصد في كل شؤونك، فكل أمر فيه طرفان مذمومان ووسط ممدوح. والشيطان إذا علم من الإنسان عزيمة دفعه إلى الغلو، فحسن لزوم الهدي النبوي في المداومة ولو على القليل."
+    ]
+  },
+  {
+    n: 65, title: "نوم مشرد", poet: "أبو تمام", meter: "بحر الطويل",
+    verses: [
+      ["ولم تعطني الأيامُ نومًا مُسَكَّنَا", "أَلَذُّ به إلا بنوم مشرد"],
+      ["وطول بقاء المرء في الحي مُخْلِقٌ", "لديباجتيه فاغترب تتجدد"],
+      ["فإني رأيت الشمس زيدت محبةً", "إلى الناس أن ليست عليهم بسرمد"]
+    ],
+    explain: [
+      "لم أنم نومة ساكنة إلا سبقها نوم مشرد، فلا راحة إلا على جسر التعب.",
+      "<span class='gloss'>الديباجتان</span>: الخدان. إذا مَكَثَ المرء في مكان واحد ملّ وملّوه، وفي اغترابه يجد عوضًا وينبعث نشاطه.",
+      "الناس زادت محبتهم للشمس لأنها تغرب وتشرق، ولو كانت قائمة سرمدا لما عرف الناس فضلها."
+    ]
+  },
+  {
+    n: 66, title: "أطعت مطامعي", poet: "القاضي عبد الوهاب المالكي", meter: "بحر الوافر",
+    verses: [
+      ["طلبتُ المستقرَّ بكل أرض", "فلم أرَ لي بأرض مستقرا"],
+      ["ونلت من الزمان ونال مني", "فكان مناله حلوًا ومرًا"],
+      ["أطعت مطامعي فاستعبدتني", "ولو أني قنعتُ لكنـت حـرا"]
+    ],
+    explain: [
+      "طلبت الاستقرار فلم أجده بأرض، ونلت من الزمان كما نال مني، فكان مناله حلوا ومرا.",
+      "حين أطعت مطامعي أصبحت أسيرًا لها، ولو قنعت بما وهبني ربي لكنتُ حُرّا لا أخضع لغير خالقي."
+    ]
+  },
+  {
+    n: 67, title: "قناة صليبة", poet: "إبراهيم النبهاني", meter: "بحر الطويل",
+    verses: [
+      ["تعز فإنَّ الصبر بالحُر أجمل", "وليس على ريب الزمـان مـعـولُ"],
+      ["فإن تكن الأيام فينا تبدلت", "بيُؤسى ونُعمى، والحوادث تفعَلُ"],
+      ["فما ليَّنَتْ منا قناة صليبة", "ولا ذللتنا للتي ليس تجملُ"],
+      ["ولكن رحلناها نفوسا كريمةً", "تُحمَّلُ ما لا يُستطَاعُ فَتَحْمِلُ"]
+    ],
+    explain: [
+      "<span class='gloss'>تعز</span>: اصبر. <span class='gloss'>ريب الزمان</span>: حوادثه. <span class='gloss'>معول</span>: معتمد. تصبّر فإن الصبر أحسن للفتى الحر، وهذه الأحداث كثيرة التبدل فلا يعتمد عليها.",
+      "<span class='gloss'>بؤسى</span>: مصائب. <span class='gloss'>النُعمى</span>: رغد العيش. <span class='gloss'>قناة صليبة</span>: كناية عن العزة. دارت الأيام بالنعماء والبأساء فلم تغيّر فينا، فلم تُضعف قوتنا.",
+      "<span class='gloss'>رحلناها</span>: حملنا عليها. هيأنا لنوائب الدهر نفوسا كريمة، نحملها على صعاب المراكب، فتحمل ما يضيق عن حمله الرجال."
+    ]
+  },
+  {
+    n: 68, title: "لزوم العصا", poet: "لبيد بن ربيعة", meter: "بحر الطويل",
+    verses: [
+      ["ومـا الـمـره إلا كالشهاب وضوئه", "يحور رمادا بعد إذ هو ساطع"],
+      ["أليس ورائي إن تراخت منيتي", "لزوم العصا تحنى عليها الأصابع"],
+      ["أُخَبِّرُ أخبار القرون التي مضت", "أَدِبُّ كأني كلما قمتُ راكـعُ"]
+    ],
+    explain: [
+      "<span class='gloss'>يحور</span>: يرجع. المرء كالشهاب يلتمع ثم يكون رمادا يضمحل، يضيء ثم يذهب نوره بالهرم.",
+      "أليس ورائي إن تأخرت منيتي أيام الضعف التي ألزم فيها العصا وأحني عليها الأصابع؟",
+      "وأدب دبيبًا إذا أردت المشي، وأظلُّ أخبر من لاقيت بأخبار القرون وأنا على هيئة تشبه الراكع."
+    ]
+  },
+  {
+    n: 69, title: "خاتل يدنو لصيد", poet: "أبو الطمحان القيني", meter: "بحر الوافر",
+    verses: [
+      ["حنَتْني حانياتُ الدَّهر حتى", "كأني خاتل يدنو لصيد"],
+      ["قريب الخطو يحسَبُ مَن رآني", "- ولست مقيدا - أني بقيد"]
+    ],
+    explain: [
+      "<span class='gloss'>خاتل</span>: من المخاتلة، المشي للصيد في خفية وبطء. وصف نفسه حين بلغ الشيخوخة بوصفين: وقوفه ومشيه.",
+      "حنتني حوادث الدهر فجعلتني منحنيا راكِعًا كأني خاتل يدنو نحو صيد، وخطواتي متقاربة حتى إن من رآني ليتوهم أني مقيد ولست كذلك."
+    ]
+  },
+  {
+    n: 70, title: "قذى عينيه", poet: "عبد الله بن الزبير", meter: "بحر الطويل",
+    verses: [
+      ["سأشكرُ عَمْرا ما تَراحَت مَنِيَّتي", "أيادي لم تُمَنَنْ وإن هيَ جَلَّتِ"],
+      ["فتى غير محجوب الغنى عن صديقه", "ولا مُظْهِرِ الشَّكوى إِذَا النَّعَلُ زَلَّتِ"],
+      ["رأى خَلَّتي من حيثُ يخفى مكانها", "فكانت قَذى عينيه حتى تَجَلَّتِ"]
+    ],
+    explain: [
+      "<span class='gloss'>جلت</span>: عَظُمَت. سأظل شاكرا لعمرو ما تأخر موتي، وسأبقى ذاكرًا لأياديه التي لم يكدرها بمِنَّة.",
+      "وصفه بصفتين: إذا اغتنى تعد غناه إلى أصدقائه، وإذا افتقر لم يُظهر الشكوى. و(زلت النعل به) كناية عن نزول الشر.",
+      "<span class='gloss'>الخلة</span>: الحاجة. رأى حاجتي المستورة دون بوح، واهتم بها فكانت كقذى العين لا يسكن حتى يزيله. ومن كانت هذه صفته فقد بلغ الغاية في الإحسان."
+    ]
+  },
+  {
+    n: 71, title: "منه شيبان", poet: "ابن الرومي", meter: "بحر البسيط",
+    verses: [
+      ["قالوا أبو الصقر من شيبان قلتُ لهم", "كلا لعمري، ولكن مِنْهُ شيبان"],
+      ["وكم أب قد علا بابن ذُری شرف", "كما علا برسول الله عدنان"],
+      ["تسمو الرجال بآباء، وآونة", "تسمو الرجال بأبناء وتزدانُ"]
+    ],
+    explain: [
+      "<span class='gloss'>الذرى</span>: أعالي الشيء. قالوا: أبو الصقر فرع من شيبان، فذكرت أن أصل شيبان يشرف به، كما يقول المتنبي: «لا بقومي شرفت بل شرفوابي...».",
+      "عدنان شرفت برسول الله وعلت به، فإن الرجال إن كانت تسمو بآبائها فكم قد شرف الآباء بالأبناء."
+    ]
+  },
+  {
+    n: 72, title: "صبر الراس", poet: "أعرابي", meter: "بحر الكامل",
+    verses: [
+      ["اصبر نكـن لـك تابعين فإنمـا", "صبر الجميع بحُسْنِ صبر الراس"],
+      ["خير من العباس أجرك بعـده", "والله خير منك للعباس"]
+    ],
+    explain: [
+      "لما مات العباس بن المأمون جزع المعتصم، فدخل أعرابي وقال: اصبر — أيها الكبير — نكن تابعين لك، فإنه إذا صبر الرأس كان معينا لسائر الناس، وإذا تضعضع اضطربت سائر الأعضاء.",
+      "في هذه المصيبة خيران: أجر الصبر لك، وهو خير من بقاء حبيبك. والعباس عند ربه أرحم به وهو خير له منك: ﴿وَمَا عِندَ اللَّهِ خَيْرٌ وَأَبْقَى﴾."
+    ]
+  },
+  {
+    n: 73, title: "إحدى يدي أصابتني", poet: "أعرابي", meter: "بحر البسيط",
+    verses: [
+      ["أقولُ للنفس - تأساء وتعزية-", "إحدى يدي أصابتنـي ولـم تُـرِدِ"],
+      ["كلاهما خَلَفٌ مِن فَقْدِ صاحِبِهِ", "هذا أخي حين أدعوه، وذا ولدي!"]
+    ],
+    explain: [
+      "قال أعرابي قتل أخوه ابنا له فَقُدّم ليقتاد منه، فألقى السيف وقال هذين البيتين. يقول: هل أنا قاطع يدي إذا أصابت جسدي دون قصد؟! وفيه التماس العذر لأخيه.",
+      "القاتل والمقتول عوض لي إذا فقدتُ الآخر، فإذا فقدت ابني وجدت في أخي سلوة، فلن أفرط بصاحبه."
+    ]
+  },
+  {
+    n: 74, title: "قوم سواء", poet: "أعرابي يهجو قوما من طيء", meter: "بحر الوافر",
+    verses: [
+      ["ولما أن رأيتُ بني جوين", "جلوسا ليس بينهم جليس"],
+      ["يئست من التي قد جئتُ أبغي", "لديهم، إنني رجل يـؤوس"],
+      ["إذا ما قلت أيُّهم لأي", "تشابهت المناكب والرؤوس"]
+    ],
+    explain: [
+      "لما وفدتُ على بني جُوين أرجو كرمهم، فرأيتهم جالسين لا مزية لأحد على غيره، يئست من إنجاح حاجتي، فإن شرَّ القوم من لا رئيس لهم.",
+      "إذا سألت أي واحد فيهم يُرد إليه الأمر لم تجد أحدا يفضل أخاه، فهم قوم سواء، وهو معنى معروف عند العرب: (هم سواء كأسنان المشط)!"
+    ]
+  },
+  {
+    n: 75, title: "حجة اللئام", poet: "المتنبي", meter: "بحر الخفيف",
+    verses: [
+      ["ذل من يغبط الذليل بعيش", "رُبَّ عيش أخـفُ . منه الحمام"],
+      ["كل حلم أتى بغير اقتدار", "حجة لاجئ إليها اللئام"],
+      ["من يهن يسهل الهوان عليـه", "ما لجرح بميت إيلام"]
+    ],
+    explain: [
+      "<span class='gloss'>الحمام</span>: الموت. من يغبط الذليل على عيشه فهو ذليل، وربّ موت هو أخف على النفس من هذا العيش!",
+      "كل حلم يحصل بالعجز فليس حلمًا، وإنما هو حجة للعاجز. وإنما يحسن الحلم عند المقدرة: ﴿وَالَّذِينَ إِذَا أَصَابَهُمُ الْبَغْى هُمْ يَنتَصِرُونَ﴾.",
+      "من كانت نفسه هَيِّئَة عليه، فهو مطبوع على احتمال الذل، لا تؤلمه الإهانة، فهو كالميت لا يشعر بألم الجراح."
+    ]
+  },
+  {
+    n: 76, title: "سهل فيها إذا هو كانا", poet: "المتنبي", meter: "بحر الخفيف",
+    verses: [
+      ["وَلوَ انَّ الحياة تبقى لحي", "لعددنا أضلنا الشجعانا"],
+      ["وإذا لم يكن من الموتِ بُدَّ", "فَمِنَ العَجْز أن تكون جبانا"],
+      ["كلُّ ما لم يكن من الصعب في الأنـ", "فس، سهل فيها إذا هـو كـانـا"]
+    ],
+    explain: [
+      "لو كانت الحياة تبقى لأحد لكنا نعتبر الشجاعة غباوة، ولكن المنايا لا تستثني أحدا.",
+      "ما دام الموت نهاية الجميع فمن العجز أن تكون جبانا. ويروى أن خالد بن الوليد قال على فراش الموت: فلا أقر الله أعين الجبناء!",
+      "كل ما يتهيبه الإنسان يصعب على النفس زمن ارتقابه، فإذا وقع سهل وهان. وكما قيل: «لعمــرك مــا المكروه إلا ارتقابه...»."
+    ]
+  },
+  {
+    n: 77, title: "رجال الحقائق", poet: "الوزير ابن المغربي", meter: "بحر الطويل",
+    verses: [
+      ["مررتُ بقبر ابن المبارك غُدوة", "فأوسَعَني وَعْظًا، وليس بناطقِ"],
+      ["وقد كنتُ بالعلم الذي في جوانحي", "غنيا، وبالشيب الذي في مفارقي"],
+      ["ولكن أرى الذكرى تنبه غافلا", "إذا هي جاءت من رجال الحقائق"]
+    ],
+    explain: [
+      "<span class='gloss'>الغُدوة</span>: أول النهار. <span class='gloss'>المفارق</span>: وسط الرأس. مررت بقبر ابن المبارك أول النهار، فوعظني مرأى القبر رغم صمته، وقد كنت مستغنيا بالعلم والشيب.",
+      "أرى الذكرى تنبه غافلا إذا جاءت من رجال أدركوا الحقائق. وكان ابن المبارك من فلتات الزمان: حافظًا محدثًا مجاهدا عابدا تاجرا ينفق على إخوانه."
+    ]
+  },
+  {
+    n: 78, title: "حقيقة الفخر", poet: "أبو الأسود الدؤلي", meter: "بحر البسيط",
+    verses: [
+      ["كم من حسيب أخي عِيّ وطمطمة", "قدم لدى القوم معروق إذا انتسبا"],
+      ["في بيت مكرمة آباؤه نُجب", "كانوا رؤوسا فأمسى بعدهم ذنبا"],
+      ["وخامــل مـقــرف الآباء ذي أدب", "نال المعالي بالآداب والرتبا"]
+    ],
+    explain: [
+      "<span class='gloss'>عِيّ</span>: العجز في الكلام. <span class='gloss'>طمطمة</span>: العجمة. <span class='gloss'>فدم</span>: أحمق. <span class='gloss'>معروق</span>: عريق النسب. كم من رجل معروف بالنسب لكنه بعيد عن مآثر آبائه، لا يُحسن الكلام، أحمق غليظ الفهم، فهو فيهم ذنب مذموم.",
+      "<span class='gloss'>خامل</span>: مغمور. <span class='gloss'>مقرف الآباء</span>: آباؤه ليسوا بمعروفين. كم من رجل لا يُعرف نسبه إلا أنه اجتهد في تحصيل الأدب فبلغ عظام الأمور."
+    ]
+  },
+  {
+    n: 79, title: "ورب الدار كاره", poet: "ابن قدامة", meter: "مجزوء الكامل",
+    verses: [
+      ["لا تَجْلِسَنَّ بـابِ مَن", "يأبى عليك دخول داره"],
+      ["وتقول: حاجاتي إليـ", "هِ يَعُوقُها إن لم أُدارة"],
+      ["واقصد ربَّها تُقضى، وربُّ", "الدار كاره!"]
+    ],
+    explain: [
+      "لا تتطلب قضاء حاجاتك بالجلوس بباب من يغلق دونك الباب، وإنما اعتمد على ربك مع فعل الأسباب.",
+      "وتقول في نفسك: حاجاتي سيعوقها إن لم أترك مداراته.",
+      "اترك هذا الرجل واقصد ربَّ الحاجات، تُقضَ حاجتك وربُّ الدار غير راض، فإن الله مسخر الخلق ومصرف الأقدار، وربُّ الدار مجرد سبب."
+    ]
+  },
+  {
+    n: 80, title: "شكر يستوجب الشكر", poet: "محمود الوراق", meter: "بحر الطويل",
+    verses: [
+      ["إذا كان شكري نعمة الله نعمة", "عليَّ له في مثلها يـجـب الشُّكْرُ"],
+      ["فكيف بلوغ الشكر إلا بِفَضْلِهِ", "وإن طالت الأيام واتصل العُمْرُ"]
+    ],
+    explain: [
+      "نعمة الله على العبد تحتاج إلى شكر، وتوفيق العبد للشكر نعمة أخرى بحاجة إلى شكر، وهكذا تتسلسل النعم فلا يمكن للعبد أن يبلغ الشكر الواجب. وقال الشافعي في الرسالة: «الحمد لله الذي لا يُؤدى شُكر نعمة من نِعَمِهِ؛ إلا بنعمة منه توجب على مؤدي ماضي نعمه بأدائها نعمة حادثة، يجب عليه شكره بها»، وهو عين المعنى."
+    ]
+  },
+  {
+    n: 81, title: "سُلَّم الرجاء", poet: "الإمام الشافعي", meter: "بحر الطويل",
+    verses: [
+      ["ولما قسا قلبي وضاقت مذاهبي", "جعلتُ رجائي دونَ عفوك سُلَّما"],
+      ["تَعاظَمَني ذنبي فلما قرنتُهُ", "بعفوك ربي كان عفوك أعظمـا"],
+      ["فما زلت ذا عفو عن الذنب لم تزل", "تجود وتعفو مِنَّةٌ وتَكَرما"]
+    ],
+    explain: [
+      "قال المزني: دخلت على الشافعي في مرضه الذي مات فيه، فقلت: كيف أصبحت؟ فقال: أصبحت من الدنيا راحلا، ولإخواني مفارقا، ولسوء عملي ملاقيا، وعلى الله واردا، ما أدري روحي تصير إلى جنة فأهنيها، أو إلى نار فأعزيها. ثم بكى وأنشأ يقول الأبيات.",
+      "هذه الأبيات مليئة بمعاني الرجاء وحسن الظن بالله، ومن كان في حال ارتحال عن الدنيا فتغليب الرجاء أصلح لحاله. قال السفاريني: «هذا حال السلف: رجاء بلا إهمال، وخوف بلا قنوط». وقال ابن القيم: «حسن الظن إن حمل على العمل وحث عليه فهو صحيح، وإن دعا إلى البطالة فهو غرور»."
+    ]
+  }
+];
+
+/* ============================================================
+   SAFE INITIALIZATION
+   ============================================================ */
+(function(){
+  'use strict';
+  var log = function(msg, err){ if(err) console.error('[Qilada] ' + msg, err); };
+  var $ = function(id){ return document.getElementById(id); };
+
+  /* ---------- Render poems ---------- */
+  try {
+    var poemsContainer = $('poemsContainer');
+    if (!poemsContainer) throw new Error('poemsContainer missing');
+
+    function renderBayt(bayt){
+      if (!Array.isArray(bayt)) return '';
+      if (bayt.length === 1) {
+        return '<div class="bayt"><span class="sadr">' + bayt[0] + '</span></div>';
+      }
+      return '<div class="bayt"><span class="sadr">' + bayt[0] + '</span><span class="ajz">' + (bayt[1] || '') + '</span></div>';
+    }
+
+    poems.forEach(function(p){
+      var article = document.createElement('article');
+      article.className = 'poem-entry';
+      article.id = 'poem-' + p.n;
+      var versesHTML = '';
+      if (Array.isArray(p.verses)) {
+        versesHTML = p.verses.map(renderBayt).join('');
+      }
+      var explainHTML = '';
+      if (Array.isArray(p.explain)) {
+        explainHTML = p.explain.map(function(x){ return '<p>' + x + '</p>'; }).join('');
+      }
+      article.innerHTML =
+        '<div class="entry-head">' +
+          '<div class="entry-num">' + p.n + '</div>' +
+          '<div class="entry-meta">' +
+            '<h3>' + p.title + '</h3>' +
+            '<div class="poet">قال ' + p.poet + '</div>' +
+            '<div class="meter">' + p.meter + '</div>' +
+          '</div>' +
+        '</div>' +
+        '<div class="verses">' + versesHTML + '</div>' +
+        '<button class="collapse-btn" data-target="expl-' + p.n + '" type="button">' +
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="m6 9 6 6 6-6"/></svg>' +
+          '<span>عرض الشرح</span>' +
+        '</button>' +
+        '<div class="explanation collapsed" id="expl-' + p.n + '">' +
+          '<h4>الشرح والتعليق</h4>' +
+          explainHTML +
+        '</div>';
+      poemsContainer.appendChild(article);
+    });
+    log('Poems rendered: ' + poems.length);
+  } catch(e) { log('Render poems failed', e); }
+
+  /* ---------- Collapse toggles ---------- */
+  try {
+    document.addEventListener('click', function(e){
+      var btn = e.target.closest ? e.target.closest('.collapse-btn') : null;
+      if (!btn) return;
+      var target = document.getElementById(btn.getAttribute('data-target'));
+      if (!target) return;
+      var isCollapsed = target.classList.contains('collapsed');
+      if (isCollapsed) {
+        target.classList.remove('collapsed');
+      } else {
+        target.classList.add('collapsed');
+      }
+      btn.classList.toggle('open', isCollapsed);
+      var span = btn.querySelector('span');
+      if (span) span.textContent = isCollapsed ? 'إخفاء الشرح' : 'عرض الشرح';
+    });
+  } catch(e) { log('Collapse handler failed', e); }
+
+  /* ---------- TOC ---------- */
+  try {
+    var tocList = $('tocList');
+    if (tocList) {
+      poems.forEach(function(p){
+        var li = document.createElement('li');
+        li.innerHTML = '<a href="#poem-' + p.n + '"><span class="num">' + p.n + '.</span> ' + p.title + '</a>';
+        tocList.appendChild(li);
+      });
+    }
+  } catch(e) { log('TOC build failed', e); }
+
+  /* ---------- Footnotes ---------- */
+  var footnotes = {
+    1: 'آداب الشافعي ومناقبه (١١٢).',
+    2: 'الأدب الصغير (٢١).',
+    3: 'معجم الأدباء (١/١٧).',
+    4: 'اقتضاء الصراط المستقيم (١/٥٢٧).',
+    5: 'تاريخ ابن خلدون (١/٧٣٨).',
+    6: 'دلائل الإعجاز (٦٠٨).',
+    7: 'الموافقات (٢/١٣٨).',
+    8: 'البحر المحيط (١/١٩).'
+  };
+  try {
+    var fnPopover = $('fnPopover');
+    var fnText = $('fnText');
+    var fnNum = $('fnNum');
+    var fnClose = $('fnClose');
+    var activeFn = null;
+
+    document.addEventListener('click', function(e){
+      var ref = e.target.closest ? e.target.closest('.fn-ref') : null;
+      if (ref) {
+        e.stopPropagation();
+        var num = ref.getAttribute('data-fn');
+        if (activeFn === num && fnPopover.classList.contains('show')) {
+          fnPopover.classList.remove('show');
+          activeFn = null;
+          return;
+        }
+        activeFn = num;
+        fnNum.textContent = num;
+        fnText.textContent = footnotes[num] || '';
+        var rect = ref.getBoundingClientRect();
+        var popW = Math.min(380, window.innerWidth - 32);
+        var left = rect.left + rect.width/2 - popW/2;
+        left = Math.max(16, Math.min(left, window.innerWidth - popW - 16));
+        var top = rect.bottom + 8;
+        fnPopover.classList.add('show');
+        var popH = fnPopover.offsetHeight;
+        if (top + popH > window.innerHeight - 20) top = rect.top - popH - 8;
+        fnPopover.style.width = popW + 'px';
+        fnPopover.style.left = left + 'px';
+        fnPopover.style.top = top + 'px';
+        return;
+      }
+      if (!e.target.closest || !e.target.closest('.fn-popover')) {
+        fnPopover.classList.remove('show');
+        activeFn = null;
+      }
+    });
+    if (fnClose) {
+      fnClose.addEventListener('click', function(){
+        fnPopover.classList.remove('show');
+        activeFn = null;
+      });
+    }
+  } catch(e) { log('Footnote handler failed', e); }
+
+  /* ---------- Search ---------- */
+  try {
+    var searchInput = $('searchInput');
+    var searchResults = $('searchResults');
+    if (searchInput && searchResults) {
+      var searchIndex = poems.map(function(p){
+        var text = [p.title, p.poet];
+        if (Array.isArray(p.verses)) {
+          p.verses.forEach(function(v){ if (Array.isArray(v)) text = text.concat(v); });
+        }
+        if (Array.isArray(p.explain)) text = text.concat(p.explain);
+        return {
+          n: p.n, title: p.title, poet: p.poet,
+          text: text.join(' ')
+        };
+      });
+      var norm = function(s){ return s.replace(/[\u064B-\u0652]/g, '').toLowerCase(); };
+
+      searchInput.addEventListener('input', function(){
+        var q = searchInput.value.trim();
+        if (q.length < 2) { searchResults.classList.remove('show'); return; }
+        var nq = norm(q);
+        var matches = searchIndex.filter(function(item){
+          return norm(item.text).indexOf(nq) !== -1;
+        }).slice(0, 8);
+        if (matches.length === 0) {
+          searchResults.innerHTML = '<div class="no-res">لا توجد نتائج لـ «' + q + '»</div>';
+        } else {
+          searchResults.innerHTML = matches.map(function(m){
+            return '<a href="#poem-' + m.n + '">' +
+              '<span class="res-title">' + m.n + '. ' + m.title + '</span>' +
+              '<span class="res-snippet">' + m.poet + '</span>' +
+            '</a>';
+          }).join('');
+        }
+        searchResults.classList.add('show');
+      });
+      searchResults.addEventListener('click', function(e){
+        if (e.target.closest('a')) {
+          searchResults.classList.remove('show');
+          searchInput.value = '';
+        }
+      });
+      document.addEventListener('click', function(e){
+        if (!e.target.closest || !e.target.closest('.search-wrap')) {
+          searchResults.classList.remove('show');
+        }
+      });
+    }
+  } catch(e) { log('Search setup failed', e); }
+
+  /* ---------- Theme ---------- */
+  try {
+    var themeToggle = $('themeToggle');
+    var themeIcon = $('themeIcon');
+    var savedTheme = 'light';
+    try { savedTheme = localStorage.getItem('qilada-theme') || 'light'; } catch(err) {}
+    if (savedTheme === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
+    var updateIcon = function(t){
+      if (t === 'dark') {
+        themeIcon.innerHTML = '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>';
+      } else {
+        themeIcon.innerHTML = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>';
+      }
+    };
+    updateIcon(savedTheme);
+    if (themeToggle) {
+      themeToggle.addEventListener('click', function(){
+        var cur = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+        var next = cur === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', next);
+        try { localStorage.setItem('qilada-theme', next); } catch(err) {}
+        updateIcon(next);
+      });
+    }
+  } catch(e) { log('Theme setup failed', e); }
+
+  /* ---------- Sidebar mobile ---------- */
+  try {
+    var menuToggle = $('menuToggle');
+    var sidebar = $('sidebar');
+    var overlay = $('sidebarOverlay');
+    if (menuToggle && sidebar && overlay) {
+      menuToggle.addEventListener('click', function(){
+        sidebar.classList.toggle('open');
+        overlay.classList.toggle('show');
+      });
+      overlay.addEventListener('click', function(){
+        sidebar.classList.remove('open');
+        overlay.classList.remove('show');
+      });
+      sidebar.addEventListener('click', function(e){
+        if (e.target.closest('a') && window.innerWidth <= 900) {
+          sidebar.classList.remove('open');
+          overlay.classList.remove('show');
+        }
+      });
+    }
+  } catch(e) { log('Sidebar failed', e); }
+
+  /* ---------- Progress + back to top + scroll spy ---------- */
+  try {
+    var progressFill = $('progressFill');
+    var backTop = $('backTop');
+    var tocList2 = $('tocList');
+    var tocLinks = tocList2 ? tocList2.querySelectorAll('a') : [];
+
+    function onScroll(){
+      var h = document.documentElement;
+      var max = h.scrollHeight - h.clientHeight;
+      var pct = max > 0 ? (h.scrollTop / max) * 100 : 0;
+      if (progressFill) progressFill.style.width = pct + '%';
+      if (backTop) backTop.classList.toggle('show', h.scrollTop > 600);
+
+      var sections = document.querySelectorAll('section.chapter, .poem-entry');
+      var current = null;
+      var y = window.scrollY + 120;
+      for (var i = 0; i < sections.length; i++) {
+        if (sections[i].offsetTop <= y) current = sections[i];
+        else break;
+      }
+      if (tocLinks.length) {
+        for (var j = 0; j < tocLinks.length; j++) tocLinks[j].classList.remove('active');
+        if (current) {
+          var link = tocList2.querySelector('a[href="#' + current.id + '"]');
+          if (link) link.classList.add('active');
+        }
+      }
+    }
+    window.addEventListener('scroll', onScroll, {passive:true});
+    onScroll();
+    if (backTop) {
+      backTop.addEventListener('click', function(){
+        window.scrollTo({top:0, behavior:'smooth'});
+      });
+    }
+  } catch(e) { log('Scroll setup failed', e); }
+
+  /* ---------- Smooth anchor navigation ---------- */
+  try {
+    document.addEventListener('click', function(e){
+      var a = e.target.closest ? e.target.closest('a[href^="#"]') : null;
+      if (!a) return;
+      var id = a.getAttribute('href').slice(1);
+      if (!id) return;
+      var target = document.getElementById(id);
+      if (!target) return;
+      e.preventDefault();
+      var y = target.getBoundingClientRect().top + window.scrollY - 80;
+      window.scrollTo({top:y, behavior:'smooth'});
+      if (history.pushState) history.pushState(null, '', '#' + id);
+    });
+  } catch(e) { log('Anchor handler failed', e); }
+
+  /* ---------- Keyboard ---------- */
+  try {
+    document.addEventListener('keydown', function(e){
+      if (e.key === 'Escape') {
+        var fp = $('fnPopover'); if (fp) fp.classList.remove('show');
+        var sr = $('searchResults'); if (sr) sr.classList.remove('show');
+        var sb = $('sidebar'); if (sb) sb.classList.remove('open');
+        var ov = $('sidebarOverlay'); if (ov) ov.classList.remove('show');
+      }
+      if ((e.ctrlKey || e.metaKey) && (e.key === 'k' || e.key === 'K')) {
+        e.preventDefault();
+        var si = $('searchInput'); if (si) si.focus();
+      }
+    });
+  } catch(e) { log('Keyboard handler failed', e); }
+
+  log('Initialization complete.');
+})();
+</script>
+</body>
+</html>

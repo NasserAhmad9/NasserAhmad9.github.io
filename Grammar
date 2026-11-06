@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" data-theme="light" data-color="brown">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>مكتبة الآجرومية الشاملة | متن + نظم + شواهد + اختبارات</title>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@300;400;600;700&family=Scheherazade+New:wght@400;700&family=Lateef&family=Noto+Naskh+Arabic:wght@400;700&family=Reem+Kufi:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --base-size:17px;--font-body:'Amiri','Scheherazade New',serif;--font-ui:'Cairo',sans-serif;
+  --bg:#f7f3ea;--surface:#fff;--surface-2:#f3ecdd;--text:#2a2016;--text-soft:#5c4b36;
+  --muted:#8a7a63;--border:#e5d9c3;--accent:#8b4513;--accent-2:#b8860b;--accent-soft:#f0e0c0;
+  --q-bg:linear-gradient(135deg,#fff8e7,#fdf0d5);--a-bg:#fbfbf7;--poem-bg:linear-gradient(135deg,#f5f0e0,#ede2c8);
+  --matn-bg:linear-gradient(135deg,#eef5e8,#e2ebd9);--alfia-bg:linear-gradient(135deg,#f3ecf9,#e8d8f5);
+  --shadow:0 4px 20px rgba(139,69,19,.08);--shadow-lg:0 12px 40px rgba(139,69,19,.14);
+  --radius:14px;--header-h:112px;--sidebar-w:290px;--transition:.28s cubic-bezier(.4,0,.2,1);
+}
+[data-color="green"]{--accent:#2d6a4f;--accent-2:#52b788;--accent-soft:#d8f3dc;--q-bg:linear-gradient(135deg,#edf7f0,#d8f3dc);--matn-bg:linear-gradient(135deg,#e8f4ed,#d8ebde);--poem-bg:linear-gradient(135deg,#eef7f1,#e2ede6);--alfia-bg:linear-gradient(135deg,#e8f0ec,#dce8e2)}
+[data-color="blue"]{--accent:#1d4e89;--accent-2:#4895ef;--accent-soft:#d6e8fa;--q-bg:linear-gradient(135deg,#ecf3fc,#d6e8fa);--matn-bg:linear-gradient(135deg,#e6f0f9,#d8e5f3);--poem-bg:linear-gradient(135deg,#ecf3fa,#e2ecf7);--alfia-bg:linear-gradient(135deg,#e6edf5,#dae3ee)}
+[data-color="purple"]{--accent:#5a189a;--accent-2:#9d4edd;--accent-soft:#e8d8f5;--q-bg:linear-gradient(135deg,#f3ecf9,#e8d8f5);--matn-bg:linear-gradient(135deg,#f0e9f5,#e6dff0);--poem-bg:linear-gradient(135deg,#f3ecf7,#eae2f2);--alfia-bg:linear-gradient(135deg,#eee6f5,#e4daee)}
+[data-color="teal"]{--accent:#006d77;--accent-2:#2a9d8f;--accent-soft:#d1e8ea;--q-bg:linear-gradient(135deg,#ebf5f6,#d1e8ea);--matn-bg:linear-gradient(135deg,#e6f0f1,#d8e8e9);--poem-bg:linear-gradient(135deg,#edf4f5,#e2eaeb);--alfia-bg:linear-gradient(135deg,#e4eded,#dae5e5)}
+[data-color="rose"]{--accent:#a4133c;--accent-2:#ff4d6d;--accent-soft:#ffd6de;--q-bg:linear-gradient(135deg,#fdf0f3,#ffd6de);--matn-bg:linear-gradient(135deg,#faebef,#f2dde2);--poem-bg:linear-gradient(135deg,#fdf0f2,#f2e2e5);--alfia-bg:linear-gradient(135deg,#f5e8ec,#eedde3)}
+[data-theme="dark"]{--bg:#14100c;--surface:#211a13;--surface-2:#2b2218;--text:#f0e6d6;--text-soft:#d4c5ad;--muted:#9c8b74;--border:#3a2f22;--accent:#e0a86a;--accent-2:#f0c674;--accent-soft:#3a2b1a;--q-bg:linear-gradient(135deg,#2b2218,#241c13);--a-bg:#1c1610;--poem-bg:linear-gradient(135deg,#2b2418,#241c13);--matn-bg:linear-gradient(135deg,#1d2617,#182012);--alfia-bg:linear-gradient(135deg,#261e2e,#1e1828);--shadow:0 4px 20px rgba(0,0,0,.4);--shadow-lg:0 12px 40px rgba(0,0,0,.6)}
+[data-theme="dark"][data-color="green"]{--accent:#95d5b2;--accent-2:#b7e4c7;--accent-soft:#1b3a28;--q-bg:linear-gradient(135deg,#1a2e21,#152619);--matn-bg:linear-gradient(135deg,#172418,#12201a);--poem-bg:linear-gradient(135deg,#1c2c1f,#182420);--alfia-bg:linear-gradient(135deg,#1a2620,#15201a)}
+[data-theme="dark"][data-color="blue"]{--accent:#90caf9;--accent-2:#bbdefb;--accent-soft:#1a2a3d;--q-bg:linear-gradient(135deg,#1a2432,#15202c);--matn-bg:linear-gradient(135deg,#16212d,#12202d);--poem-bg:linear-gradient(135deg,#1c2634,#18232f);--alfia-bg:linear-gradient(135deg,#18202d,#121a28)}
+[data-theme="dark"][data-color="purple"]{--accent:#d0a3e8;--accent-2:#e0b8f0;--accent-soft:#2d1a3d;--q-bg:linear-gradient(135deg,#251c2e,#1e1628);--matn-bg:linear-gradient(135deg,#1e1825,#1a1520);--poem-bg:linear-gradient(135deg,#281e32,#21182b);--alfia-bg:linear-gradient(135deg,#22192e,#1a1328)}
+[data-theme="dark"][data-color="teal"]{--accent:#80cbc4;--accent-2:#a7dad3;--accent-soft:#0f2a2d;--q-bg:linear-gradient(135deg,#15282a,#122123);--matn-bg:linear-gradient(135deg,#132222,#101e1e);--poem-bg:linear-gradient(135deg,#1c2c2e,#182527);--alfia-bg:linear-gradient(135deg,#162425,#122022)}
+[data-theme="dark"][data-color="rose"]{--accent:#f4a5b2;--accent-2:#f8c4ce;--accent-soft:#3d1520;--q-bg:linear-gradient(135deg,#2d1a20,#25151a);--matn-bg:linear-gradient(135deg,#221820,#1e141a);--poem-bg:linear-gradient(135deg,#2b1c22,#241620);--alfia-bg:linear-gradient(135deg,#281a22,#20141c)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:calc(var(--header-h) + 20px)}
+body{font-family:var(--font-ui);font-size:var(--base-size);background:var(--bg);color:var(--text);line-height:1.8;transition:background .28s,color .28s;overflow-x:hidden}
+::selection{background:var(--accent);color:#fff}
+a{color:var(--accent);text-decoration:none}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+#loader{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:24px;z-index:2000;transition:opacity .5s,visibility .5s}
+#loader.hidden{opacity:0;visibility:hidden;pointer-events:none}
+#loader .basmala{font-family:var(--font-body);font-size:1.6rem;color:var(--accent);font-weight:700}
+#loader .ring{width:52px;height:52px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+#loader .msg{font-size:.88rem;color:var(--muted)}
+#progress-bar{position:fixed;top:0;right:0;height:3px;width:0;background:linear-gradient(90deg,var(--accent),var(--accent-2));z-index:1000;transition:width .1s linear}
+header#top-bar{position:fixed;top:0;right:0;left:0;min-height:var(--header-h);background:color-mix(in srgb,var(--surface) 94%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--border);display:flex;flex-direction:column;z-index:900;box-shadow:0 2px 12px rgba(0,0,0,.04)}
+.top-row{display:flex;align-items:center;gap:8px;padding:8px 12px;height:54px}
+.brand{display:flex;flex-direction:column;line-height:1.15;margin-left:auto;flex:1;min-width:0}
+.brand h1{font-family:var(--font-body);font-size:1rem;font-weight:700;color:var(--accent);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.brand small{font-size:.68rem;color:var(--muted);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hdr-btn{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;color:var(--text-soft);transition:all .2s;flex-shrink:0}
+.hdr-btn:hover{background:var(--surface-2);color:var(--accent)}
+.hdr-btn svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.main-nav{display:flex;gap:2px;padding:0 8px 6px;border-top:1px solid var(--border);overflow-x:auto;scrollbar-width:none;height:48px;align-items:center}
+.main-nav::-webkit-scrollbar{display:none}
+.nav-btn{padding:6px 12px;border-radius:10px;font-size:.76rem;font-weight:600;color:var(--text-soft);white-space:nowrap;transition:all .2s;display:flex;align-items:center;gap:5px;border:1px solid transparent}
+.nav-btn:hover{background:var(--surface-2);color:var(--accent)}
+.nav-btn.active{background:var(--accent);color:#fff}
+.nav-btn .ico{font-size:.9rem}
+.search-wrap{position:relative;display:flex;align-items:center;background:var(--surface-2);border:1px solid var(--border);border-radius:10px;padding:4px 10px;gap:6px;width:min(220px,24vw)}
+.search-wrap:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.search-wrap svg{width:14px;height:14px;stroke:var(--muted);fill:none;stroke-width:2;flex-shrink:0}
+.search-wrap input{border:none;background:transparent;outline:none;font-family:var(--font-ui);font-size:.8rem;color:var(--text);width:100%}
+.search-count{font-size:.66rem;color:var(--accent);font-weight:700;white-space:nowrap}
+#sidebar{position:fixed;top:var(--header-h);right:0;bottom:0;width:var(--sidebar-w);background:var(--surface);border-left:1px solid var(--border);display:flex;flex-direction:column;z-index:800;transition:transform .28s;box-shadow:-4px 0 20px rgba(0,0,0,.03)}
+#sidebar .side-head{padding:12px 14px 8px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+#sidebar .side-head h2{font-family:var(--font-body);font-size:.92rem;color:var(--accent);font-weight:700}
+#sidebar .side-head span{font-size:.64rem;color:var(--muted);font-weight:600}
+#toc-list{overflow-y:auto;flex:1;padding:6px 4px 16px;scrollbar-width:thin}
+#toc-list::-webkit-scrollbar{width:6px}
+#toc-list::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+.toc-item{display:flex;align-items:center;gap:8px;padding:6px 10px;margin:1px 0;border-radius:8px;font-size:.76rem;color:var(--text-soft);border-right:3px solid transparent;transition:all .28s;cursor:pointer;line-height:1.4}
+.toc-item:hover{background:var(--surface-2);color:var(--accent)}
+.toc-item.active{background:var(--accent-soft);color:var(--accent);border-right-color:var(--accent);font-weight:700}
+.toc-item .num{font-size:.6rem;font-weight:700;color:var(--accent-2);background:var(--accent-soft);width:20px;height:20px;border-radius:5px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.toc-item.active .num{background:var(--accent);color:#fff}
+#sidebar-toggle{display:none}
+main{margin-right:var(--sidebar-w);padding-top:calc(var(--header-h) + 20px);padding-bottom:60px;min-height:100vh;transition:margin .28s}
+.content-wrap{max-width:900px;margin:0 auto;padding:0 20px}
+.view{display:none}
+.view.active{display:block}
+/* Chapter page */
+.chapter-page{animation:fadeIn .35s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.chapter-header{background:var(--q-bg);border:1px solid var(--border);border-radius:var(--radius);padding:16px 20px;margin-bottom:18px;box-shadow:var(--shadow);display:flex;align-items:center;gap:12px;flex-wrap:wrap;position:sticky;top:calc(var(--header-h) + 6px);z-index:50;backdrop-filter:blur(8px)}
+.chapter-header .ch-num{font-family:var(--font-ui);font-size:.7rem;font-weight:700;background:var(--accent);color:#fff;padding:3px 10px;border-radius:6px}
+.chapter-header h2{font-family:var(--font-body);font-size:clamp(1.1rem,2.4vw,1.4rem);color:var(--accent);font-weight:700;flex:1;margin:0}
+.chapter-header .ch-actions{display:flex;gap:4px;margin-right:auto}
+.section-block{margin-bottom:16px}
+.section-label{font-family:var(--font-ui);font-size:.7rem;font-weight:700;color:var(--accent);display:inline-flex;align-items:center;gap:5px;margin-bottom:6px;padding:3px 10px;background:var(--surface-2);border-radius:20px}
+.matn-card{background:var(--matn-bg);border:1px solid var(--border);border-right:4px solid #5a8f4e;border-radius:var(--radius);padding:14px 18px;margin-bottom:12px;box-shadow:var(--shadow);font-family:var(--font-body);font-size:1rem;line-height:2;color:var(--text);text-align:justify;position:relative}
+[data-theme="dark"] .matn-card{border-right-color:#95d5b2}
+.matn-card p{margin-bottom:10px;text-indent:1.5em}
+.matn-card p:last-child{margin-bottom:0}
+.nazm-card{background:var(--poem-bg);border:1px solid var(--border);border-right:4px solid var(--accent-2);border-radius:var(--radius);padding:10px 16px;margin-bottom:12px;box-shadow:var(--shadow);text-align:center}
+.nazm-card .bayt{font-family:var(--font-body);font-size:.98rem;line-height:1.95;color:var(--text);font-weight:600;padding:5px 4px;border-bottom:1px dashed var(--border);position:relative;display:flex;flex-direction:column;align-items:center;gap:2px;transition:background .2s}
+.nazm-card .bayt:last-child{border-bottom:none}
+.nazm-card .bayt:hover{background:var(--accent-soft);border-radius:6px}
+.nazm-card .bayt .sadr{display:block}
+.nazm-card .bayt .ajz{display:block;color:var(--accent)}
+.nazm-card .bayt-actions{position:absolute;top:2px;left:4px;display:flex;gap:2px;opacity:0;transition:opacity .2s}
+.nazm-card .bayt:hover .bayt-actions{opacity:1}
+.alfia-card{background:var(--alfia-bg);border:1px solid var(--border);border-right:4px solid #7c3aed;border-radius:var(--radius);padding:10px 16px;margin-bottom:12px;box-shadow:var(--shadow);text-align:center}
+[data-theme="dark"] .alfia-card{border-right-color:#c084fc}
+.alfia-card .bayt{font-family:var(--font-body);font-size:.96rem;line-height:1.9;color:var(--text);font-weight:600;padding:4px 4px;border-bottom:1px dashed var(--border);position:relative;display:flex;flex-direction:column;align-items:center;gap:1px}
+.alfia-card .bayt:last-child{border-bottom:none}
+.alfia-card .bayt:hover{background:var(--accent-soft);border-radius:6px}
+.alfia-card .bayt .sadr{display:block}
+.alfia-card .bayt .ajz{display:block;color:#7c3aed}
+[data-theme="dark"] .alfia-card .bayt .ajz{color:#c084fc}
+.qa-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:12px;overflow:hidden;box-shadow:var(--shadow);position:relative}
+.qa-card .q{display:flex;gap:8px;padding:10px 14px;background:var(--q-bg);border-bottom:1px solid var(--border);align-items:flex-start}
+.qa-card .q .lbl{font-family:var(--font-ui);font-weight:700;font-size:.66rem;background:var(--accent);color:#fff;padding:2px 8px;border-radius:6px;flex-shrink:0;margin-top:3px}
+.qa-card .q p{font-family:var(--font-body);font-size:.98rem;color:var(--text);font-weight:700;line-height:1.55;flex:1}
+.qa-card .a{display:flex;gap:8px;padding:10px 14px;background:var(--a-bg);align-items:flex-start}
+.qa-card .a .lbl{font-family:var(--font-ui);font-weight:700;font-size:.66rem;background:var(--accent-2);color:#fff;padding:2px 9px;border-radius:6px;flex-shrink:0;margin-top:3px}
+.qa-card .a .a-body{font-family:var(--font-body);font-size:.94rem;color:var(--text-soft);line-height:1.8;flex:1}
+.qa-card .a .a-body p{margin-bottom:6px}
+.qa-card .a .a-body p:last-child{margin-bottom:0}
+.qa-card .a .a-body strong{color:var(--accent);font-weight:700}
+.copy-share{display:inline-flex;gap:3px;margin-right:auto}
+.icon-btn{width:26px;height:26px;border-radius:6px;display:flex;align-items:center;justify-content:center;color:var(--muted);transition:all .2s;background:transparent}
+.icon-btn:hover{background:var(--surface-2);color:var(--accent)}
+.icon-btn.fav{color:var(--accent-2)}
+.icon-btn.fav.saved{color:#e63946;background:#ffe4e8}
+.icon-btn svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.icon-btn.fav.saved svg{fill:currentColor}
+.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--accent);color:#fff;padding:10px 20px;border-radius:10px;font-family:var(--font-ui);font-size:.82rem;font-weight:600;box-shadow:var(--shadow-lg);opacity:0;pointer-events:none;transition:opacity .3s,transform .3s;z-index:3000}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.empty-state{text-align:center;padding:50px 20px;color:var(--muted);font-family:var(--font-body);font-size:1.05rem}
+.empty-state .ico{font-size:3rem;margin-bottom:12px;display:block;opacity:.5}
+/* Favorites */
+.fav-item{background:var(--poem-bg);border:1px solid var(--border);border-right:4px solid #e63946;border-radius:var(--radius);padding:14px 18px;position:relative;font-family:var(--font-body);margin-bottom:10px}
+.fav-item .fav-chapter{font-family:var(--font-ui);font-size:.68rem;color:var(--accent);font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.fav-item .fav-verse{text-align:center;font-size:1rem;line-height:1.9;color:var(--text);font-weight:600}
+.fav-item .fav-verse .sadr{display:block}
+.fav-item .fav-verse .ajz{display:block;color:var(--accent)}
+.fav-item .fav-actions{position:absolute;top:8px;left:8px;display:flex;gap:3px}
+/* Quiz */
+.quiz-setup{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:18px;box-shadow:var(--shadow)}
+.quiz-setup h3{font-family:var(--font-body);color:var(--accent);font-size:1.15rem;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.form-group{margin-bottom:16px}
+.form-label{display:block;font-family:var(--font-ui);font-size:.8rem;font-weight:700;color:var(--text-soft);margin-bottom:6px}
+.form-label small{color:var(--muted);font-weight:600}
+.chapter-select{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:5px;max-height:240px;overflow-y:auto;padding:8px;background:var(--surface-2);border-radius:10px;border:1px solid var(--border)}
+.chapter-check{display:flex;align-items:center;gap:6px;padding:5px 8px;border-radius:6px;font-size:.76rem;color:var(--text-soft);cursor:pointer}
+.chapter-check:hover{background:var(--accent-soft)}
+.chapter-check input{accent-color:var(--accent)}
+.chapter-check.checked{background:var(--accent-soft);color:var(--accent);font-weight:700}
+.chapter-controls{display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap}
+.mini-btn{font-family:var(--font-ui);font-size:.7rem;font-weight:700;padding:4px 10px;border-radius:6px;background:var(--surface-2);color:var(--text-soft);border:1px solid var(--border);transition:all .2s}
+.mini-btn:hover{background:var(--accent-soft);color:var(--accent);border-color:var(--accent)}
+.range-wrap{display:flex;align-items:center;gap:10px}
+.range-wrap input[type="range"]{flex:1;accent-color:var(--accent)}
+.range-value{font-family:var(--font-ui);font-weight:700;color:var(--accent);min-width:50px;text-align:center;background:var(--surface-2);padding:3px 10px;border-radius:6px;font-size:.82rem}
+.btn-primary{background:var(--accent);color:#fff;padding:10px 24px;border-radius:10px;font-weight:700;font-size:.88rem;transition:all .2s;display:inline-flex;align-items:center;gap:8px}
+.btn-primary:hover{background:var(--accent-2)}
+.btn-secondary{background:var(--surface-2);color:var(--text-soft);padding:8px 18px;border-radius:8px;font-weight:700;font-size:.82rem;border:1px solid var(--border);transition:all .2s}
+.btn-secondary:hover{background:var(--accent-soft);color:var(--accent)}
+.quiz-progress{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 14px;margin-bottom:14px;display:flex;align-items:center;gap:10px;font-family:var(--font-ui);font-size:.82rem;position:sticky;top:calc(var(--header-h) + 10px);z-index:100;box-shadow:var(--shadow)}
+.quiz-progress .bar{flex:1;height:6px;background:var(--surface-2);border-radius:3px;overflow:hidden}
+.quiz-progress .bar div{height:100%;background:var(--accent);transition:width .3s}
+.quiz-progress .count{color:var(--accent);font-weight:700}
+.qz-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px;margin-bottom:14px;box-shadow:var(--shadow)}
+.qz-card .qz-header{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.qz-card .qz-num{font-family:var(--font-ui);font-size:.7rem;font-weight:700;background:var(--accent);color:#fff;padding:2px 10px;border-radius:6px}
+.qz-card .qz-type{font-family:var(--font-ui);font-size:.66rem;font-weight:700;padding:2px 8px;border-radius:6px;background:var(--accent-soft);color:var(--accent)}
+.qz-card .qz-text{font-family:var(--font-body);font-size:1.02rem;font-weight:700;color:var(--text);line-height:1.7;margin-bottom:12px;padding:10px 12px;background:var(--q-bg);border-radius:8px;border-right:3px solid var(--accent);white-space:pre-line}
+.qz-options{display:flex;flex-direction:column;gap:8px}
+.qz-option{padding:10px 14px;background:var(--surface-2);border:2px solid var(--border);border-radius:8px;font-family:var(--font-body);font-size:.94rem;cursor:pointer;transition:all .2s;text-align:right;line-height:1.6}
+.qz-option:hover{border-color:var(--accent);background:var(--accent-soft)}
+.qz-option.selected{border-color:var(--accent);background:var(--accent-soft);color:var(--accent);font-weight:700}
+.qz-option.correct{border-color:#28a745;background:#d4edda;color:#155724;font-weight:700}
+.qz-option.wrong{border-color:#dc3545;background:#f8d7da;color:#721c24;font-weight:700}
+[data-theme="dark"] .qz-option.correct{background:#1e3a1e;color:#b7e4c7;border-color:#28a745}
+[data-theme="dark"] .qz-option.wrong{background:#3d1a1a;color:#f8c4ce;border-color:#dc3545}
+.qz-feedback{margin-top:10px;padding:8px 12px;border-radius:8px;font-family:var(--font-ui);font-size:.8rem;font-weight:700;display:none}
+.qz-feedback.show{display:block}
+.qz-feedback.ok{background:#d4edda;color:#155724}
+.qz-feedback.no{background:#f8d7da;color:#721c24}
+[data-theme="dark"] .qz-feedback.ok{background:#1e3a1e;color:#b7e4c7}
+[data-theme="dark"] .qz-feedback.no{background:#3d1a1a;color:#f8c4ce}
+.quiz-result{background:var(--surface);border:2px solid var(--accent);border-radius:var(--radius);padding:26px;text-align:center;box-shadow:var(--shadow-lg)}
+.quiz-result .score-num{font-family:var(--font-body);font-size:3rem;font-weight:700;color:var(--accent);margin:10px 0}
+.quiz-result .score-text{font-family:var(--font-body);font-size:1.1rem;color:var(--text-soft);margin-bottom:16px}
+.quiz-result .score-pct{font-family:var(--font-ui);font-size:.9rem;color:var(--muted);margin-bottom:20px}
+/* Games */
+.game-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px;margin-bottom:16px;box-shadow:var(--shadow)}
+.game-card h3{font-family:var(--font-body);color:var(--accent);font-size:1.1rem;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.match-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.match-item{padding:10px 12px;background:var(--surface-2);border:2px solid var(--border);border-radius:8px;font-family:var(--font-body);font-size:.9rem;cursor:pointer;transition:all .2s;text-align:center;line-height:1.5}
+.match-item:hover{border-color:var(--accent)}
+.match-item.selected{border-color:var(--accent);background:var(--accent-soft);font-weight:700}
+.match-item.matched{background:#d4edda;border-color:#28a745;color:#155724;opacity:.6;pointer-events:none}
+[data-theme="dark"] .match-item.matched{background:#1e3a1e;color:#b7e4c7}
+.arrange-container{display:flex;flex-direction:column;gap:12px}
+.arrange-target{min-height:80px;background:var(--surface-2);border:2px dashed var(--border);border-radius:10px;padding:10px;display:flex;flex-wrap:wrap;gap:6px;align-content:flex-start}
+.arrange-source{display:flex;flex-wrap:wrap;gap:6px}
+.arrange-word{padding:6px 12px;background:var(--accent-soft);color:var(--accent);border:1px solid var(--accent-2);border-radius:8px;font-family:var(--font-body);font-size:.92rem;font-weight:600;cursor:pointer;transition:all .2s;user-select:none}
+.arrange-word:hover{background:var(--accent);color:#fff}
+.arrange-word.used{opacity:.3;pointer-events:none}
+/* Settings */
+.settings-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px;margin-bottom:16px;box-shadow:var(--shadow)}
+.settings-card h3{font-family:var(--font-body);color:var(--accent);font-size:1.05rem;margin-bottom:12px;display:flex;align-items:center;gap:8px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+.setting-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px dashed var(--border);flex-wrap:wrap}
+.setting-row:last-child{border-bottom:none}
+.setting-label{font-family:var(--font-ui);font-size:.85rem;font-weight:700;color:var(--text-soft);min-width:110px}
+.setting-control{flex:1;display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.font-btn{width:32px;height:32px;border-radius:8px;background:var(--surface-2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--text-soft);transition:all .2s}
+.font-btn:hover{background:var(--accent-soft);color:var(--accent)}
+.font-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.select-input{padding:8px 12px;background:var(--surface-2);border:1px solid var(--border);border-radius:8px;font-family:var(--font-ui);font-size:.85rem;color:var(--text);min-width:180px}
+.select-input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.color-swatches{display:flex;gap:8px;flex-wrap:wrap}
+.color-swatch{width:40px;height:40px;border-radius:50%;border:3px solid transparent;cursor:pointer;transition:all .2s;position:relative}
+.color-swatch.active{border-color:var(--text);transform:scale(1.1)}
+.color-swatch.active::after{content:"✓";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:1.2rem;text-shadow:0 0 3px rgba(0,0,0,.5)}
+.preview-box{background:var(--surface-2);border:1px solid var(--border);border-radius:10px;padding:16px;margin-top:12px;font-family:var(--font-body);color:var(--text);line-height:1.9;text-align:center}
+.preview-box .pv-title{font-weight:700;color:var(--accent);margin-bottom:6px}
+#to-top{position:fixed;bottom:18px;left:18px;width:40px;height:40px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow-lg);z-index:700;opacity:0;pointer-events:none;transform:translateY(16px);transition:opacity .3s,transform .3s}
+#to-top.show{opacity:1;pointer-events:auto;transform:translateY(0)}
+#to-top:hover{background:var(--accent-2)}
+#to-top svg{width:18px;height:18px;stroke:#fff;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+/* Timer */
+.timer-box{display:flex;align-items:center;gap:6px;padding:4px 12px;background:var(--accent-soft);border-radius:8px;font-family:var(--font-ui);font-weight:700;color:var(--accent);font-size:.82rem}
+.timer-box.warning{background:#ffe4e8;color:#c44;animation:pulse 1s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
+/* Quiz navigation buttons */
+.qz-nav{display:flex;gap:8px;justify-content:center;margin-top:16px;flex-wrap:wrap}
+.qz-nav button{padding:8px 18px;border-radius:8px;font-weight:700;font-size:.82rem;transition:all .2s}
+.qz-nav .prev{background:var(--surface-2);color:var(--text-soft);border:1px solid var(--border)}
+.qz-nav .prev:hover{background:var(--accent-soft);color:var(--accent)}
+.qz-nav .next{background:var(--accent);color:#fff}
+.qz-nav .next:hover{background:var(--accent-2)}
+.qz-nav .goto{background:var(--accent-2);color:#fff}
+.qz-nav .goto:hover{background:var(--accent)}
+@media (max-width:768px){
+  :root{--header-h:106px}
+  main{margin-right:0}
+  #sidebar{transform:translateX(100%);width:min(300px,85vw)}
+  #sidebar.open{transform:translateX(0)}
+  #sidebar-toggle{display:flex}
+  .content-wrap{padding:0 12px}
+  .search-wrap{display:none}
+  .nav-btn{padding:5px 9px;font-size:.7rem}
+  .brand small{display:none}
+  .chapter-select{grid-template-columns:1fr}
+  .match-grid{grid-template-columns:1fr}
+  .chapter-header{position:static}
+}
+body.zen #sidebar{transform:translateX(100%)}
+body.zen main{margin-right:0}
+@media print{#sidebar,#top-bar,#progress-bar,.hdr-btn,#to-top,#loader,.main-nav,.copy-share,.bayt-actions,.icon-btn,.search-wrap{display:none!important}main{margin:0;padding:0}.matn-card,.nazm-card,.alfia-card,.qa-card{box-shadow:none;border:1px solid #ccc;break-inside:avoid}}
+</style>
+</head>
+<body>
+
+<div id="loader">
+  <div class="basmala">بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ</div>
+  <div class="ring"></div>
+  <div class="msg" id="loader-msg">جارٍ تحميل المكتبة…</div>
+</div>
+
+<div id="progress-bar"></div>
+
+<header id="top-bar">
+  <div class="top-row">
+    <button class="hdr-btn" id="sidebar-toggle" aria-label="القائمة"><svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+    <div class="search-wrap"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="search" id="search-input" placeholder="ابحث…" autocomplete="off"><span class="search-count" id="search-count"></span></div>
+    <div class="brand"><h1>مكتبة الآجرومية الشاملة</h1><small id="brand-meta">جارٍ التحميل…</small></div>
+    <button class="hdr-btn" id="theme-toggle" title="الوضع الليلي"><svg id="icon-moon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg><svg id="icon-sun" style="display:none" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></button>
+  </div>
+  <nav class="main-nav" id="main-nav">
+    <button class="nav-btn active" data-view="reader"><span class="ico">📖</span><span>القراءة</span></button>
+    <button class="nav-btn" data-view="favorites"><span class="ico">⭐</span><span>المحفوظات <span id="fav-count" style="font-size:.65rem;opacity:.7"></span></span></button>
+    <button class="nav-btn" data-view="quiz"><span class="ico">📝</span><span>الاختبار</span></button>
+    <button class="nav-btn" data-view="games"><span class="ico">🎮</span><span>الألعاب</span></button>
+    <button class="nav-btn" data-view="settings"><span class="ico">⚙️</span><span>الإعدادات</span></button>
+  </nav>
+</header>
+
+<aside id="sidebar">
+  <div class="side-head"><div><h2>فهرس الأبواب</h2><span id="toc-progress">0 / 0</span></div><button class="hdr-btn" id="close-sidebar" style="display:none"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
+  <nav id="toc-list"></nav>
+</aside>
+
+<main><div class="content-wrap">
+  <div id="view-reader" class="view active"></div>
+  <div id="view-favorites" class="view"></div>
+  <div id="view-quiz" class="view"></div>
+  <div id="view-games" class="view"></div>
+  <div id="view-settings" class="view"></div>
+</div></main>
+
+<button id="to-top" aria-label="العودة للأعلى"><svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg></button>
+<div class="toast" id="toast"></div>
+
+<!-- ============================================================
+     البيانات: الأبواب المدمجة (متن + نظم + شواهد ألفية + أسئلة)
+     ============================================================ -->
+<script type="application/json" id="data">
+{"chapters":[
+{"id":"kalam","title":"باب الكلام","matn":"الكَلَامُ هُوَ اللَّفْظُ المُرَكَّبُ المُفِيدُ بِالوَضْعِ. وَأَقْسَامُهُ ثَلَاثَةٌ: اسْمٌ، وَفِعْلٌ، وَحَرْفٌ جَاءَ لِمَعْنًى. فَالاسْمُ يُعْرَفُ بِالخَفْضِ، وَالتَّنْوِينِ، وَدُخُولِ الأَلِفِ وَاللَّامِ عَلَيْهِ، وَحُرُوفِ الخَفْضِ، وَهِيَ: مِنْ، وَإِلَى، وَعَنْ، وَعَلَى، وَفِي، وَرُبَّ، وَحَتَّى، وَحَاشَا، وَمُذْ، وَمُنْذُ، وَالبَاءُ، وَالكَافُ، وَاللَّامُ، وَحُرُوفُ القَسَمِ، وَهِيَ: الوَاوُ، وَالبَاءُ، وَالتَّاءُ. وَالفِعْلُ يُعْرَفُ بِقَدْ، وَالسِّينِ، وَسَوْفَ، وَتَاءِ التَّأْنِيثِ السَّاكِنَةِ. وَالحَرْفُ: مَا لَا يَصْلُحُ مَعَهُ دَلِيلُ الاسْمِ، وَلَا دَلِيلُ الفِعْلِ.","nazm":[["إِنَّ الكَلَامَ عِنْدَنَا فَلْتَسْتَمِعْ","لَفْظٌ مُرَكَّبٌ مُفِيدٌ قَدْ وُضِعْ"],["أَقْسَامُهُ الَّتِي عَلَيْهَا يُبْنَى","اسْمٌ وَفِعْلٌ ثُمَّ حَرْفُ مَعْنَى"],["فَالاسْمُ بِالخَفْضِ وَبِالتَّنْوِينِ أَوْ","دُخُولِ أَلْ يُعْرَفُ فَاقْفُ مَا قَفَوْا"],["وَبِحُرُوفِ الخَفْضِ وَهْيَ مِنْ إِلَى","وَعَنْ وَفِي وَرُبَّ وَالبَاءِ وَعَلَى"],["وَالكَافِ وَاللَّامِ وَوَاوٍ وَالتَّا","وَمُذْ وَمُنْذُ وَلَعَلَّ حَتَّى"],["وَالفِعْلُ بِالسِّينِ وَسَوْفَ وَبِقَدْ","فَاعْلَمْ وَنَا التَّأْنِيثِ مَيْزُهُ وَرَدْ"],["وَالحَرْفُ يُعْرَفُ بِأَلَّا يَقْبَلَا","لِاسْمٍ وَلَا فِعْلٍ دَلِيلًا كَ: بَلَى"]],"alfia":[["كَلَامُنَا لَفْظٌ مُفِيدٌ كَاسْتَقِمْ","وَاسْمٌ وَفِعْلٌ ثُمَّ حَرْفٌ وَالكَلِمْ"],["وَاحِدُهُ كَلِمَةٌ وَالقَوْلُ عَمْ","وَكِلْمَةٌ بِهَا كَلَامٌ قَدْ يُؤَمْ"]],"qas":[{"q":"ما هو الكلام؟","a":"الكلامُ هو اللفظ المركب المفيد بالوضع."},{"q":"ما معنى كونه لفظًا؟","a":"أن يكون صوتًا مشتملًا على بعض الحروف الهجائية التي تبتدئ بالألف وتنتهي بالياء."},{"q":"ما معنى كونه مفيدًا؟","a":"أن يَحسُن سكوت المتكلم عليه، بحيث لا يبقى السامع منتظرًا لشيء آخر."},{"q":"ما معنى كونه مركبًا؟","a":"أن يكون مؤلفًا من كلمتين أو أكثر."},{"q":"ما معنى كونه موضوعًا بالوضع العربي؟","a":"أن تكون الألفاظ المستعملة من الألفاظ التي وضعتها العرب للدلالة على معنى من المعاني."},{"q":"مَثِّل بخمسة أمثلة لما يسمى عند النحاة كلامًا.","a":"﴿وَلَا يُفْلِحُ السَّاحِرُ حَيْثُ أَتَى﴾ — لا إله إلا الله — محمدٌ صفوةُ المرسلين — الله ربنا — محمد نبينا."},{"q":"ما تقول في رجل كتب لك رسالة يحكي قصة رحلته إلى مكة، هل يسمى هذا كلامًا؟","a":"هذا ليس بكلام عند النحويين؛ لأنه ليس بلفظ."},{"q":"ما تقول فيما إذا قال لك شخص: «إن اجتهدت»، هل هذا كلام؟","a":"لا، ليس كلامًا؛ لأنه غير مفيد."}]},
+{"id":"aqsam","title":"أقسام الكلام","matn":"وَأَقْسَامُهُ ثَلَاثَةٌ: اسْمٌ، وَفِعْلٌ، وَحَرْفٌ جَاءَ لِمَعْنًى.","nazm":[["أَقْسَامُهُ الَّتِي عَلَيْهَا يُبْنَى","اسْمٌ وَفِعْلٌ ثُمَّ حَرْفُ مَعْنَى"]],"alfia":[["وَاسْمٌ وَفِعْلٌ ثُمَّ حَرْفٌ وَالكَلِمْ","وَاحِدُهُ كَلِمَةٌ وَالقَوْلُ عَمْ"]],"qas":[{"q":"ما هو الاسم؟ مَثِّل بعشرة أمثلة.","a":"كلمة دلت على معنى في نفسها، ولم تقترن بزمان. مثاله: محمد، علي، رجلٌ، جملٌ، نهرٌ، تفاحةٌ، ليمونةٌ، عصا، فرس، ترك."},{"q":"ما هو الفعل؟ وإلى كم قسم ينقسم؟","a":"كلمة دلت على معنى في نفسها، واقترنت بأحد الأزمنة الثلاثة. وينقسم إلى ثلاثة: ماضٍ، ومضارع، وأمر."},{"q":"ما هو الحرف؟ مَثِّل بعشرة أمثلة.","a":"كلمة دلت على معنى في غيرها. من أمثلته: مِن، إلى، عن، على، إلا، لكن، إنَّ، إنْ، بلى، قد."},{"q":"ما الدليل على انحصار أقسام الكلام في ثلاثة؟","a":"التتبع والاستقراء؛ فالعلماء تتبعوا كلام العرب فوجدوه لا يخرج عن: الاسم والفعل والحرف."},{"q":"لماذا قيد المؤلف الحرف بقوله: «وحرف جاء لمعنى»؟","a":"احترازًا من الحرف الذي لم يأتِ لمعنى كالميم."}]},
+{"id":"alamat-ism","title":"علامات الاسم","matn":"فَالاسْمُ يُعْرَفُ بِالخَفْضِ، وَالتَّنْوِينِ، وَدُخُولِ الأَلِفِ وَاللَّامِ عَلَيْهِ، وَحُرُوفِ الخَفْضِ، وَهِيَ: مِنْ، وَإِلَى، وَعَنْ، وَعَلَى، وَفِي، وَرُبَّ، وَحَتَّى، وَحَاشَا، وَمُذْ، وَمُنْذُ، وَالبَاءُ، وَالكَافُ، وَاللَّامُ، وَحُرُوفُ القَسَمِ، وَهِيَ: الوَاوُ، وَالبَاءُ، وَالتَّاءُ.","nazm":[["فَالاسْمُ بِالخَفْضِ وَبِالتَّنْوِينِ أَوْ","دُخُولِ أَلْ يُعْرَفُ فَاقْفُ مَا قَفَوْا"],["وَبِحُرُوفِ الخَفْضِ وَهْيَ مِنْ إِلَى","وَعَنْ وَفِي وَرُبَّ وَالبَاءِ وَعَلَى"],["وَالكَافِ وَاللَّامِ وَوَاوٍ وَالتَّا","وَمُذْ وَمُنْذُ وَلَعَلَّ حَتَّى"]],"alfia":[["بِالجَرِّ وَالتَّنْوِينِ وَالنِّدَا وَأَلْ","وَمُسْنَدٍ لِلِاسْمِ تَمْيِيزٌ حَصَلْ"]],"qas":[{"q":"ما هي علامات الاسم؟","a":"الخفض، والتنوين، ودخول الألف واللام، وحروف الخفض."},{"q":"ما هو الفرق بين الخفض والجر؟","a":"الخفض اصطلاح الكوفيين، والجر اصطلاح البصريين، ولا اختلاف بينهما من جهة المعنى."},{"q":"ما هي أنواع التنوين؟","a":"ستة: التمكين، والتنكير، والمقابلة، والعوض (عن حرف أو كلمة أو جملة)، والترنم، والغالي. ويختص الاسم بالأربعة الأولى."},{"q":"هل يجتمع التنوين والألف واللام؟","a":"لا يجتمعان أبدًا."},{"q":"على أي شيء تدل الحروف: مِن، اللام، الكاف، رُبَّ، عن، في؟","a":"مِن: الابتداء. اللام: الملك والاختصاص. الكاف: التشبيه. رُبَّ: التقليل/التكثير. عن: المجاوزة. في: الظرفية."}]},
+{"id":"alamat-fil","title":"علامات الفعل","matn":"وَالفِعْلُ يُعْرَفُ بِقَدْ، وَالسِّينِ، وَسَوْفَ، وَتَاءِ التَّأْنِيثِ السَّاكِنَةِ.","nazm":[["وَالفِعْلُ بِالسِّينِ وَسَوْفَ وَبِقَدْ","فَاعْلَمْ وَنَا التَّأْنِيثِ مَيْزُهُ وَرَدْ"]],"alfia":[["وَنُونُ أَفْعَالِ الرُّبَاعِيِّ إِذَا","خُصَّتْ بِتَاءِ فَاعِلٍ وَقَدْ نُسِخَا"]],"qas":[{"q":"ما هي علامات الفعل؟","a":"قد، والسين، وسوف، وتاء التأنيث الساكنة."},{"q":"ما المعاني التي تدل عليها «قد»؟","a":"مع الماضي: التحقيق والتقريب. ومع المضارع: التقليل، والتكثير، والتحقيق."},{"q":"على أي شيء تدل تاء التأنيث الساكنة؟","a":"على أن الاسم الذي أُسند إليه الفعل مؤنث، سواء كان فاعلًا أو نائب فاعل."}]},
+{"id":"irab","title":"باب الإعراب","matn":"الإِعْرَابُ هُوَ تَغْيِيرُ أَوَاخِرِ الكَلِمِ؛ لِاخْتِلَافِ العَوَامِلِ الدَّاخِلَةِ عَلَيْهَا، لَفْظًا أَوْ تَقْدِيرًا. وَأَقْسَامُهُ أَرْبَعَةٌ: رَفْعٌ، وَنَصْبٌ، وَخَفْضٌ، وَجَزْمٌ. فَلِلْأَسْمَاءِ مِنْ ذَلِكَ الرَّفْعُ، وَالنَّصْبُ، وَالخَفْضُ، وَلَا جَزْمَ. وَلِلْأَفْعَالِ مِنْ ذَلِكَ الرَّفْعُ، وَالنَّصْبُ، وَالجَزْمُ، وَلَا خَفْضَ.","nazm":[["الإِعْرَابُ تَغْيِيرُ أَوَاخِرِ الكَلِمْ","تَقْدِيرًا أَوْ لَفْظًا فَذَا الخَدَّ اغْتَنِمْ"],["وَذَلِكَ التَّغْيِيرُ لِاضْطِرَابِ","عَوَامِلٍ تَدْخُلُ لِلْإِعْرَابِ"],["أَقْسَامُهُ أَرْبَعَةٌ تُؤَمُّ","رَفْعٌ وَنَصْبٌ ثُمَّ خَفْضٌ جَزْمٌ"],["فَالْأَوَّلَانِ دُونَ رَيْبٍ وَقَعَا","فِي الاسْمِ وَالفِعْلِ المُضَارِعِ مَعَا"],["وَالاسْمُ قَدْ خُصِّصَ بِالخَفْضِ كَمَا","قَدْ خُصِّصَ الفِعْلُ بِجَزْمٍ فَاعْلَمَا"]],"alfia":[["الإِعْرَابُ تَغْيِيرُ أَوَاخِرِ الكَلِمْ","تَقْدِيرًا أَوْ لَفْظًا فَذَا الخَدَّ اغْتَنِمْ"]],"qas":[{"q":"ما هو الإعراب لغة واصطلاحًا؟","a":"لغةً: الإظهار والإبانة. اصطلاحًا: تغيير أواواخر الكلم لاختلاف العوامل الداخلة عليها، لفظًا أو تقديرًا."},{"q":"ما هو البناء لغة واصطلاحًا؟","a":"لغةً: وضع شيء على شيء للثبوت واللزوم. اصطلاحًا: لزوم آخر الكلمة حالة واحدة لغير عامل ولا اعتلال."},{"q":"ما هي حروف العلة؟","a":"الألف، والياء المكسور ما قبلها، والواو المضموم ما قبلها."},{"q":"ما هي أحكام حروف العلة؟","a":"الألف: تُقدَّر عليها جميع الحركات (التعذر). والياء والواو: تُقدَّر عليهما الضمة والكسرة (الثقل)، وتظهر الفتحة لخفتها."}]},
+{"id":"anwa-irab","title":"أنواع الإعراب","matn":"وَأَقْسَامُهُ أَرْبَعَةٌ: رَفْعٌ، وَنَصْبٌ، وَخَفْضٌ، وَجَزْمٌ.","nazm":[["أَقْسَامُهُ أَرْبَعَةٌ تُؤَمُّ","رَفْعٌ وَنَصْبٌ ثُمَّ خَفْضٌ جَزْمٌ"]],"alfia":[["وَالاسْمُ قَدْ خُصِّصَ بِالخَفْضِ كَمَا","قَدْ خُصِّصَ الفِعْلُ بِجَزْمٍ فَاعْلَمَا"]],"qas":[{"q":"ما هي أقسام الإعراب؟","a":"أربعة: الرفع، والنصب، والخفض، والجزم."},{"q":"ما الدليل على انحصارها في هذه الأقسام الأربعة؟","a":"التتبع والاستقراء لكلام العرب."},{"q":"ما الذي يختص به الاسم؟","a":"الخفض، فلا يوجد فعل مخفوض."},{"q":"ما الذي يختص به الفعل؟","a":"الجزم، فلا يوجد اسم مجزوم."},{"q":"ما الأنواع المشتركة بين الاسم والفعل؟","a":"الرفع والنصب."}]},
+{"id":"alamat-irab","title":"علامات الإعراب","matn":"لِلرَّفْعِ أَرْبَعُ عَلَامَاتٍ: الضَّمَّةُ، وَالوَاوُ، وَالأَلِفُ، وَالنُّونُ. وَلِلنَّصْبِ خَمْسُ عَلَامَاتٍ: الفَتْحَةُ، وَالأَلِفُ، وَالكَسْرَةُ، وَاليَاءُ، وَحَذْفُ النُّونِ. وَلِلخَفْضِ ثَلَاثُ عَلَامَاتٍ: الكَسْرَةُ، وَاليَاءُ، وَالفَتْحَةُ. وَلِلْجَزْمِ عَلَامَتَانِ: السُّكُونُ، وَالحَذْفُ.","nazm":[["ضَمٌّ وَوَاوٌ أَلِفٌ وَالنُّونُ","عَلَامَةُ الرَّفْعِ بِهَا تَكُونُ"],["عَلَامَةُ النَّصْبِ لَهَا كُنْ مُحْصِيَا","الفَتْحَ وَالأَلِفَ وَالكَسْرَ وَيَا"],["عَلَامَةُ الخَفْضِ الَّتِي بِهَا يَفِي","كَسْرٌ وَبَاءٌ ثُمَّ فَتْحٌ فَاقْتَفِ"],["إِنَّ السُّكُونَ يَا ذَوِي الأَذْهَانِ","وَالحَذْفَ لِلْجَزْمِ عَلَامَتَانِ"]],"alfia":[["وَلِلْمَرْفُوعَاتِ أَرْبَعُ عَلَامَاتٍ","فَاعْلَمْ وَالْأَصْلُ فِي ذَاكَ الضَّمُّ"]],"qas":[{"q":"كم علامات الرفع؟","a":"أربعة: الضمة، والواو، والألف، والنون."},{"q":"في كم موضع تكون الضمة علامة للرفع؟","a":"أربعة: الاسم المفرد، وجمع التكسير، وجمع المؤنث السالم، والفعل المضارع الذي لم يتصل بآخره شيء."},{"q":"متى يُرفع الفعل المضارع بالضمة؟","a":"إذا لم يتصل بآخره شيء (لا نون توكيد، ولا نون نسوة، ولا ألف اثنين، ولا واو جماعة، ولا ياء مخاطبة)."},{"q":"ما هي الأفعال الخمسة؟","a":"كل فعل مضارع اتصل بآخره ألف الاثنين، أو واو الجماعة، أو ياء المخاطبة."}]},
+{"id":"muarabat","title":"فصل المعربات","matn":"المُعْرَبَاتُ قِسْمَانِ: قِسْمٌ يُعْرَبُ بِالحَرَكَاتِ، وَقِسْمٌ يُعْرَبُ بِالحُرُوفِ. فَالَّذِي يُعْرَبُ بِالحَرَكَاتِ أَرْبَعَةُ أَنْوَاعٍ: الاسْمُ المُفْرَدُ، وَجَمْعُ التَّكْسِيرِ، وَجَمْعُ المُؤَنَّثِ السَّالِمُ، وَالفِعْلُ المُضَارِعُ الَّذِي لَمْ يَتَّصِلْ بِآخِرِهِ شَيْءٌ. وَالَّذِي يُعْرَبُ بِالحُرُوفِ أَرْبَعَةُ أَنْوَاعٍ: التَّثْنِيَةُ، وَجَمْعُ المُذَكَّرِ السَّالِمُ، وَالأَسْمَاءُ الخَمْسَةُ، وَالأَفْعَالُ الخَمْسَةُ.","nazm":[],"alfia":[["وَالمُعْرَبَاتُ مِنَ الأَسْمَاءِ سِوَى","مَا مِنْهَا بِالحَرْفِ قَدْ جِيءَ بِهِ"]],"qas":[{"q":"إلى كم قسم تنقسم المعربات؟","a":"قسمان: ما يعرب بالحركات، وما يعرب بالحروف."},{"q":"ما المعربات التي تُعرب بالحركات؟","a":"أربعة: الاسم المفرد، وجمع التكسير، وجمع المؤنث السالم، والفعل المضارع الذي لم يتصل بآخره شيء."},{"q":"ما المعربات التي تُعرب بالحروف؟","a":"أربعة: التثنية، وجمع المذكر السالم، والأسماء الخمسة، والأفعال الخمسة."}]},
+{"id":"afal","title":"باب الأفعال","matn":"الأَفْعَالُ ثَلَاثَةٌ: مَاضٍ، وَمُضَارِعٌ، وَأَمْرٌ، نَحْوُ: ضَرَبَ، يَضْرِبُ، اضْرِبْ. فَالمَاضِي مَفْتُوحُ الآخِرِ أَبَدًا. وَالأَمْرُ مَجْزُومٌ أَبَدًا. وَالمُضَارِعُ مَا كَانَ فِي أَوَّلِهِ إِحْدَى الزَّوَائِدِ الأَرْبَعِ الَّتِي يَجْمَعُهَا قَوْلُكَ: «أَنَيْتُ»، وَهُوَ مَرْفُوعٌ أَبَدًا حَتَّى يَدْخُلَ عَلَيْهِ نَاصِبٌ أَوْ جَازِمٌ.","nazm":[["وَهْيَ ثَلَاثَةٌ مُضِيٌّ قَدْ خَلَا","وَفِعْلُ أَمْرٍ وَمُضَارِعٌ عَلَا"],["فَابْنِ عَلَى الفَتْحِ المُضِيَّ أَبَدًا","وَالأَمْرُ بِالجَزْمِ لَدَى البَعْضِ ارْتَدَى"],["ثُمَّ المُضَارِعُ الَّذِي فِي صَدْرِهِ","إِحْدَى زَوَائِدِ أَنَيْتَ فَادْرِهِ"],["وَحُكْمُهُ الرَّفْعُ إِذَا يُجَرَّدُ","مِنْ نَاصِبٍ وَجَازِمٍ كَتَسْعَدُ"]],"alfia":[["فِعْلٌ مُضَارِعٌ يَلِيهِ نَاصِبُ","أَوْ جَازِمٌ أَوْ مَا لَهُ مُلَابِسُ"]],"qas":[{"q":"إلى كم قسم ينقسم الفعل؟","a":"ثلاثة: ماضٍ، ومضارع، وأمر."},{"q":"ما هو الفعل الماضي؟","a":"ما يدل على حصول شيء قبل زمن التكلم؛ نحو: ضرب، نصر، فتح، علم."},{"q":"ما هو الفعل المضارع؟","a":"ما يدل على حصول شيء في زمن التكلم أو بعده."},{"q":"ما هو فعل الأمر؟","a":"ما يُطلب به حصول شيء بعد زمن التكلم."},{"q":"متى يكون الفعل الماضي مبنيًا على الفتح الظاهر؟","a":"في موضعين: الصحيح الآخر الذي لم يتصل به واو جماعة ولا ضمير رفع متحرك، وكل فعل ماضٍ آخره واو أو ياء."},{"q":"ما هي علامة الفعل المضارع؟","a":"منفصلة (لم، السين، سوف)، ومتصلة (أن يكون في أوله إحدى زوائد «أنيت»)."}]},
+{"id":"nawasib","title":"نواصب المضارع","matn":"فَالنَّوَاصِبُ عَشَرَةٌ، وَهِيَ: أَنْ، وَلَنْ، وَإِذَنْ، وَكَيْ، وَلَامُ كَيْ، وَلَامُ الجُحُودِ، وَحَتَّى، وَالجَوَابُ بِالفَاءِ، وَالوَاوِ، وَأَوْ.","nazm":[["فَنَصْبُهُ بِأَنْ وَلَنْ إِذَنْ وَكَيْ","وَلَامِ كَيْ لَامِ الجُحُودِ يَا أُخَيْ"],["كَذَاكَ حَتَّى وَالجَوَابُ بِالفَا","وَالهَاءِ ثُمَّ أَوْ رُزِقْتَ اللُّطْفَا"]],"alfia":[["وَنَصْبُهُمْ بِأَنْ وَلَنْ وَكَيْ وَإِذْ","وَلَامِ كَيْ لَامِ الجُحُودِ يَا أُخَيْ"]],"qas":[{"q":"ما الأدوات التي تنصب المضارع بنفسها؟","a":"أن، ولن، وإذن، وكي."},{"q":"ما الذي يشترط لنصب المضارع بعد «إذن»؟","a":"ثلاثة: أن تكون في صدر جملة الجواب، ومتصلة بالفعل، والفعل دال على الاستقبال."},{"q":"متى تنصب «أن» مضمرة جوازًا؟","a":"بعد لام كي."},{"q":"متى تنصب «أن» مضمرة وجوبًا؟","a":"بعد: لام الجحود، وحتى، وفاء السببية، وواو المعية، وأو."}]},
+{"id":"jawazim","title":"جوازم المضارع","matn":"وَالجَوَازِمُ ثَمَانِيَةَ عَشَرَ، وَهِيَ: لَمْ، وَلَمَّا، وَأَلَمْ، وَأَلَمَّا، وَلَامُ الأَمْرِ وَالدُّعَاءِ، وَ«لَا» فِي النَّهْيِ وَالدُّعَاءِ، وَإِنْ، وَمَا، وَمَنْ، وَمَهْمَا، وَإِذْمَا، وَأَيُّ، وَمَتَى، وَأَيَّانَ، وَأَيْنَ، وَأَنَّى، وَحَيْثُمَا، وَكَيْفَمَا، وَإِذَا فِي الشِّعْرِ خَاصَّةً.","nazm":[["وَجَزْمُهُ إِذَا أَرَدْتَ الجَزْمَا","بِلَمْ وَلَمَّا وَأَلَمْ أَلَمَّا"],["وَلَامِ الأَمْرِ وَالدُّعَاءِ ثُمَّ لَا","فِي النَّهْيِ وَالدُّعَاءِ نِلْتَ الأَمَلَا"],["وَإِنْ وَمَا وَمَنْ وَأَنَّى مَهْمَا","أَيٌّ مَتَى أَيَّانَ أَيْنَ إِذْمَا"],["وَحَيْثُمَا وَكَيْفَمَا ثُمَّ إِذَا","فِي الشِّعْرِ لَا فِي النَّثْرِ فَادْرِ المَأْخَذَا"]],"alfia":[["وَجَزْمُهُمْ بِلَمْ وَلَمَّا وَأَلَمْ","وَلَامِ كَيْ لَامِ الجُحُودِ يَا أُخَيْ"]],"qas":[{"q":"إلى كم قسم تنقسم الجوازم؟","a":"قسمان: ما يجزم فعلًا واحدًا، وما يجزم فعلين."},{"q":"ما الجوازم التي تجزم فعلًا واحدًا؟","a":"ستة: لم، ولما، وألم، وألما، ولام الأمر والدعاء، و«لا» في النهي والدعاء."},{"q":"ما الجوازم التي تجزم فعلين؟","a":"اثنا عشر: إن، ما، مهما، إذما، أي، متى، أين، أنى، أيان، حيثما، كيفما، من."}]},
+{"id":"marfuat","title":"مرفوعات الأسماء","matn":"المَرْفُوعَاتُ سَبْعَةٌ، وَهِيَ: الفَاعِلُ، وَالمَفْعُولُ الَّذِي لَمْ يُسَمَّ فَاعِلُهُ، وَالمُبْتَدَأُ، وَخَبَرُهُ، وَاسْمُ كَانَ وَأَخَوَاتِهَا، وَخَبَرُ إِنَّ وَأَخَوَاتِهَا، وَالتَّابِعُ لِلْمَرْفُوعِ.","nazm":[],"alfia":[["وَالمَرْفُوعَاتُ سَبْعَةٌ","فَاعِلٌ وَمَفْعُولٌ لَمْ يُسَمَّ فَاعِلُهْ"]],"qas":[{"q":"في كم موضع يكون الاسم مرفوعًا؟","a":"سبعة: الفاعل، ونائب الفاعل، والمبتدأ، والخبر، واسم كان، وخبر إن، وتابع المرفوع."},{"q":"ما أنواع التوابع؟","a":"أربعة: النعت، والعطف، والتوكيد، والبدل."}]},
+{"id":"fail","title":"باب الفاعل","matn":"الفَاعِلُ هُوَ الاسْمُ المَرْفُوعُ المَذْكُورُ قَبْلَهُ فِعْلُهُ. وَهُوَ عَلَى قِسْمَيْنِ: ظَاهِرٌ، وَمُضْمَرٌ.","nazm":[["الفَاعِلَ ارْفَعْ وَهْوَ مَا قَدْ أُسْنِدَا","إِلَيْهِ فِعْلٌ قَبْلَهُ قَدْ وُجِدَا"],["وَظَاهِرًا يَأْتِي وَيَأْتِي مُضْمَرًا","كَأَصْطَادَ زَيْدٌ وَأَشْتَرَيْتُ أَعْفَرَا"]],"alfia":[["وَالْفَاعِلُ الَّذِي كَفِعْلٍ أُسْنِدَا","وَقَدْ يَكُونُ ظَاهِرًا وَمُضْمَرَا"]],"qas":[{"q":"ما هو الفاعل؟","a":"اصطلاحًا: الاسم المرفوع المذكور قبله فعله."},{"q":"هل يمكن أن يكون الفاعل منصوبًا؟","a":"لا؛ لأن الفاعل هو الاسم المرفوع."},{"q":"هل يتقدم الفاعل على فعله؟","a":"لا؛ لأن الفاعل مذكور قبله فعله، فإن تقدم كان مبتدأً لا فاعلًا."},{"q":"إلى كم قسم ينقسم الفاعل؟","a":"قسمان: ظاهر ومضمر. والمضمر: متصل ومنفصل."}]},
+{"id":"naib-fail","title":"نائب الفاعل","matn":"المَفْعُولُ الَّذِي لَمْ يُسَمَّ فَاعِلُهُ هُوَ الاسْمُ المَرْفُوعُ الَّذِي لَمْ يُذْكَرْ مَعَهُ فَاعِلُهُ. فَإِنْ كَانَ الفِعْلُ مَاضِيًا ضُمَّ أَوَّلُهُ وَكُسِرَ مَا قَبْلَ آخِرِهِ، وَإِنْ كَانَ مُضَارِعًا ضُمَّ أَوَّلُهُ وَفُتِحَ مَا قَبْلَ آخِرِهِ.","nazm":[["إِذَا حَذَفْتَ فِي الكَلَامِ فَاعِلَا","مُخْتَصَرًا أَوْ مُبْهَمًا أَوْ جَاهِلَا"],["فَأَوْجِبِ التَّأْخِيرَ لِلْمَفْعُولِ بِهْ","وَارْفَعْ حَيْثُ نَابَ عَنْهُ فَانْتَبِهْ"]],"alfia":[["وَالْمَفْعُولُ الَّذِي لَمْ يُسَمَّ فَاعِلُهُ","مَرْفُوعٌ وَالثَّانِي مَنْصُوبٌ"]],"qas":[{"q":"ما الذي تفعله في الفعل عند إسناده للنائب عن الفاعل؟","a":"الماضي: ضم أوله وكسر ما قبل آخره. المضارع: ضم أوله وفتح ما قبل آخره."},{"q":"ما الذي تفعله في المفعول إذا أقمته مقام الفاعل؟","a":"ترفعه بعد أن كان منصوبًا، وتُعطيه أحكام الفاعل."}]},
+{"id":"mubtada","title":"المبتدأ والخبر","matn":"المُبْتَدَأُ هُوَ الاسْمُ المَرْفُوعُ العَارِي عَنِ العَوَامِلِ اللَّفْظِيَّةِ. وَالخَبَرُ هُوَ الاسْمُ المَرْفُوعُ المُسْنَدُ إِلَيْهِ.","nazm":[["المُبْتَدَا اسْمٌ مِنْ عَوَامِلٍ سَلِمَ","لَفْظِيَّةٍ وَهُوَ بِرَفْعٍ قَدْ وُسِمَ"],["وَالخَبَرُ الاسْمُ الَّذِي قَدْ أُسْنِدَا","إِلَيْهِ وَالرَّفْعَ الْتَزِمْهُ أَبَدَا"]],"alfia":[["مُبْتَدَأٌ زَائِدٌ مُسْنَدٌ إِلَيْهْ","وَالْخَبَرُ الْمُسْنَدُ نَفْعًا فِيهِ"]],"qas":[{"q":"ما هو المبتدأ؟ وما هو الخبر؟","a":"المبتدأ: الاسم المرفوع العاري عن العوامل اللفظية. الخبر: الاسم المرفوع المسند إليه."},{"q":"ما الذي يربط الخبر الجملة بالمبتدأ؟","a":"ضمير يعود على المبتدأ، أو إشارة إليه، أو إعادة المبتدأ بلفظه، أو لفظ عام يشتمل عليه."},{"q":"في أي شيء تجب مطابقة الخبر للمبتدأ؟","a":"في التذكير والتأنيث، والجمع والإفراد والتثنية."}]},
+{"id":"nawasikh","title":"النواسخ","matn":"العَوَامِلُ الدَّاخِلَةُ عَلَى المُبْتَدَأِ وَالخَبَرِ ثَلَاثَةُ أَشْيَاءَ: كَانَ وَأَخَوَاتُهَا، وَإِنَّ وَأَخَوَاتُهَا، وَظَنَنْتُ وَأَخَوَاتُهَا.","nazm":[["وَرَفْعُكَ الاسْمَ وَنَصْبُكَ الخَبَرْ","بِهَذِهِ الأَفْعَالِ حُكْمٌ مُعْتَبَرْ"],["عَمَلُ كَانَ عَكْسُهُ لِإِنَّ أَنْ","لَكِنَّ لَيْتَ وَلَعَلَّ وَكَأَنْ"],["أَنْصِبْ بِأَفْعَالِ القُلُوبِ مُبْتَدَا","وَخَبَرًا وَهْيَ ظَنَنْتُ وَجَدَا"]],"alfia":[["وَكَانَ وَأَخَوَاتُهَا تَرْفَعُ الِاسْمَ","وَتَنْصِبُ الْخَبَرَ وَهَذَا حُكْمُهَا"],["وَإِنَّ وَأَخَوَاتُهَا تَنْصِبُ الِاسْمَ","وَتَرْفَعُ الْخَبَرَ وَهَذَا رَسْمُهَا"]],"qas":[{"q":"إلى كم قسم تنقسم النواسخ؟","a":"ثلاثة: كان وأخواتها، وإن وأخواتها، وظننت وأخواتها."},{"q":"ما الذي تعمله «كان» وأخواتها؟","a":"ترفع المبتدأ (اسمها) وتنصب الخبر (خبرها)."},{"q":"ما الذي تعمله «إنَّ» وأخواتها؟","a":"تنصب المبتدأ (اسمها) وترفع الخبر (خبرها)."},{"q":"ما الذي تعمله «ظننت» وأخواتها؟","a":"تنصب المبتدأ والخبر على أنهما مفعولان لها."}]},
+{"id":"naat","title":"باب النعت","matn":"النَّعْتُ تَابِعٌ لِمَنْعُوتِهِ فِي رَفْعِهِ، وَنَصْبِهِ، وَخَفْضِهِ، وَتَعْرِيفِهِ، وَتَنْكِيرِهِ.","nazm":[["النَّعْتُ قَدْ قَالَ ذَوُو الأَلْبَابِ","يَتْبَعُ لِلْمَنْعُوتِ فِي الإِعْرَابِ"]],"alfia":[["يَتْبَعُ فِي الْإِعْرَابِ وَالتَّعْرِيفِ","وَالنَّكِرَاتِ وَالتَّذْكِيرِ وَالتَّأْنِيثِ"]],"qas":[{"q":"ما هو النعت؟","a":"التابع المشتق أو المؤول بالمشتق، لاسم يتبعه في الإعراب والتعريف والتنكير."},{"q":"إلى كم قسم ينقسم النعت؟","a":"قسمان: الحقيقي، والسببي."},{"q":"ما هي المعرفة؟","a":"خمسة: الضمير، والعلم، واسم الإشارة، والاسم المعرف بالألف واللام، وما أضيف إلى واحد منها."},{"q":"ما هي النكرة؟","a":"كل اسم شائع في جنسه لا يختص به واحد دون آخر، وصلح لدخول الألف واللام عليه."}]},
+{"id":"atf","title":"باب العطف","matn":"حُرُوفُ العَطْفِ عَشَرَةٌ: الوَاوُ، وَالفَاءُ، وَثُمَّ، وَأَوْ، وَأَمْ، وَإِمَّا، وَبَلْ، وَلَا، وَلَكِنْ، وَحَتَّى فِي بَعْضِ المَوَاضِعِ.","nazm":[["هَذَا وَإِنَّ العَطْفَ أَيْضًا تَابِعُ","حُرُوفُهُ عَشَرَةٌ يَا سَامِعُ"]],"alfia":[["وَحُرُوفُ الْعَطْفِ عَشَرَةٌ","الْوَاوُ وَالْفَاءُ وَثُمَّ وَأَوْ"]],"qas":[{"q":"ما هي حروف العطف؟","a":"الواو، الفاء، ثم، أو، أم، إما، بل، لا، لكن، حتى في بعض المواضع."},{"q":"فيم يشترك المعطوف والمعطوف عليه؟","a":"في الحكم الإعرابي، فالمعطوف تابع للمعطوف عليه."}]},
+{"id":"tawkid","title":"باب التوكيد","matn":"التَّوْكِيدُ تَابِعٌ لِلْمُؤَكَّدِ فِي رَفْعِهِ، وَنَصْبِهِ، وَخَفْضِهِ، وَتَعْرِيفِهِ. وَيَكُونُ بِأَلْفَاظٍ مَعْلُومَةٍ، وَهِيَ: النَّفْسُ، وَالعَيْنُ، وَكُلٌّ، وَأَجْمَعُ، وَتَوَابِعُ أَجْمَعَ.","nazm":[["وَيَتْبَعُ المُؤَكَّدَ التَّوْكِيدُ فِي","رَفْعٍ وَنَصْبٍ ثُمَّ خَفْضٍ فَاعْرِفِ"]],"alfia":[["وَالنَّفْسُ وَالْعَيْنُ وَكُلٌّ وَأَجْمَعُ","وَتَابِعُ الْأَجْمَعِ وَالْأَبْتَعُ"]],"qas":[{"q":"ما هو التوكيد؟","a":"التابع المقوي لمتبوعه. وهو قسمان: لفظي، ومعنوي."},{"q":"ما الألفاظ التي تستعمل في التوكيد المعنوي؟","a":"النفس، والعين، وكل، وأجمع، وتوابع أجمع: أكتع، وأبتع، وأبصع."}]},
+{"id":"badal","title":"باب البدل","matn":"إِذَا أُبْدِلَ اسْمٌ مِنَ اسْمٍ، أَوْ فِعْلٌ مِنْ فِعْلٍ، تَبِعَهُ فِي جَمِيعِ إِعْرَابِهِ. وَهُوَ عَلَى أَرْبَعَةِ أَقْسَامٍ: بَدَلُ الشَّيْءِ مِنَ الشَّيْءِ، وَبَدَلُ البَعْضِ مِنَ الكُلِّ، وَبَدَلُ الاشْتِمَالِ، وَبَدَلُ الغَلَطِ.","nazm":[["إِذَا اسْمٌ أُبْدِلَ مِنْ اسْمٍ يُنْحَلْ","إِعْرَابَهُ وَالفِعْلُ أَيْضًا يُبْدَلْ"]],"alfia":[["وَالْبَدَلُ الْمُبْدَلُ مِنْهُ مَا","مِنْهُ بِحُكْمِ الْإِعْرَابِ قَدْ حُكِمَا"]],"qas":[{"q":"ما هو البدل؟","a":"التابع المقصود بالحكم بلا واسطة بينه وبين متبوعه."},{"q":"إلى كم قسم ينقسم البدل؟","a":"أربعة: بدل كل من كل، وبدل بعض من كل، وبدل اشتمال، وبدل غلط."},{"q":"ما الذي يشترط في بدل البعض وبدل الاشتمال؟","a":"أن يضاف إلى ضمير عائد إلى المبدل منه."}]},
+{"id":"mafool-bih","title":"المفعول به","matn":"المَفْعُولُ بِهِ هُوَ الاسْمُ المَنْصُوبُ الَّذِي يَقَعُ بِهِ الفِعْلُ. وَهُوَ قِسْمَانِ: ظَاهِرٌ، وَمُضْمَرٌ.","nazm":[["مَهْمَا تَرَى اسْمًا وَقَعَ الفِعْلُ بِهِ","فَذَاكَ مَفْعُولٌ فَقُلْ بِنَصْبِهِ"]],"alfia":[["وَالْمَفْعُولُ بِهِ مَنْصُوبٌ","وَهُوَ الَّذِي يَقَعُ بِهِ الْفِعْلُ"]],"qas":[{"q":"ما هو المفعول به؟","a":"الاسم المنصوب الذي يقع عليه فعل الفاعل."},{"q":"إلى كم قسم ينقسم المفعول به؟","a":"قسمان: ظاهر ومضمر."},{"q":"ما الذي يجب أن يفصل بين الفعل وياء المتكلم؟","a":"نون تسمى نون الوقاية."}]},
+{"id":"masdar","title":"باب المصدر","matn":"المَصْدَرُ هُوَ الاسْمُ المَنْصُوبُ الَّذِي يَجِيءُ ثَالِثًا فِي تَصْرِيفِ الفِعْلِ، نَحْوُ: ضَرَبَ، يَضْرِبُ، ضَرْبًا.","nazm":[["المَصْدَرُ اسْمٌ جَاءَ ثَالِثًا لَدَى","تَصْرِيفِ فِعْلٍ وَانْتِصَابُهُ بَدَا"]],"alfia":[["بِفِعْلِهِ مَصْدَرٌ مُنْصَبٌّ","وَمَا يَكُونُ بَعْدَهُ مَنْصُوبًا"]],"qas":[{"q":"ما هو المصدر؟ وما هو المفعول المطلق؟","a":"المصدر: الاسم المنصوب الذي يجيء ثالثًا في تصريف الفعل. المفعول المطلق: ما دل على تأكيد عامله أو نوعه أو عدده."},{"q":"إلى كم قسم ينقسم المفعول المطلق من جهة ما يراد منه؟","a":"ثلاثة: المؤكد لعامله، والمبين لنوع العامل، والمبين للعدد."}]},
+{"id":"zarf","title":"ظرف الزمان والمكان","matn":"ظَرْفُ الزَّمَانِ هُوَ اسْمُ الزَّمَانِ المَنْصُوبُ بِتَقْدِيرِ «فِي». وَظَرْفُ المَكَانِ هُوَ اسْمُ المَكَانِ المَنْصُوبُ بِتَقْدِيرِ «فِي».","nazm":[["الظَّرْفُ مَنْصُوبٌ عَلَى إِضْمَارِ فِي","وَزَمَنِيًّا وَمَكَانِيًّا يَفِي"]],"alfia":[["وَالظَّرْفُ يَكُونُ زَمَانًا وَمَكَانًا","وَكُلُّهُمَا مَنْصُوبٌ عَلَى الظَّرْفِيَّةِ"]],"qas":[{"q":"ما هو الظرف؟","a":"هو المفعول فيه. وينقسم إلى ظرف زمان وظرف مكان."},{"q":"ما هو ظرف الزمان؟","a":"الاسم الدال على الزمان المنصوب بتقدير «في»."},{"q":"ما هو ظرف المكان المبهم؟ وما هو المختص؟","a":"المبهم: ما ليس له صورة ولا حدود محصورة. المختص: ما له صورة وحدود محصورة."},{"q":"هل ينصب كل ظرف مكان على المفعول فيه؟","a":"لا، المبهم فقط. وأما المختص فيجب جره بحرف جر."}]},
+{"id":"hal","title":"باب الحال","matn":"الحَالُ هُوَ الاسْمُ المَنْصُوبُ، المُفَسِّرُ لِمَا انْبَهَمَ مِنَ الهَيْئَاتِ. وَلَا يَكُونُ الحَالُ إِلَّا نَكِرَةً، وَلَا يَكُونُ إِلَّا بَعْدَ تَمَامِ الكَلَامِ، وَلَا يَكُونُ صَاحِبُهَا إِلَّا مَعْرِفَةً.","nazm":[["الحَالُ لِلْهَيْئَاتِ أَيْ لِمَا انْبَهَمْ","مِنْهَا مُفَسِّرٌ وَنَصْبُهُ أُحْتِمْ"]],"alfia":[["وَالْحَالُ مَنْصُوبٌ وَهُوَ مَا","يُبَيِّنُ الْهَيْئَةَ وَالْحَالِيَّةَ"]],"qas":[{"q":"ما هو الحال؟","a":"الاسم الفضلة المنصوب المفسر لما استبهم من الهيئات."},{"q":"ما الذي يشترط في الحال؟","a":"أن يكون نكرة، وأن تجيء بعد تمام الكلام."},{"q":"ما الذي يشترط في صاحب الحال؟","a":"أن يكون معرفة، فلا يجوز أن يكون نكرة بغير مسوغ."},{"q":"ما هو ضابط الحال؟","a":"هي التي تقع في جواب «كيف»."}]},
+{"id":"tamyiz","title":"باب التمييز","matn":"التَّمْيِيزُ هُوَ الاسْمُ المَنْصُوبُ، المُفَسِّرُ لِمَا انْبَهَمَ مِنَ الذَّوَاتِ. وَلَا يَكُونُ إِلَّا نَكِرَةً، وَلَا يَكُونُ إِلَّا بَعْدَ تَمَامِ الكَلَامِ.","nazm":[["اسْمٌ مُفَسِّرٌ لِمَا قَدِ انْبَهَمْ","مِنَ الذَّوَاتِ بِاسْمِ تَمْيِيزٍ رُسِمْ"]],"alfia":[["وَالْمَنْصُوبُ مِنَ الْأَسْمَاءِ مَا","يُفَسِّرُ الذَّاتَ وَيُبْدِي مَا"]],"qas":[{"q":"ما هو التمييز؟","a":"الاسم الصريح المنصوب المفسر لما استبهم من الذوات أو النسب."},{"q":"إلى كم قسم ينقسم؟","a":"قسمان: تمييز الذات، وتمييز النسبة."},{"q":"ما الفرق بين التمييز والحال؟","a":"التمييز مفسر للذوات، والحال مفسر للهيئات."},{"q":"ما هو العدد الذي ينصب تمييزه؟","a":"من أحد عشر إلى تسعة وتسعين وما بينهما."}]},
+{"id":"istithna","title":"باب الاستثناء","matn":"حُرُوفُ الاسْتِثْنَاءِ ثَمَانِيَةٌ، وَهِيَ: إِلَّا، وَغَيْرُ، وَسِوَى، وَسُوَى، وَسَوَاءٌ، وَخَلَا، وَعَدَا، وَحَاشَا.","nazm":[["إِلَّا وَغَيْرٌ وَسِوَى سُوَى سَوَا","خَلَا عَدَا وَحَاشَ الاسْتِثْنَا حَوَى"]],"alfia":[["وَالْمُسْتَثْنَى مَنْصُوبٌ","بِإِلَّا أَوْ غَيْرِهَا مِنَ الْأَدَوَاتِ"]],"qas":[{"q":"ما أدوات الاستثناء؟","a":"ثمانية: إلا، وغير، وسوى، وسوى، وسواء، وخلا، وعدا، وحاشا."},{"q":"كم حالة للاسم الواقع بعد «إلا»؟","a":"ثلاثة: وجوب النصب، وجواز الإتباع بدلًا مع جواز النصب، ووجوب الإجراء على حسب العامل (في الناقص)."},{"q":"ما هو الكلام التام؟ وما هو الناقص؟","a":"التام: ما ذُكر فيه المستثنى منه. الناقص: ما لم يُذكر فيه."},{"q":"ما حكم الاسم بعد «سوى» و«غير»؟","a":"يجب جره بالإضافة إليه."}]},
+{"id":"la","title":"لا النافية للجنس","matn":"«لَا» تَنْصِبُ النَّكِرَةَ بِغَيْرِ تَنْوِينٍ إِذَا بَاشَرَتِ النَّكِرَةَ وَلَمْ تَتَكَرَّرْ «لَا»، نَحْوُ: لَا رَجُلَ فِي الدَّارِ.","nazm":[["أَنْصِبْ بِلَا مُنَكَّرًا مُتَّصِلَا","مِنْ غَيْرِ تَنْوِينٍ إِذَا أُفْرِدَتْ لَا"]],"alfia":[["وَلَا لِنَفْيِ الْجِنْسِ تَعْمَلُ عَمَلَ إِنَّ","فَاسْمًا تَنْصِبُ وَخَبَرًا تَرْفَعُ"]],"qas":[{"q":"ما الذي تعمله «لا» النافية للجنس؟","a":"تعمل عمل «إنَّ» فتنصب الاسم وترفع الخبر."},{"q":"ما شروط وجوب عملها؟","a":"أربعة: أن يكون اسمها نكرة، ومتصلًا بها، وخبرها نكرة، وألا تتكرر."},{"q":"إلى كم قسم ينقسم اسم «لا»؟","a":"ثلاثة: المفرد، والمضاف إلى نكرة، والشبيه بالمضاف."},{"q":"ما حكم اسم «لا» المفرد؟","a":"يُبنى على ما يُنصب به."},{"q":"ما الحكم إذا تكررت «لا»؟","a":"جاز إعمالها وإهمالها."}]},
+{"id":"munada","title":"باب المنادى","matn":"المُنَادَى خَمْسَةُ أَنْوَاعٍ: المُفْرَدُ العَلَمُ، وَالنَّكِرَةُ المَقْصُودَةُ، وَالنَّكِرَةُ غَيْرُ المَقْصُودَةِ، وَالمُضَافُ، وَالمُشَبَّهُ بِالمُضَافِ.","nazm":[["إِنَّ المُنَادَى فِي الكَلَامِ يَأْتِي","خَمْسَةَ أَنْوَاعٍ لَدَى النُّحَاةِ"]],"alfia":[["وَالمُنَادَى خَمْسَةٌ","مُفْرَدُ عَلَمٍ وَنَكِرَةٌ مُقْصَدَهْ"]],"qas":[{"q":"ما هي أدوات النداء؟","a":"يا، والهمزة، وأي، وأيا، وهيا."},{"q":"إلى كم قسم ينقسم المنادى؟","a":"خمسة: المفرد العلم، والنكرة المقصودة، والنكرة غير المقصودة، والمضاف، والشبيه بالمضاف."},{"q":"ما حكم المنادى المفرد العلم والمضاف؟","a":"المفرد العلم يُبنى على ما يُرفع به، والمضاف يُنصب وجوبًا."}]},
+{"id":"mafool-ajlih","title":"المفعول من أجله","matn":"المَفْعُولُ مِنْ أَجْلِهِ هُوَ الاسْمُ المَنْصُوبُ الَّذِي يُذْكَرُ بَيَانًا لِسَبَبِ وُقُوعِ الفِعْلِ.","nazm":[["وَهُوَ الَّذِي جَاءَ بَيَانًا لِسَبَبْ","كَيْنُونَةِ العَامِلِ فِيهِ وَانْتَصَبْ"]],"alfia":[["وَالْمَفْعُولُ لِأَجْلِهِ مَنْصُوبٌ","بِشَرْطِ أَنْ يَكُونَ مَصْدَرًا"]],"qas":[{"q":"ما هو المفعول لأجله؟","a":"الاسم المنصوب الذي يُذكر بيانًا لسبب وقوع الفعل."},{"q":"ما شروط الاسم الذي يقع مفعولًا لأجله؟","a":"خمسة: مصدر، وقلبي، وعلة لما قبله، ومتحد مع عامله في الوقت، ومتحد معه في الفاعل."},{"q":"كم حالة له؟","a":"ثلاثة: مقترن بـ«أل»، أو مضاف، أو مجرد."}]},
+{"id":"mafool-maah","title":"المفعول معه","matn":"المَفْعُولُ مَعَهُ هُوَ الاسْمُ المَنْصُوبُ الَّذِي يُذْكَرُ لِبَيَانِ مَنْ فُعِلَ مَعَهُ الفِعْلُ.","nazm":[["وَهُوَ اسْمٌ انْتَصَبَ بَعْدَ وَاوِ","مَعِيَّةٍ فِي قَوْلِ كُلِّ رَاوِ"]],"alfia":[["وَالْمَفْعُولُ مَعَهُ مَنْصُوبٌ","بَعْدَ وَاوٍ تُفِيدُ الْمَعِيَّةَ"]],"qas":[{"q":"ما هو المفعول معه؟","a":"الاسم الفضلة المنصوب بعد واو تفيد المعية نصًا، الدال على الذات التي وقع الفعل بمصاحبتها."},{"q":"إلى كم قسم ينقسم؟","a":"قسمان: ما يتعين نصبه، وما يجوز نصبه وإتباعه لما قبله معطوفًا عليه."}]},
+{"id":"makhfudat","title":"باب المخفوضات","matn":"المَخْفُوضَاتُ ثَلَاثَةُ أَنْوَاعٍ: مَخْفُوضٌ بِالحَرْفِ، وَمَخْفُوضٌ بِالإِضَافَةِ، وَتَابِعٌ لِلْمَخْفُوضِ.","nazm":[["الخَفْضُ بِالحَرْفِ وَبِالإِضَافَةِ","كَمِثْلِ أَكْرِمْ بِأَبِي قُحَافَةَ"]],"alfia":[["وَالْخَفْضُ بِالْحَرْفِ وَبِالْإِضَافَةِ","وَبِالتَّبَعِيَّةِ الَّتِي قَدْ خُصَّتِ"]],"qas":[{"q":"على كم نوع تتنوع المخفوضات؟","a":"ثلاثة: بالحرف، وبالإضافة، وبالتبعية. وزاد بعضهم: بالمجاورة."},{"q":"ما المعنى الذي تدل عليه: مِن، عن، في، رُبَّ، الكاف، اللام؟","a":"مِن: الابتداء والتبعيض والتعليل. عن: المجاوزة. في: الظرفية. رُبَّ: التقليل/التكثير. الكاف: التشبيه. اللام: الملك والاختصاص."},{"q":"على كم نوع تأتي الإضافة؟","a":"ثلاثة: على معنى «مِن»، وعلى معنى «في»، وعلى معنى اللام."}]}
+]}
+</script>
+
+<script>
+/* ============================================================
+   الحالة والإعدادات
+   ============================================================ */
+const STATE = {chapters:[], currentChapter:0, currentView:'reader', searchQuery:''};
+const SETTINGS_KEY = 'agrumiyya-settings-v4';
+const FAV_KEY = 'agrumiyya-favs-v4';
+const DEFAULT_SETTINGS = {theme:'light', color:'brown', fontSize:17, fontFamily:'Amiri'};
+let SETTINGS = {...DEFAULT_SETTINGS};
+let FAVORITES = [];
+
+/* ============================================================
+   تحميل وحفظ
+   ============================================================ */
+function loadSettings(){
+  try{const raw = localStorage.getItem(SETTINGS_KEY); if(raw) SETTINGS = {...DEFAULT_SETTINGS, ...JSON.parse(raw)};}catch(e){}
+  applySettings();
+}
+function saveSettings(){ try{localStorage.setItem(SETTINGS_KEY, JSON.stringify(SETTINGS));}catch(e){} }
+function applySettings(){
+  document.documentElement.setAttribute('data-theme', SETTINGS.theme);
+  document.documentElement.setAttribute('data-color', SETTINGS.color);
+  document.documentElement.style.setProperty('--base-size', SETTINGS.fontSize+'px');
+  const fontMap = {
+    'Amiri':"'Amiri','Scheherazade New',serif", 'Scheherazade New':"'Scheherazade New','Amiri',serif",
+    'Lateef':"'Lateef','Amiri',serif", 'Noto Naskh Arabic':"'Noto Naskh Arabic','Amiri',serif",
+    'Cairo':"'Cairo','Amiri',sans-serif", 'Reem Kufi':"'Reem Kufi','Amiri',sans-serif"
+  };
+  document.documentElement.style.setProperty('--font-body', fontMap[SETTINGS.fontFamily] || fontMap['Amiri']);
+}
+function loadFavorites(){
+  try{const raw = localStorage.getItem(FAV_KEY); if(raw) FAVORITES = JSON.parse(raw) || [];}catch(e){FAVORITES=[];}
+  updateFavCount();
+}
+function saveFavorites(){ try{localStorage.setItem(FAV_KEY, JSON.stringify(FAVORITES));}catch(e){} updateFavCount(); }
+function updateFavCount(){ const el = document.getElementById('fav-count'); if(el) el.textContent = FAVORITES.length ? `(${FAVORITES.length})` : ''; }
+
+/* ============================================================
+   أدوات
+   ============================================================ */
+function escapeHTML(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function stripHTML(html){const d=document.createElement('div');d.innerHTML=html||'';return d.textContent||'';}
+function showToast(msg, ok=true){
+  const t = document.getElementById('toast'); t.textContent = msg;
+  t.style.background = ok ? 'var(--accent)' : '#c44';
+  t.classList.add('show'); clearTimeout(t._timer);
+  t._timer = setTimeout(()=>t.classList.remove('show'), 2200);
+}
+async function copyText(text){
+  try{ await navigator.clipboard.writeText(text); showToast('✓ تم النسخ'); }
+  catch(e){ const ta=document.createElement('textarea'); ta.value=text; document.body.appendChild(ta); ta.select();
+    try{document.execCommand('copy'); showToast('✓ تم النسخ');}catch(e2){showToast('تعذّر النسخ',false);} document.body.removeChild(ta); }
+}
+async function shareContent(title, text){
+  if(navigator.share){ try{ await navigator.share({title, text}); showToast('✓ تمت المشاركة'); return; }catch(e){ if(e.name==='AbortError') return; } }
+  await copyText(text);
+}
+const ICONS = {
+  copy:'<svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>',
+  share:'<svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>',
+  star:'<svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>'
+};
+function favKey(chId, type, idx){ return `${chId}:${type}:${idx}`; }
+function isFav(key){ return FAVORITES.some(f=>f.key===key); }
+function toggleFav(key, data){
+  const idx = FAVORITES.findIndex(f=>f.key===key);
+  if(idx>=0){ FAVORITES.splice(idx,1); showToast('أُزيل من المحفوظات', false); }
+  else { FAVORITES.push({key, ...data, savedAt:Date.now()}); showToast('✓ حُفظ في المحفوظات'); }
+  saveFavorites();
+  document.querySelectorAll(`[data-favkey="${key}"]`).forEach(btn=>btn.classList.toggle('saved', isFav(key)));
+}
+
+/* ============================================================
+   عرض الصفحة الرئيسية (القارئ)
+   ============================================================ */
+function renderReader(){
+  const container = document.getElementById('view-reader');
+  const ch = STATE.chapters[STATE.currentChapter];
+  if(!ch) return;
+  let html = `<div class="chapter-page">
+    <div class="chapter-header">
+      <span class="ch-num">${STATE.currentChapter+1}</span>
+      <h2>${ch.title}</h2>
+      <div class="ch-actions">
+        <button class="icon-btn" onclick="copyChapter()" title="نسخ الباب">${ICONS.copy}</button>
+        <button class="icon-btn" onclick="shareChapter()" title="مشاركة الباب">${ICONS.share}</button>
+      </div>
+    </div>`;
+
+  // المتن
+  if(ch.matn){
+    html += `<div class="section-block">
+      <div class="section-label">📖 المتن</div>
+      <div class="matn-card"><div class="copy-share" style="float:left">
+        <button class="icon-btn" onclick="copyMatn()" title="نسخ">${ICONS.copy}</button>
+        <button class="icon-btn" onclick="shareMatn()" title="مشاركة">${ICONS.share}</button>
+      </div>${ch.matn}</div>
+    </div>`;
+  }
+
+  // النظم
+  if(ch.nazm && ch.nazm.length){
+    html += `<div class="section-block"><div class="section-label">✍️ النظم</div><div class="nazm-card">`;
+    ch.nazm.forEach((v, i)=>{
+      const key = favKey(ch.id, 'nazm', i);
+      const favCls = isFav(key) ? 'saved' : '';
+      html += `<div class="bayt">
+        <div class="bayt-actions">
+          <button class="icon-btn fav ${favCls}" data-favkey="${key}" onclick="toggleFav('${key}', {type:'nazm', sadr:'${escapeHTML(v[0]).replace(/'/g,"\\'")}', ajz:'${escapeHTML(v[1]||'').replace(/'/g,"\\'")}', chapter:'${escapeHTML(ch.title).replace(/'/g,"\\'")}', chapterId:'${ch.id}', idx:${i}})" title="حفظ">${ICONS.star}</button>
+          <button class="icon-btn" onclick="copyVerse('nazm', ${i})" title="نسخ">${ICONS.copy}</button>
+          <button class="icon-btn" onclick="shareVerse('nazm', ${i})" title="مشاركة">${ICONS.share}</button>
+        </div>
+        <span class="sadr">${v[0]}</span>
+        ${v[1] ? `<span class="ajz">${v[1]}</span>` : ''}
+      </div>`;
+    });
+    html += `</div></div>`;
+  }
+
+  // شواهد الألفية
+  if(ch.alfia && ch.alfia.length){
+    html += `<div class="section-block"><div class="section-label">📜 شاهد من ألفية ابن مالك</div><div class="alfia-card">`;
+    ch.alfia.forEach((v, i)=>{
+      const key = favKey(ch.id, 'alfia', i);
+      const favCls = isFav(key) ? 'saved' : '';
+      html += `<div class="bayt">
+        <div class="bayt-actions">
+          <button class="icon-btn fav ${favCls}" data-favkey="${key}" onclick="toggleFav('${key}', {type:'alfia', sadr:'${escapeHTML(v[0]).replace(/'/g,"\\'")}', ajz:'${escapeHTML(v[1]||'').replace(/'/g,"\\'")}', chapter:'${escapeHTML(ch.title).replace(/'/g,"\\'")}', chapterId:'${ch.id}', idx:${i}})" title="حفظ">${ICONS.star}</button>
+          <button class="icon-btn" onclick="copyVerse('alfia', ${i})" title="نسخ">${ICONS.copy}</button>
+          <button class="icon-btn" onclick="shareVerse('alfia', ${i})" title="مشاركة">${ICONS.share}</button>
+        </div>
+        <span class="sadr">${v[0]}</span>
+        ${v[1] ? `<span class="ajz">${v[1]}</span>` : ''}
+      </div>`;
+    });
+    html += `</div></div>`;
+  }
+
+  // الأسئلة
+  if(ch.qas && ch.qas.length){
+    html += `<div class="section-block"><div class="section-label">🔄 الأسئلة والأجوبة</div>`;
+    ch.qas.forEach((qa, j)=>{
+      html += `<div class="qa-card">
+        <div class="q"><span class="lbl">س ${j+1}</span><p>${qa.q}</p>
+          <div class="copy-share">
+            <button class="icon-btn" onclick="copyQA(${j})" title="نسخ">${ICONS.copy}</button>
+            <button class="icon-btn" onclick="shareQA(${j})" title="مشاركة">${ICONS.share}</button>
+          </div>
+        </div>
+        <div class="a"><span class="lbl">ج</span><div class="a-body">${qa.a}</div></div>
+      </div>`;
+    });
+    html += `</div>`;
+  }
+
+  html += `</div>`;
+  container.innerHTML = html;
+
+  // TOC
+  const toc = document.getElementById('toc-list');
+  toc.innerHTML = '';
+  STATE.chapters.forEach((c, i)=>{
+    const a = document.createElement('a');
+    a.className = 'toc-item' + (i===STATE.currentChapter?' active':'');
+    a.innerHTML = `<span class="num">${i+1}</span><span>${c.title}</span>`;
+    a.addEventListener('click', ()=>{ STATE.currentChapter = i; renderReader(); window.scrollTo({top:0,behavior:'smooth'}); if(window.innerWidth<=768) closeMobileSidebar(); });
+    toc.appendChild(a);
+  });
+  document.getElementById('toc-progress').textContent = `${STATE.currentChapter+1} / ${STATE.chapters.length}`;
+  document.getElementById('brand-meta').textContent = `${STATE.chapters.length} بابًا · متن + نظم + شواهد + أسئلة`;
+  document.getElementById('progress-bar').style.width = `${((STATE.currentChapter+1)/STATE.chapters.length)*100}%`;
+  document.getElementById('to-top').classList.remove('show');
+}
+
+/* ============================================================
+   Copy/Share للباب
+   ============================================================ */
+function getCurrentChapter(){ return STATE.chapters[STATE.currentChapter]; }
+function copyChapter(){
+  const ch = getCurrentChapter();
+  let text = `📖 ${ch.title}\n\n`;
+  if(ch.matn) text += `【المتن】\n${ch.matn}\n\n`;
+  if(ch.nazm && ch.nazm.length) text += `【النظم】\n${ch.nazm.map(v=>v.join(' ❁ ')).join('\n')}\n\n`;
+  if(ch.alfia && ch.alfia.length) text += `【شاهد الألفية】\n${ch.alfia.map(v=>v.join(' ❁ ')).join('\n')}\n\n`;
+  if(ch.qas && ch.qas.length) text += `【الأسئلة】\n${ch.qas.map(qa=>`س: ${qa.q}\nج: ${qa.a}`).join('\n\n')}`;
+  copyText(text);
+}
+function shareChapter(){ const ch = getCurrentChapter(); shareContent(ch.title, stripHTML(ch.matn||'') + '\n\n' + (ch.nazm||[]).map(v=>v.join(' ')).join('\n')); }
+function copyMatn(){ const ch = getCurrentChapter(); if(ch.matn) copyText(`📖 ${ch.title}\n\n${ch.matn}`); }
+function shareMatn(){ const ch = getCurrentChapter(); if(ch.matn) shareContent(ch.title, ch.matn); }
+function copyVerse(type, idx){
+  const ch = getCurrentChapter();
+  const arr = type==='nazm' ? ch.nazm : ch.alfia;
+  if(!arr || !arr[idx]) return;
+  const v = arr[idx];
+  copyText(`${type==='nazm'?'✍️ النظم':'📜 الألفية'}\n\n${v[0]}\n${v[1]||''}\n\n— ${ch.title}`);
+}
+function shareVerse(type, idx){
+  const ch = getCurrentChapter();
+  const arr = type==='nazm' ? ch.nazm : ch.alfia;
+  if(!arr || !arr[idx]) return;
+  const v = arr[idx];
+  shareContent(ch.title, `${v[0]}\n${v[1]||''}\n\n— ${ch.title}`);
+}
+function copyQA(j){ const ch = getCurrentChapter(); const qa = ch.qas[j]; if(qa) copyText(`س: ${qa.q}\n\nج: ${qa.a}`); }
+function shareQA(j){ const ch = getCurrentChapter(); const qa = ch.qas[j]; if(qa) shareContent(ch.title, `س: ${qa.q}\n\nج: ${qa.a}`); }
+
+/* ============================================================
+   المحفوظات
+   ============================================================ */
+function renderFavorites(){
+  const container = document.getElementById('view-favorites');
+  if(!FAVORITES.length){
+    container.innerHTML = `<div class="empty-state"><span class="ico">⭐</span>لم تحفظ أي شيء بعد<br><small>اضغط على أيقونة النجمة بجانب أي متن أو بيت أو شاهد لحفظه هنا</small></div>`;
+    return;
+  }
+  let html = `<div class="chapter-header"><h2>⭐ المحفوظات (${FAVORITES.length})</h2><button class="mini-btn" onclick="clearAllFavs()" style="background:#ffe4e8;color:#c44;border-color:#c44">🗑 حذف الكل</button></div>`;
+  FAVORITES.slice().reverse().forEach((f, i)=>{
+    const realIdx = FAVORITES.length-1-i;
+    html += `<div class="fav-item">
+      <div class="fav-actions">
+        <button class="icon-btn" onclick="copyFav(${realIdx})" title="نسخ">${ICONS.copy}</button>
+        <button class="icon-btn" onclick="shareFav(${realIdx})" title="مشاركة">${ICONS.share}</button>
+        <button class="icon-btn" onclick="removeFav(${realIdx})" title="حذف" style="color:#c44">✕</button>
+      </div>
+      <div class="fav-chapter">📖 ${f.chapter || ''}</div>
+      <div class="fav-verse"><span class="sadr">${f.sadr || ''}</span>${f.ajz ? `<span class="ajz">${f.ajz}</span>` : ''}</div>
+    </div>`;
+  });
+  container.innerHTML = html;
+}
+function copyFav(i){ const f=FAVORITES[i]; if(f) copyText(`${f.chapter}\n\n${f.sadr}\n${f.ajz}`); }
+function shareFav(i){ const f=FAVORITES[i]; if(f) shareContent(f.chapter, `${f.sadr}\n${f.ajz}\n\n— ${f.chapter}`); }
+function removeFav(i){ FAVORITES.splice(i,1); saveFavorites(); renderFavorites(); document.querySelectorAll('[data-favkey]').forEach(b=>b.classList.toggle('saved', FAVORITES.some(f=>f.key===b.dataset.favkey))); }
+function clearAllFavs(){ if(!confirm('حذف جميع المحفوظات؟')) return; FAVORITES=[]; saveFavorites(); renderFavorites(); document.querySelectorAll('[data-favkey]').forEach(b=>b.classList.remove('saved')); showToast('تم حذف الكل'); }
+
+/* ============================================================
+   الاختبار (سؤال يتبعه سؤال + توقيت اختياري + الانتقال للدرس)
+   ============================================================ */
+const QUIZ = {active:false, questions:[], currentIdx:0, answers:[], timed:false, timeLeft:0, timerId:null, chapterFilter:[]};
+
+function renderQuiz(){
+  const container = document.getElementById('view-quiz');
+  if(QUIZ.active){ renderQuizQuestion(); return; }
+  container.innerHTML = `<div class="quiz-setup">
+    <h3>📝 إعداد الاختبار</h3>
+    <div class="form-group">
+      <label class="form-label">نوع الأسئلة</label>
+      <select id="q-type" class="select-input" style="width:100%">
+        <option value="mix">🔀 مختلط</option><option value="qa">🔄 أسئلة فقط</option><option value="nazm">✍️ أبيات النظم فقط</option><option value="alfia">📜 شواهد الألفية فقط</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">عدد الأسئلة</label>
+      <div class="range-wrap"><input type="range" id="q-count" min="5" max="30" value="10"><span class="range-value" id="q-count-val">10</span></div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">⏱ التوقيت</label>
+      <label style="display:flex;align-items:center;gap:8px;font-size:.85rem;color:var(--text-soft);cursor:pointer">
+        <input type="checkbox" id="q-timed" style="accent-color:var(--accent)"> تفعيل التوقيت (دقيقة لكل سؤال)
+      </label>
+    </div>
+    <div class="form-group">
+      <label class="form-label">الأبواب <small>(اتركها فارغة = الكل)</small></label>
+      <div class="chapter-controls"><button class="mini-btn" onclick="toggleAllCh(true)">تحديد الكل</button><button class="mini-btn" onclick="toggleAllCh(false)">إلغاء الكل</button></div>
+      <div class="chapter-select" id="q-chapters">${STATE.chapters.map((c,i)=>`<label class="chapter-check"><input type="checkbox" value="${i}" class="q-ch"><span>${i+1}. ${c.title}</span></label>`).join('')}</div>
+    </div>
+    <div style="text-align:center;margin-top:16px"><button class="btn-primary" onclick="startQuiz()">🚀 ابدأ</button></div>
+  </div>`;
+  document.getElementById('q-count').addEventListener('input', e=>document.getElementById('q-count-val').textContent = e.target.value);
+  container.querySelectorAll('.q-ch').forEach(cb=>cb.addEventListener('change', ()=>cb.closest('.chapter-check').classList.toggle('checked', cb.checked)));
+}
+function toggleAllCh(v){ document.querySelectorAll('.q-ch').forEach(cb=>{cb.checked=v; cb.closest('.chapter-check').classList.toggle('checked', v);}); }
+
+function startQuiz(){
+  const type = document.getElementById('q-type').value;
+  const count = parseInt(document.getElementById('q-count').value, 10);
+  const timed = document.getElementById('q-timed').checked;
+  const selected = Array.from(document.querySelectorAll('.q-ch:checked')).map(cb=>parseInt(cb.value,10));
+  const chapters = selected.length ? selected.map(i=>STATE.chapters[i]) : STATE.chapters;
+
+  let pool = [];
+  chapters.forEach((ch, ci)=>{
+    if((type==='mix'||type==='qa') && ch.qas) ch.qas.forEach((qa,i)=>{ pool.push({type:'qa', question:qa.q, correct:stripHTML(qa.a).substring(0,80), chapter:ch.title, chapterId:ch.id, options:null}); });
+    if((type==='mix'||type==='nazm') && ch.nazm) ch.nazm.forEach((v,i)=>{ pool.push({type:'nazm', question:`من أي باب هذا البيت؟\n«${v[0]} ❁ ${v[1]||''}»`, correct:ch.title, chapter:ch.title, chapterId:ch.id, options:null}); });
+    if((type==='mix'||type==='alfia') && ch.alfia) ch.alfia.forEach((v,i)=>{ pool.push({type:'alfia', question:`من أي باب هذا الشاهد من الألفية؟\n«${v[0]} ❁ ${v[1]||''}»`, correct:ch.title, chapter:ch.title, chapterId:ch.id, options:null}); });
+  });
+  if(!pool.length){ showToast('لا توجد أسئلة كافية', false); return; }
+  pool = shuffle(pool).slice(0, count);
+  // Build options
+  const allTitles = STATE.chapters.map(c=>c.title);
+  pool.forEach(q=>{
+    if(q.type==='qa'){
+      const wrongPool = STATE.chapters.flatMap(c=>(c.qas||[]).map(x=>stripHTML(x.a).substring(0,80))).filter(x=>x!==q.correct);
+      q.options = shuffle([q.correct, ...shuffle(wrongPool).slice(0,3)]);
+    } else {
+      const wrongs = shuffle(allTitles.filter(t=>t!==q.correct)).slice(0,3);
+      q.options = shuffle([q.correct, ...wrongs]);
+    }
+  });
+  QUIZ.active = true; QUIZ.questions = pool; QUIZ.currentIdx = 0; QUIZ.answers = new Array(pool.length).fill(null);
+  QUIZ.timed = timed; QUIZ.timeLeft = timed ? 60 : 0;
+  renderQuizQuestion();
+}
+function shuffle(a){const arr=[...a];for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];}return arr;}
+
+function renderQuizQuestion(){
+  if(QUIZ.timerId){ clearInterval(QUIZ.timerId); QUIZ.timerId=null; }
+  const container = document.getElementById('view-quiz');
+  if(QUIZ.currentIdx >= QUIZ.questions.length){ showQuizResult(); return; }
+  const q = QUIZ.questions[QUIZ.currentIdx];
+  const answered = QUIZ.answers[QUIZ.currentIdx];
+  let html = `<div class="chapter-header"><span class="ch-num">${QUIZ.currentIdx+1}/${QUIZ.questions.length}</span><h2>${q.type==='qa'?'🔄 سؤال':q.type==='nazm'?'✍️ بيت':'📜 شاهد'}</h2>
+    ${QUIZ.timed?`<div class="timer-box" id="timer">⏱ ${formatTime(QUIZ.timeLeft)}</div>`:''}
+  </div>
+  <div class="qz-card">
+    <div class="qz-text" style="white-space:pre-line">${escapeHTML(q.question)}</div>
+    <div class="qz-options">`;
+  q.options.forEach(opt=>{
+    let cls = '';
+    if(answered !== null){
+      if(opt === q.correct) cls = 'correct';
+      else if(opt === answered) cls = 'wrong';
+    }
+    html += `<div class="qz-option ${cls}" ${answered===null?`onclick="answerQuiz('${escapeHTML(opt).replace(/'/g,"\\'")}')"`:''}>${escapeHTML(opt)}</div>`;
+  });
+  html += `</div>`;
+  if(answered !== null){
+    const ok = answered === q.correct;
+    html += `<div class="qz-feedback show ${ok?'ok':'no'}">${ok?'✓ إجابة صحيحة':'✗ الإجابة الصحيحة: '+escapeHTML(q.correct)}</div>`;
+  }
+  html += `</div>
+  <div class="qz-nav">
+    ${QUIZ.currentIdx>0?`<button class="prev" onclick="prevQuiz()">← السابق</button>`:''}
+    ${answered!==null?`<button class="goto" onclick="gotoChapter('${q.chapterId}')">📖 اذهب إلى الدرس</button>`:''}
+    ${QUIZ.currentIdx<QUIZ.questions.length-1?`<button class="next" onclick="nextQuiz()">التالي →</button>`:`<button class="next" onclick="showQuizResult()">عرض النتيجة</button>`}
+  </div>`;
+  container.innerHTML = html;
+  if(QUIZ.timed && answered===null) startTimer();
+}
+function formatTime(s){ return `${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`; }
+function startTimer(){
+  QUIZ.timerId = setInterval(()=>{
+    QUIZ.timeLeft--; const el = document.getElementById('timer');
+    if(el){ el.textContent = `⏱ ${formatTime(QUIZ.timeLeft)}`; if(QUIZ.timeLeft<=10) el.classList.add('warning'); }
+    if(QUIZ.timeLeft<=0){ clearInterval(QUIZ.timerId); QUIZ.timerId=null; nextQuiz(); }
+  }, 1000);
+}
+function answerQuiz(opt){
+  QUIZ.answers[QUIZ.currentIdx] = opt;
+  if(QUIZ.timerId){ clearInterval(QUIZ.timerId); QUIZ.timerId=null; }
+  renderQuizQuestion();
+}
+function nextQuiz(){ if(QUIZ.currentIdx<QUIZ.questions.length-1){ QUIZ.currentIdx++; QUIZ.timeLeft=QUIZ.timed?60:0; renderQuizQuestion(); } else showQuizResult(); }
+function prevQuiz(){ if(QUIZ.currentIdx>0){ QUIZ.currentIdx--; QUIZ.timeLeft=QUIZ.timed?60:0; renderQuizQuestion(); } }
+function gotoChapter(chId){
+  const idx = STATE.chapters.findIndex(c=>c.id===chId);
+  if(idx>=0){ STATE.currentChapter=idx; switchView('reader'); showToast('📖 انتقلت إلى الدرس'); }
+}
+function showQuizResult(){
+  if(QUIZ.timerId){ clearInterval(QUIZ.timerId); QUIZ.timerId=null; }
+  const correct = QUIZ.questions.filter((q,i)=>QUIZ.answers[i]===q.correct).length;
+  const pct = Math.round((correct/QUIZ.questions.length)*100);
+  let emoji='📚', grade='يحتاج مراجعة';
+  if(pct>=90){emoji='🏆';grade='ممتاز';}else if(pct>=80){emoji='⭐';grade='جيد جدًا';}else if(pct>=70){emoji='👍';grade='جيد';}else if(pct>=60){emoji='✅';grade='مقبول';}
+  document.getElementById('view-quiz').innerHTML = `<div class="quiz-result">
+    <div style="font-size:4rem;margin-bottom:10px">${emoji}</div>
+    <div class="score-num">${correct} / ${QUIZ.questions.length}</div>
+    <div class="score-pct">${pct}% — ${grade}</div>
+    <div class="score-text">أجبت على ${correct} من ${QUIZ.questions.length} سؤالًا بشكل صحيح</div>
+    <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:20px">
+      <button class="btn-primary" onclick="resetQuiz()">🔄 اختبار جديد</button>
+      <button class="btn-secondary" onclick="showQuizReview()">📝 مراجعة الإجابات</button>
+    </div>
+  </div>`;
+}
+function showQuizReview(){
+  let html = `<div class="chapter-header"><h2>📝 مراجعة الإجابات</h2><button class="mini-btn" onclick="showQuizResult()">← النتيجة</button></div>`;
+  QUIZ.questions.forEach((q,i)=>{
+    const ans = QUIZ.answers[i]; const ok = ans===q.correct;
+    html += `<div class="qz-card"><div class="qz-header"><span class="qz-num">${i+1}</span><span class="qz-type">${ok?'✓':'✗'}</span></div>
+      <div class="qz-text" style="white-space:pre-line">${escapeHTML(q.question)}</div><div class="qz-options">`;
+    q.options.forEach(o=>{ let cls=''; if(o===q.correct)cls='correct'; else if(o===ans&&!ok)cls='wrong'; html+=`<div class="qz-option ${cls}">${escapeHTML(o)}</div>`; });
+    html += `</div></div>`;
+  });
+  document.getElementById('view-quiz').innerHTML = html;
+}
+function resetQuiz(){ QUIZ.active=false; renderQuiz(); }
+
+/* ============================================================
+   الألعاب
+   ============================================================ */
+function renderGames(){
+  document.getElementById('view-games').innerHTML = `
+    <div class="chapter-header"><h2>🎮 ألعاب تعليمية</h2></div>
+    <div class="game-card"><h3>🔗 طابق المصطلح بتعريفه</h3><p style="font-size:.82rem;color:var(--muted);margin-bottom:10px">اختر مصطلحًا من العمود الأيمن ثم تعريفه من الأيسر</p><div class="match-grid" id="match-grid"></div><div id="match-msg" style="text-align:center;margin-top:10px;font-weight:700;color:var(--accent)"></div></div>
+    <div class="game-card"><h3>🧩 رتب الكلمات</h3><p style="font-size:.82rem;color:var(--muted);margin-bottom:10px">اضغط على الكلمات بالترتيب لتكوين جملة صحيحة</p><div class="arrange-container"><div class="arrange-target" id="arrange-target"></div><div class="arrange-source" id="arrange-source"></div></div><div style="margin-top:12px;text-align:center"><button class="btn-secondary" onclick="checkArrange()">تحقق</button><button class="btn-secondary" onclick="resetArrange()" style="margin-right:6px">إعادة</button></div><div id="arrange-msg" style="text-align:center;margin-top:10px;font-weight:700;color:var(--accent)"></div></div>
+    <div class="game-card"><h3>❓ خمن الباب</h3><p style="font-size:.82rem;color:var(--muted);margin-bottom:10px">اقرأ البيت واختر الباب الصحيح</p><div id="guess-game"></div></div>`;
+  initMatchGame(); initArrangeGame(); initGuessGame();
+}
+
+/* لعبة المطابقة */
+function initMatchGame(){
+  const pairs = [
+    {term:'الفاعل', def:'الاسم المرفوع المذكور قبله فعله'},
+    {term:'المفعول به', def:'الاسم المنصوب الذي يقع عليه فعل الفاعل'},
+    {term:'المبتدأ', def:'الاسم المرفوع العاري عن العوامل اللفظية'},
+    {term:'الحال', def:'الاسم المنصوب المفسر لما استبهم من الهيئات'},
+    {term:'التمييز', def:'الاسم المنصوب المفسر لما استبهم من الذوات'}
+  ];
+  const shuffledDefs = shuffle(pairs.map(p=>p.def));
+  const grid = document.getElementById('match-grid');
+  let selectedTerm = null;
+  grid.innerHTML = '';
+  const termCol = document.createElement('div');
+  const defCol = document.createElement('div');
+  pairs.forEach(p=>{ const d=document.createElement('div'); d.className='match-item'; d.textContent=p.term; d.dataset.term=p.term; termCol.appendChild(d); });
+  shuffledDefs.forEach(d=>{ const el=document.createElement('div'); el.className='match-item'; el.textContent=d; el.dataset.def=d; defCol.appendChild(el); });
+  grid.appendChild(termCol); grid.appendChild(defCol);
+  grid.querySelectorAll('[data-term]').forEach(el=>el.addEventListener('click', ()=>{
+    if(el.classList.contains('matched')) return;
+    grid.querySelectorAll('[data-term]').forEach(x=>x.classList.remove('selected'));
+    el.classList.add('selected'); selectedTerm = el.dataset.term;
+  }));
+  grid.querySelectorAll('[data-def]').forEach(el=>el.addEventListener('click', ()=>{
+    if(!selectedTerm || el.classList.contains('matched')) return;
+    const correctDef = pairs.find(p=>p.term===selectedTerm)?.def;
+    if(el.dataset.def === correctDef){
+      el.classList.add('matched');
+      grid.querySelector(`[data-term="${selectedTerm}"]`).classList.add('matched');
+      document.getElementById('match-msg').textContent = '✓ إجابة صحيحة!';
+      setTimeout(()=>document.getElementById('match-msg').textContent='', 1200);
+    } else { document.getElementById('match-msg').textContent = '✗ حاول مرة أخرى'; setTimeout(()=>document.getElementById('match-msg').textContent='', 1200); }
+    selectedTerm = null; grid.querySelectorAll('[data-term]').forEach(x=>x.classList.remove('selected'));
+  }));
+}
+
+/* لعبة الترتيب */
+let arrangeWords = [], arrangeTarget = [];
+function initArrangeGame(){
+  const sentences = [
+    ['الكلامُ','هو','اللفظُ','المركبُ','المفيدُ','بالوضعِ'],
+    ['الفاعلُ','هو','الاسمُ','المرفوعُ','المذكورُ','قبله','فعلُه'],
+    ['المبتدأُ','هو','الاسمُ','المرفوعُ','العارِي','عن','العواملِ','اللفظيةِ'],
+    ['الحالُ','هو','الاسمُ','المنصوبُ','المفسرُ','لما','استبهم','من','الهيئاتِ']
+  ];
+  const sent = sentences[Math.floor(Math.random()*sentences.length)];
+  arrangeWords = shuffle([...sent]);
+  arrangeTarget = [];
+  renderArrange();
+}
+function renderArrange(){
+  const target = document.getElementById('arrange-target');
+  const source = document.getElementById('arrange-source');
+  target.innerHTML = arrangeTarget.map((w,i)=>`<span class="arrange-word" onclick="removeArrange(${i})">${w}</span>`).join('');
+  source.innerHTML = arrangeWords.map((w,i)=>`<span class="arrange-word ${arrangeTarget.includes(w)?'used':''}" onclick="addArrange('${w}')">${w}</span>`).join('');
+}
+function addArrange(w){ if(!arrangeTarget.includes(w)){ arrangeTarget.push(w); renderArrange(); } }
+function removeArrange(i){ arrangeTarget.splice(i,1); renderArrange(); }
+function checkArrange(){
+  const msg = document.getElementById('arrange-msg');
+  const target = arrangeTarget.join(' ');
+  const candidates = [
+    'الكلام هو اللفظ المركب المفيد بالوضع',
+    'الفاعل هو الاسم المرفوع المذكور قبله فعله',
+    'المبتدأ هو الاسم المرفوع العاري عن العوامل اللفظية',
+    'الحال هو الاسم المنصوب المفسر لما استبهم من الهيئات'
+  ];
+  if(candidates.some(c=>c.replace(/\s+/g,' ').trim() === target.replace(/\s+/g,' ').trim())){
+    msg.textContent = '✓ أحسنت! ترتيب صحيح'; msg.style.color = '#28a745';
+  } else { msg.textContent = '✗ الترتيب غير صحيح، حاول مرة أخرى'; msg.style.color = '#dc3545'; }
+  setTimeout(()=>msg.textContent='', 2500);
+}
+function resetArrange(){ arrangeTarget=[]; initArrangeGame(); }
+
+/* لعبة تخمين الباب */
+function initGuessGame(){
+  const pool = [];
+  STATE.chapters.forEach(ch=>{
+    if(ch.nazm) ch.nazm.forEach(v=>pool.push({verse:v, chapter:ch.title}));
+    if(ch.alfia) ch.alfia.forEach(v=>pool.push({verse:v, chapter:ch.title}));
+  });
+  if(!pool.length){ document.getElementById('guess-game').innerHTML='<p>لا توجد أبيات</p>'; return; }
+  const item = pool[Math.floor(Math.random()*pool.length)];
+  const options = shuffle([item.chapter, ...STATE.chapters.map(c=>c.title).filter(t=>t!==item.chapter).slice(0,3)]);
+  let html = `<div class="qz-text" style="white-space:pre-line">«${item.verse[0]} ❁ ${item.verse[1]||''}»</div><div class="qz-options">`;
+  options.forEach(o=>html += `<div class="qz-option" onclick="checkGuess(this,'${escapeHTML(o).replace(/'/g,"\\'")}','${escapeHTML(item.chapter).replace(/'/g,"\\'")}')">${escapeHTML(o)}</div>`);
+  html += `</div><div id="guess-msg" style="text-align:center;margin-top:10px;font-weight:700"></div>`;
+  document.getElementById('guess-game').innerHTML = html;
+}
+function checkGuess(el, chosen, correct){
+  document.querySelectorAll('#guess-game .qz-option').forEach(o=>{ o.style.pointerEvents='none'; if(o.textContent.trim()===correct) o.classList.add('correct'); });
+  const msg = document.getElementById('guess-msg');
+  if(chosen===correct){ el.classList.add('correct'); msg.textContent='✓ إجابة صحيحة'; msg.style.color='#28a745'; }
+  else { el.classList.add('wrong'); msg.textContent='✗ الإجابة الصحيحة: '+correct; msg.style.color='#dc3545'; }
+  setTimeout(()=>initGuessGame(), 2500);
+}
+
+/* ============================================================
+   الإعدادات
+   ============================================================ */
+function renderSettings(){
+  const colors = [
+    {id:'brown',name:'بني',c1:'#8b4513',c2:'#b8860b'},{id:'green',name:'أخضر',c1:'#2d6a4f',c2:'#52b788'},
+    {id:'blue',name:'أزرق',c1:'#1d4e89',c2:'#4895ef'},{id:'purple',name:'بنفسجي',c1:'#5a189a',c2:'#9d4edd'},
+    {id:'teal',name:'تركوازي',c1:'#006d77',c2:'#2a9d8f'},{id:'rose',name:'وردي',c1:'#a4133c',c2:'#ff4d6d'}
+  ];
+  const fonts = ['Amiri','Scheherazade New','Lateef','Noto Naskh Arabic','Cairo','Reem Kufi'];
+  const fontNames = {'Amiri':'أميري','Scheherazade New':'شهرزاد','Lateef':'لطيف','Noto Naskh Arabic':'نسخ','Cairo':'القاهرة','Reem Kufi':'ريم كوفي'};
+  document.getElementById('view-settings').innerHTML = `
+    <div class="chapter-header"><h2>⚙️ الإعدادات</h2></div>
+    <div class="settings-card"><h3>📏 حجم الخط</h3>
+      <div class="setting-row"><span class="setting-label">الحجم:</span><div class="setting-control">
+        <button class="font-btn" onclick="changeFontSize(-1)">−</button><span id="fs-val" style="font-weight:700;color:var(--accent);min-width:50px;text-align:center">${SETTINGS.fontSize}px</span><button class="font-btn" onclick="changeFontSize(1)">+</button>
+        <input type="range" min="13" max="26" value="${SETTINGS.fontSize}" id="fs-slider" style="flex:1;margin-right:10px;accent-color:var(--accent)">
+      </div></div>
+      <div class="preview-box"><div class="pv-title">معاينة</div>الكلامُ هو اللفظُ المركبُ المفيدُ بالوضعِ</div>
+    </div>
+    <div class="settings-card"><h3>🔤 نوع الخط</h3>
+      <div class="setting-row"><span class="setting-label">الخط:</span>
+        <select class="select-input" id="font-sel">${fonts.map(f=>`<option value="${f}" ${SETTINGS.fontFamily===f?'selected':''}>${fontNames[f]}</option>`).join('')}</select>
+      </div>
+    </div>
+    <div class="settings-card"><h3>🎨 اللون</h3>
+      <div class="setting-row"><span class="setting-label">اللون:</span><div class="color-swatches">
+        ${colors.map(c=>`<div class="color-swatch ${SETTINGS.color===c.id?'active':''}" onclick="setColor('${c.id}')" title="${c.name}" style="background:linear-gradient(135deg,${c.c1},${c.c2})"></div>`).join('')}
+      </div></div>
+    </div>
+    <div class="settings-card"><h3>🌓 الوضع</h3>
+      <div class="setting-row"><span class="setting-label">الوضع:</span>
+        <div style="display:flex;gap:8px">
+          <button class="mini-btn" onclick="setTheme('light')" style="${SETTINGS.theme==='light'?'background:var(--accent);color:#fff':''}">☀️ نهاري</button>
+          <button class="mini-btn" onclick="setTheme('dark')" style="${SETTINGS.theme==='dark'?'background:var(--accent);color:#fff':''}">🌙 ليلي</button>
+        </div>
+      </div>
+    </div>
+    <div class="settings-card"><h3>⚙️ إجراءات</h3><button class="btn-secondary" onclick="resetSettings()">🔄 إعادة الافتراضي</button></div>`;
+  document.getElementById('fs-slider').addEventListener('input', e=>{ SETTINGS.fontSize=parseInt(e.target.value,10); applySettings(); saveSettings(); document.getElementById('fs-val').textContent=SETTINGS.fontSize+'px'; });
+  document.getElementById('font-sel').addEventListener('change', e=>{ SETTINGS.fontFamily=e.target.value; applySettings(); saveSettings(); renderSettings(); });
+}
+function changeFontSize(d){ SETTINGS.fontSize=Math.max(13,Math.min(26,SETTINGS.fontSize+d)); applySettings(); saveSettings(); const el=document.getElementById('fs-val'); if(el)el.textContent=SETTINGS.fontSize+'px'; const sl=document.getElementById('fs-slider'); if(sl)sl.value=SETTINGS.fontSize; }
+function setColor(id){ SETTINGS.color=id; applySettings(); saveSettings(); renderSettings(); }
+function setTheme(t){ SETTINGS.theme=t; applySettings(); saveSettings(); updateThemeIcons(); renderSettings(); }
+function resetSettings(){ SETTINGS={...DEFAULT_SETTINGS}; applySettings(); saveSettings(); updateThemeIcons(); renderSettings(); showToast('تم إعادة الإعدادات'); }
+
+/* ============================================================
+   التنقل بين الصفحات
+   ============================================================ */
+function switchView(v){
+  STATE.currentView = v;
+  document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));
+  document.getElementById(`view-${v}`).classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.toggle('active', b.dataset.view===v));
+  if(v==='reader') renderReader();
+  else if(v==='favorites') renderFavorites();
+  else if(v==='quiz') renderQuiz();
+  else if(v==='games') renderGames();
+  else if(v==='settings') renderSettings();
+  window.scrollTo({top:0,behavior:'smooth'});
+  document.getElementById('sidebar').style.display = v==='reader' ? '' : 'none';
+  document.querySelector('main').style.marginRight = v==='reader' ? '' : '0';
+}
+function closeMobileSidebar(){ document.getElementById('sidebar').classList.remove('open'); document.getElementById('close-sidebar').style.display='none'; }
+function updateThemeIcons(){ const d=SETTINGS.theme==='dark'; document.getElementById('icon-moon').style.display=d?'none':'block'; document.getElementById('icon-sun').style.display=d?'block':'none'; }
+
+/* ============================================================
+   التهيئة
+   ============================================================ */
+(function init(){
+  loadSettings(); loadFavorites(); updateThemeIcons();
+  const data = JSON.parse(document.getElementById('data').textContent);
+  STATE.chapters = data.chapters;
+  document.querySelectorAll('.nav-btn').forEach(btn=>btn.addEventListener('click', ()=>switchView(btn.dataset.view)));
+  document.getElementById('theme-toggle').addEventListener('click', ()=>{ SETTINGS.theme=SETTINGS.theme==='dark'?'light':'dark'; applySettings(); saveSettings(); updateThemeIcons(); });
+  document.getElementById('sidebar-toggle').addEventListener('click', ()=>{ const s=document.getElementById('sidebar'); const o=s.classList.toggle('open'); document.getElementById('close-sidebar').style.display=o?'flex':'none'; });
+  document.getElementById('close-sidebar').addEventListener('click', closeMobileSidebar);
+  document.getElementById('to-top').addEventListener('click', ()=>window.scrollTo({top:0,behavior:'smooth'}));
+  document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeMobileSidebar(); });
+  renderReader();
+  document.getElementById('loader').classList.add('hidden');
+})();
+</script>
+</body>
+</html>
